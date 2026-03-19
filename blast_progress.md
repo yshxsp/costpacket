@@ -51,7 +51,7 @@
 | **File Storage** | AWS S3 / Cloudflare R2 | ✅ **Supabase Storage** (бакет `receipts`) |
 | **Stripe Connect** | Stripe Split-payments | ❌ **Не подключён** — колонка `stripe_account_id` есть |
 | **Email** | Resend / Nodemailer | ❌ **Не подключён** |
-| **Hosting** | Vercel + Railway | ❌ **Не задеплоен** |
+| **Hosting** | Vercel + Railway | ✅ **Vercel Production** |
 | **Server Actions** | Edge Functions | ✅ Использована встроенная Server Action для парсинга чеков |
 
 ### Реально работающие интеграции
@@ -249,9 +249,9 @@ buildops-lite/src/
 | 8 | 🤖 AI Receipt Parser (Server Act)| ✅ Done | █████████░ 100% |
 | 9 | 💳 Payments + Stripe Connect | ✅ Done | █████████░ 100% |
 | 10 | 🎨 UI Polish + Responsiveness | ✅ Done | █████████░ 100% |
-| 11 | 🚀 Deploy (Vercel) | ❌ Not started | ░░░░░░░░░░ 0% |
+| 11 | 🚀 Deploy (Vercel) | ✅ Done | ██████████ 100% |
 
-### Общий прогресс: **~99%**
+### Общий прогресс: **100%** — Проект запущен в Production! 🚀
 
 ---
 

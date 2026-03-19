@@ -1,59 +1,69 @@
-# BuildOps Lite
+# 🏗️ BuildOps Lite — Construction Operations Dashboard
 
-BuildOps Lite is a modern, lightweight operational dashboard application built with Next.js, Supabase, and Tailwind CSS. It provides essential tools for managing business operations, including expense tracking, approvals, and seamless integrations.
+BuildOps Lite is a premium, lightweight operational dashboard built for the construction industry. It streamlines project management, task tracking, and expense approvals with AI-powered insights and a modern, mobile-first experience.
 
-## 🚀 Tech Stack
+---
 
-- **Framework**: [Next.js](https://nextjs.org/) (App Router, React 19)
-- **Database & Auth**: [Supabase](https://supabase.com/)
-- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
-- **State Management**: [Zustand](https://github.com/pmndrs/zustand)
-- **Forms & Validation**: [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
-- **UI Components**: [Radix/Lucide](https://lucide.dev/) + [Framer Motion](https://www.framer.com/motion/)
-- **Payments**: [Stripe](https://stripe.com/)
+## 🚀 Key Features
 
-## 🛠 Features
+- **📱 Full PWA Support:** Installable on iOS and Android for a native mobile experience.
+- **🤖 AI Receipt Parsing:** Automatic vendor, amount, and item extraction using Google Gemini AI.
+- **🔐 Role-Based Access:** Distinct workflows for Contractors (Admins) and Subcontractors.
+- **💳 Payment Integration:** One-click payouts and transaction history via Stripe Connect.
+- **🌓 Dynamic UI:** Premium Dark Mode with OLED support, plus 5+ languages.
+- **⚡ Performance First:** Built with Next.js 16 (Turbopack) and Supabase for real-time updates.
 
-- **Authentication**: Secure user authentication via Supabase.
-- **Dashboard**: Centralized hub for operational metrics.
-- **Expense Management**: Track, approve, and reject expenses.
-- **Dark Mode**: Built-in support for multiple themes (System, Light, Dark, OLED).
-- **Internationalization**: Support for multiple languages.
-- **Responsive Design**: Fast and responsive UI powered by modern CSS features.
+---
 
-## 📦 Installation
+## 🛠 Tech Stack
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yshxsp/buildops-lite.git
-   cd buildops-lite
-   ```
+- **Framework:** [Next.js 16](https://nextjs.org/) (App Router, Turbopack)
+- **Runtime:** [React 19](https://react.dev/)
+- **Database & Auth:** [Supabase](https://supabase.com/) (Postgres + RLS)
+- **AI Engine:** [Google Gemini AI](https://aistudio.google.com/)
+- **Styling:** [Tailwind CSS 4](https://tailwindcss.com/)
+- **Animations:** [Framer Motion](https://framer.com/motion)
+- **State:** [Zustand](https://zustand-demo.pmnd.rs/)
+- **Icons:** [Lucide React](https://lucide.dev/)
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+---
 
-3. Set up environment variables:
-   Copy the example environment file and fill in your Supabase and Stripe details.
-   ```bash
-   cp .env.example .env.local
-   ```
-   **Required variables**:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `STRIPE_SECRET_KEY`
+## 📦 Getting Started
 
-4. Run the development server:
-   ```bash
-   npm run dev
-   ```
+### 1. Installation
+```bash
+git clone https://github.com/yshxsp/buildops-lite.git
+cd buildops-lite
+npm install
+```
 
-## 🔒 Security Best Practices
+### 2. Environment Setup
+Copy the example environment file and fill in your credentials from Supabase, Stripe, and Google AI Studio.
+```bash
+cp .env.example .env.local
+```
 
-- **Environment Variables**: Never commit `.env` or `.env.local` files to source control. They are ignored by default in `.gitignore`.
-- **Database Rules**: Ensure Supabase Row Level Security (RLS) policies are active for any table accessed by the client.
-- **API Keys**: Only prefix public variables with `NEXT_PUBLIC_`. Keep sensitive keys (like Stripe Secret) server-side only.
+### 3. Development
+```bash
+npm run dev
+```
+
+---
+
+## 🚀 Deployment
+
+The project is optimized for [Vercel](https://vercel.com).
+1. Connect your GitHub repository.
+2. Add your `.env` variables in the Vercel Dashboard.
+3. Update your **Supabase Redirect URL** to point to your Vercel deployment domain.
+
+---
+
+## 🛡 Security
+
+- **Safe History:** Repository history is clean and contains no sensitive API keys.
+- **Row Level Security:** All database operations are secured via Supabase RLS.
+- **Server-Side Validation:** Critical mutations are handled through secure Server Actions.
 
 ## 📜 License
 
