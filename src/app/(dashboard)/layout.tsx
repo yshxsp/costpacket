@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import { MobileNav } from '@/components/features/mobile-nav'
 import { DesktopSidebar } from '@/components/features/desktop-sidebar'
+import { PageTransition } from '@/components/providers/page-transition'
 
 export default async function DashboardLayout({
   children,
@@ -32,8 +33,10 @@ export default async function DashboardLayout({
       <DesktopSidebar displayName={displayName} role={role} />
 
       {/* Main content */}
-      <main className="flex-1 overflow-y-auto">
-        {children}
+      <main className="flex-1 overflow-y-auto relative bg-zinc-950">
+        <PageTransition>
+          {children}
+        </PageTransition>
       </main>
     </div>
   )

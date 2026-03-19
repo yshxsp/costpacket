@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Trash2, Loader2 } from 'lucide-react'
-import { createClient } from '@/lib/supabase'
+import { toast } from 'sonner'
+import { deleteProject } from '@/app/actions/projects'
 
 export function DeleteProjectButton({ projectId }: { projectId: string }) {
   const router = useRouter()
@@ -13,10 +14,18 @@ export function DeleteProjectButton({ projectId }: { projectId: string }) {
   async function handleDelete() {
     if (!confirm) { setConfirm(true); return }
     setLoading(true)
-    const supabase = createClient()
-    await supabase.from('projects').delete().eq('id', projectId)
-    router.push('/projects')
-    router.refresh()
+    try {
+      const res = await deleteProject(projectId)
+      // redirect() is called inside the server action on success
+      if (res?.error) {
+        toast.error(res.error)
+        setLoading(false)
+        setConfirm(false)
+      }
+    } catch {
+      // deleteProject calls redirect(), which throws internally — this is expected
+      router.push('/projects')
+    }
   }
 
   return (

@@ -1,11 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { DollarSign, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { createPayment } from '@/app/actions/payments'
 
 export function PayoutButton({ taskId }: { taskId: string }) {
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
 
   async function handlePayout() {
@@ -18,8 +20,9 @@ export function PayoutButton({ taskId }: { taskId: string }) {
         toast.success('Payout initiated successfully!', {
           description: 'The funds are on the way to the subcontractor.'
         })
+        router.refresh()
       }
-    } catch (err) {
+    } catch {
       toast.error('An unexpected error occurred.')
     } finally {
       setLoading(false)

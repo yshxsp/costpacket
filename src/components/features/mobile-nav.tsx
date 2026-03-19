@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Menu, X, Hammer, LayoutDashboard, FolderKanban, ClipboardList, Receipt, CreditCard, LogOut, Settings } from 'lucide-react'
+import { Menu, X, Hammer, LayoutDashboard, FolderKanban, ClipboardList, Receipt, CreditCard, LogOut, Settings, User } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { logout } from '@/app/(auth)/actions'
 import { useTranslation } from '@/lib/i18n'
@@ -19,6 +19,7 @@ export function MobileNav({ displayName, role }: { displayName: string, role: st
     { href: '/tasks', label: t('tasks'), icon: ClipboardList },
     { href: '/expenses', label: t('expenses'), icon: Receipt },
     { href: '/payments', label: t('payments'), icon: CreditCard },
+    { href: '/settings', label: 'Profile', icon: User },
   ]
 
   return (

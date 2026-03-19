@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { ChevronDown, Loader2 } from 'lucide-react'
-import { createClient } from '@/lib/supabase'
+import { toast } from 'sonner'
+import { updateProjectStatus } from '@/app/actions/projects'
 
 const statusOptions = [
   { value: 'ACTIVE', label: 'Active' },
@@ -18,18 +18,25 @@ export function UpdateProjectStatusButton({
   projectId: string
   currentStatus: string
 }) {
-  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
 
-  async function updateStatus(status: string) {
+  async function handleUpdate(status: string) {
     if (status === currentStatus) { setOpen(false); return }
     setLoading(true)
     setOpen(false)
-    const supabase = createClient()
-    await supabase.from('projects').update({ status }).eq('id', projectId)
-    router.refresh()
-    setLoading(false)
+    try {
+      const res = await updateProjectStatus(projectId, status)
+      if (res.error) {
+        toast.error(res.error)
+      } else {
+        toast.success('Project status updated!')
+      }
+    } catch {
+      toast.error('An unexpected error occurred.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -48,7 +55,7 @@ export function UpdateProjectStatusButton({
           {statusOptions.map((opt) => (
             <button
               key={opt.value}
-              onClick={() => updateStatus(opt.value)}
+              onClick={() => handleUpdate(opt.value)}
               className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
                 opt.value === currentStatus
                   ? 'text-orange-400 bg-orange-500/10'

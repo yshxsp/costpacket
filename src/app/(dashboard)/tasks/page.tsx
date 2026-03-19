@@ -130,8 +130,10 @@ export default async function TasksPage({
             <tbody className="divide-y divide-white/5">
               {tasks.map((task) => {
                 const cfg = statusConfig[task.status as StatusKey] ?? statusConfig.PENDING
-                const project = task.projects as { id: string; name: string } | null
-                const assignee = task.users as { name?: string; email?: string } | null
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const project = (task.projects as any) as { id: string; name: string } | null
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const assignee = (task.users as any) as { name?: string; email?: string } | null
                 return (
                   <tr key={task.id} className="group hover:bg-white/5 transition-colors">
                     <td className="px-5 py-4">

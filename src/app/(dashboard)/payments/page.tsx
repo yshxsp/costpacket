@@ -94,8 +94,10 @@ export default async function PaymentsPage() {
             <tbody className="divide-y divide-white/5">
               {payments.map((pmt) => {
                 const cfg = statusConfig[pmt.status as StatusKey] ?? statusConfig.PENDING
-                const task = pmt.tasks as { id: string; title: string } | null
-                const recipient = pmt.users as { name?: string; email?: string } | null
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const task = (pmt.tasks as any) as { id: string; title: string } | null
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const recipient = (pmt.users as any) as { name?: string; email?: string } | null
                 return (
                   <tr key={pmt.id} className="group hover:bg-white/5 transition-colors">
                     <td className="px-5 py-4">

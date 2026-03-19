@@ -1,10 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { ChevronDown, Loader2 } from 'lucide-react'
-import { createClient } from '@/lib/supabase'
 import { toast } from 'sonner'
+import { updateTaskStatus } from '@/app/actions/projects'
 
 const STATUS_OPTIONS = [
   { value: 'PENDING', label: 'Pending', color: 'text-zinc-400' },
@@ -20,25 +19,25 @@ export function UpdateTaskStatusSelect({
   taskId: string
   currentStatus: string
 }) {
-  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
 
-  async function updateStatus(status: string) {
+  async function handleUpdate(status: string) {
     if (status === currentStatus) { setOpen(false); return }
     setLoading(true)
     setOpen(false)
-    const supabase = createClient()
-    const { error } = await supabase.from('tasks').update({ status }).eq('id', taskId)
-    
-    if (error) {
-      toast.error('Failed to update task: ' + error.message)
-    } else {
-      toast.success(`Task status changed!`)
+    try {
+      const res = await updateTaskStatus(taskId, status)
+      if (res.error) {
+        toast.error(res.error)
+      } else {
+        toast.success('Task status updated!')
+      }
+    } catch {
+      toast.error('An unexpected error occurred.')
+    } finally {
+      setLoading(false)
     }
-
-    router.refresh()
-    setLoading(false)
   }
 
   const current = STATUS_OPTIONS.find((o) => o.value === currentStatus) ?? STATUS_OPTIONS[0]
@@ -63,7 +62,7 @@ export function UpdateTaskStatusSelect({
           {STATUS_OPTIONS.map((opt) => (
             <button
               key={opt.value}
-              onClick={() => updateStatus(opt.value)}
+              onClick={() => handleUpdate(opt.value)}
               className={`w-full text-left px-4 py-2.5 text-sm flex items-center gap-2 transition-colors ${
                 opt.value === currentStatus
                   ? 'bg-white/5'

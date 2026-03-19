@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Hammer, LayoutDashboard, FolderKanban, ClipboardList, Receipt, CreditCard, Settings, LogOut } from 'lucide-react'
+import { Hammer, LayoutDashboard, FolderKanban, ClipboardList, Receipt, CreditCard, Settings, LogOut, User } from 'lucide-react'
 import { logout } from '@/app/(auth)/actions'
 import { useTranslation } from '@/lib/i18n'
 import { SettingsModal } from './settings-modal'
@@ -17,6 +17,7 @@ export function DesktopSidebar({ displayName, role }: { displayName: string, rol
     { href: '/tasks', label: t('tasks'), icon: ClipboardList },
     { href: '/expenses', label: t('expenses'), icon: Receipt },
     { href: '/payments', label: t('payments'), icon: CreditCard },
+    { href: '/settings', label: 'Profile', icon: User },
   ]
 
   return (

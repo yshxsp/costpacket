@@ -1,28 +1,27 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react'
-import { createClient } from '@/lib/supabase'
 import { toast } from 'sonner'
+import { updateExpenseStatus } from '@/app/actions/expenses'
 
 export function ApproveRejectButtons({ expenseId }: { expenseId: string }) {
-  const router = useRouter()
   const [loading, setLoading] = useState<'approve' | 'reject' | null>(null)
 
   async function update(status: 'APPROVED' | 'REJECTED') {
     setLoading(status === 'APPROVED' ? 'approve' : 'reject')
-    const supabase = createClient()
-    const { error } = await supabase.from('expenses').update({ status }).eq('id', expenseId)
-    
-    if (error) {
-      toast.error('Failed to update expense: ' + error.message)
-    } else {
-      toast.success(`Expense ${status.toLowerCase()}!`)
+    try {
+      const res = await updateExpenseStatus(expenseId, status)
+      if (res.error) {
+        toast.error(res.error)
+      } else {
+        toast.success(`Expense ${status.toLowerCase()}!`)
+      }
+    } catch {
+      toast.error('An unexpected error occurred.')
+    } finally {
+      setLoading(null)
     }
-    
-    router.refresh()
-    setLoading(null)
   }
 
   return (

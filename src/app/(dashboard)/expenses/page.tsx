@@ -123,8 +123,10 @@ export default async function ExpensesPage({
         <div className="space-y-3">
           {expenses.map((exp) => {
             const cfg = statusConfig[exp.status as StatusKey] ?? statusConfig.PENDING
-            const task = exp.tasks as { id: string; title: string; projects: { id: string; name: string } | null } | null
-            const submitter = exp.users as { name?: string; email?: string } | null
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const task = (exp.tasks as any) as { id: string; title: string; projects: { id: string; name: string } | null } | null
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const submitter = (exp.users as any) as { name?: string; email?: string } | null
 
             return (
               <div
