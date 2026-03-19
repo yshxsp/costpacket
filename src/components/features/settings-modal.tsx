@@ -39,6 +39,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
 
   const langs: { value: LangType; label: string }[] = [
     { value: 'en', label: 'English' },
+    { value: 'es', label: 'Español' },
     { value: 'ru', label: 'Русский' },
     { value: 'uk', label: 'Українська' },
     { value: 'cs', label: 'Čeština' },

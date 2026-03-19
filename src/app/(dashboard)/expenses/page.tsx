@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Receipt, Plus, ArrowUpRight, CheckCircle2, XCircle, Clock } from 'lucide-react'
 import { ApproveRejectButtons } from '@/components/features/approve-reject-expense'
+import { ExportPdfButton } from '@/components/features/export-pdf-button'
 
 const statusConfig = {
   PENDING: { label: 'Pending', color: 'text-yellow-400', bg: 'bg-yellow-500/10', dot: 'bg-yellow-400', icon: Clock },
@@ -66,13 +67,16 @@ export default async function ExpensesPage({
             {expenses?.length ?? 0} expense{expenses?.length !== 1 ? 's' : ''} · ${totals.total.toLocaleString()} total
           </p>
         </div>
-        <Link
-          href="/expenses/new"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-500 text-white text-sm font-medium hover:bg-orange-600 transition-all shadow-lg shadow-orange-500/20"
-        >
-          <Plus className="w-4 h-4" />
-          Submit Expense
-        </Link>
+        <div className="flex items-center gap-3">
+          <ExportPdfButton expenses={expenses || []} />
+          <Link
+            href="/expenses/new"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-500 text-white text-sm font-medium hover:bg-orange-600 transition-all shadow-lg shadow-orange-500/20"
+          >
+            <Plus className="w-4 h-4" />
+            Submit Expense
+          </Link>
+        </div>
       </div>
 
       {/* Summary cards */}

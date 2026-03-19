@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 export type ThemeType = 'light' | 'dark' | 'oled' | 'system'
-export type LangType = 'en' | 'ru' | 'uk' | 'cs' | 'de'
+export type LangType = 'en' | 'es' | 'ru' | 'uk' | 'cs' | 'de'
 
 interface AppState {
   theme: ThemeType
