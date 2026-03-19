@@ -1,26 +1,53 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-background: hsl(0 0% 4%);
+  --color-foreground: hsl(0 0% 98%);
+  
+  --color-card: hsl(0 0% 7%);
+  --color-card-foreground: hsl(0 0% 98%);
+
+  --color-primary: hsl(24 95% 53%); /* Orange */
+  --color-primary-foreground: hsl(0 0% 98%);
+
+  --color-secondary: hsl(243 75% 59%); /* Indigo */
+  --color-secondary-foreground: hsl(0 0% 98%);
+  
+  --color-muted: hsl(240 5% 26%);
+  --color-muted-foreground: hsl(240 5% 65%);
+
+  --color-border: hsl(240 6% 20%);
+  --radius: 0.5rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* 
+  The default CSS from Tailwind has been replaced 
+  with the dark mode layout specific for this project.
+*/
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
   font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+/* Themes */
+html.oled body {
+  --color-background: #000000;
+  /* Darker borders for OLED */
+  --color-border: #111111;
+}
+
+html.light {
+  filter: invert(1) hue-rotate(180deg);
+}
+html.light img, 
+html.light video, 
+html.light iframe, 
+html.light .lucide {
+  filter: invert(1) hue-rotate(180deg);
 }

@@ -1,0 +1,81 @@
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { ChevronDown, Loader2 } from 'lucide-react'
+import { createClient } from '@/lib/supabase'
+import { toast } from 'sonner'
+
+const STATUS_OPTIONS = [
+  { value: 'PENDING', label: 'Pending', color: 'text-zinc-400' },
+  { value: 'IN_PROGRESS', label: 'In Progress', color: 'text-blue-400' },
+  { value: 'REVIEW', label: 'In Review', color: 'text-orange-400' },
+  { value: 'COMPLETED', label: 'Completed', color: 'text-green-400' },
+]
+
+export function UpdateTaskStatusSelect({
+  taskId,
+  currentStatus,
+}: {
+  taskId: string
+  currentStatus: string
+}) {
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const [open, setOpen] = useState(false)
+
+  async function updateStatus(status: string) {
+    if (status === currentStatus) { setOpen(false); return }
+    setLoading(true)
+    setOpen(false)
+    const supabase = createClient()
+    const { error } = await supabase.from('tasks').update({ status }).eq('id', taskId)
+    
+    if (error) {
+      toast.error('Failed to update task: ' + error.message)
+    } else {
+      toast.success(`Task status changed!`)
+    }
+
+    router.refresh()
+    setLoading(false)
+  }
+
+  const current = STATUS_OPTIONS.find((o) => o.value === currentStatus) ?? STATUS_OPTIONS[0]
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        disabled={loading}
+        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-sm font-medium transition-all hover:bg-white/10 disabled:opacity-50"
+      >
+        {loading ? (
+          <Loader2 className="w-4 h-4 animate-spin text-zinc-400" />
+        ) : (
+          <span className={`w-2 h-2 rounded-full ${current.color.replace('text-', 'bg-')}`} />
+        )}
+        <span className={current.color}>{current.label}</span>
+        <ChevronDown className="w-3.5 h-3.5 text-zinc-500" />
+      </button>
+      {open && (
+        <div className="absolute right-0 mt-1 w-44 rounded-xl bg-zinc-900 border border-white/10 shadow-xl z-10 overflow-hidden">
+          {STATUS_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => updateStatus(opt.value)}
+              className={`w-full text-left px-4 py-2.5 text-sm flex items-center gap-2 transition-colors ${
+                opt.value === currentStatus
+                  ? 'bg-white/5'
+                  : 'hover:bg-white/5'
+              }`}
+            >
+              <span className={`w-2 h-2 rounded-full flex-shrink-0 ${opt.color.replace('text-', 'bg-')}`} />
+              <span className={opt.color}>{opt.label}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}

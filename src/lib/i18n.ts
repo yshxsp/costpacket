@@ -1,0 +1,78 @@
+import { LangType, useAppStore } from './store'
+
+const dictionaries: Record<LangType, Record<string, string>> = {
+  en: {
+    dashboard: 'Dashboard',
+    projects: 'Projects',
+    tasks: 'Tasks',
+    expenses: 'Expenses',
+    payments: 'Payments',
+    settings: 'Settings',
+    signout: 'Sign out',
+    new_project: 'New Project',
+    upload_receipt: 'Upload Receipt',
+    total_paid: 'Total Paid',
+    pending: 'Pending',
+  },
+  ru: {
+    dashboard: 'Дашборд',
+    projects: 'Проекты',
+    tasks: 'Задачи',
+    expenses: 'Расходы',
+    payments: 'Выплаты',
+    settings: 'Настройки',
+    signout: 'Выйти',
+    new_project: 'Новый проект',
+    upload_receipt: 'Загрузить чек',
+    total_paid: 'Всего выплачено',
+    pending: 'В ожидании',
+  },
+  uk: {
+    dashboard: 'Дашборд',
+    projects: 'Проєкти',
+    tasks: 'Завдання',
+    expenses: 'Витрати',
+    payments: 'Виплати',
+    settings: 'Налаштування',
+    signout: 'Вийти',
+    new_project: 'Новий проєкт',
+    upload_receipt: 'Завантажити чек',
+    total_paid: 'Всього виплачено',
+    pending: 'В очікуванні',
+  },
+  cs: {
+    dashboard: 'Přehled',
+    projects: 'Projekty',
+    tasks: 'Úkoly',
+    expenses: 'Výdaje',
+    payments: 'Platby',
+    settings: 'Nastavení',
+    signout: 'Odhlásit se',
+    new_project: 'Nový projekt',
+    upload_receipt: 'Nahrát účtenku',
+    total_paid: 'Celkem zaplaceno',
+    pending: 'Čeká se',
+  },
+  de: {
+    dashboard: 'Übersicht',
+    projects: 'Projekte',
+    tasks: 'Aufgaben',
+    expenses: 'Ausgaben',
+    payments: 'Zahlungen',
+    settings: 'Einstellungen',
+    signout: 'Abmelden',
+    new_project: 'Neues Projekt',
+    upload_receipt: 'Beleg hochladen',
+    total_paid: 'Insgesamt bezahlt',
+    pending: 'Ausstehend',
+  },
+}
+
+export function useTranslation() {
+  const lang = useAppStore((state) => state.lang)
+  
+  return {
+    t: (key: string) => dictionaries[lang][key] || key,
+    lang,
+  }
+}
