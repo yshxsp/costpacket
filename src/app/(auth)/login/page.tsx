@@ -34,8 +34,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <div className="w-[17rem] max-w-full sm:w-[24rem]">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4 py-8">
+      <div className="w-full max-w-md">
         <div className="flex items-center justify-center gap-2 mb-8">
           <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
             <Receipt className="w-5 h-5 text-primary" />
@@ -45,7 +45,7 @@ export default function LoginPage() {
           </span>
         </div>
 
-        <div className="bg-card border border-border rounded-lg p-6 shadow-[0_20px_60px_rgba(0,0,0,0.24)] sm:p-8">
+        <div className="bg-card border border-border rounded-lg p-7 shadow-[0_20px_60px_rgba(0,0,0,0.24)] sm:p-8">
           <h1 className="text-2xl font-bold text-foreground mb-1">Welcome back</h1>
           <p className="text-zinc-400 text-sm mb-6">Sign in to your account to continue.</p>
 
@@ -109,7 +109,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <p className="mt-6 text-center text-xs text-zinc-500 sm:text-sm">
+          <p className="mt-6 text-center text-sm text-zinc-500">
             Don&apos;t have an account?{' '}
             <Link href="/signup" className="whitespace-nowrap text-primary hover:text-primary transition-colors font-medium">
               Create one
