@@ -1,4 +1,4 @@
-const CACHE_NAME = 'buildops-lite-cache-v1'
+const CACHE_NAME = 'costpacket-cache-v1'
 const urlsToCache = [
   '/',
   '/manifest.webmanifest',

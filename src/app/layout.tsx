@@ -8,8 +8,8 @@ import { PwaRegister } from '@/components/providers/pwa-register';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'BuildOps Lite - Contractor Management',
-  description: 'AI-powered expense tracking and payments for modern contractors.',
+  title: 'CostPacket - Job-Costed Expense Packets',
+  description: 'Receipt parsing, expense approvals, and payout packets for small contractors.',
 };
 
 export default function RootLayout({

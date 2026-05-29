@@ -1,81 +1,142 @@
-import Link from 'next/link';
-import { ArrowRight, Hammer, CheckCircle, BarChart3, Receipt } from 'lucide-react';
+import Link from 'next/link'
+import type { ComponentType, SVGProps } from 'react'
+import { ArrowRight, BarChart3, CheckCircle, Receipt } from 'lucide-react'
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Header */}
-      <header className="border-b border-white/5 px-6 py-4 flex justify-between items-center backdrop-blur-md bg-black/50 sticky top-0 z-50">
-        <div className="flex items-center gap-2 font-bold text-xl tracking-tight text-white">
-          <Hammer className="text-orange-500 w-6 h-6" />
-          BuildOps <span className="text-indigo-500">Lite</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <Link href="/login" className="text-sm font-medium text-zinc-300 hover:text-white transition-colors">Log In</Link>
-          <Link href="/signup" className="text-sm font-medium bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/20">
-            Get Started Free
+    <div className="min-h-screen bg-[#0f100d] text-stone-50">
+      <header className="border-b border-stone-800/80 px-6 py-4">
+        <div className="mx-auto flex max-w-6xl items-center justify-between">
+          <Link href="/" className="flex items-center gap-2 font-bold tracking-tight">
+            <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[#d97757]/15 text-[#d97757]">
+              <Receipt className="h-4 w-4" />
+            </span>
+            CostPacket
           </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/login" className="text-sm font-medium text-stone-300 transition-colors hover:text-white">
+              Log in
+            </Link>
+            <Link
+              href="/signup"
+              className="inline-flex items-center gap-2 rounded-md bg-[#d97757] px-4 py-2 text-sm font-semibold text-[#141413] transition-colors hover:bg-[#e68a6b]"
+            >
+              Start free
+            </Link>
+          </div>
         </div>
       </header>
 
-      {/* Hero */}
-      <main className="flex-1 flex flex-col items-center justify-center text-center px-4 py-20 relative overflow-hidden">
-        {/* Glow Effects */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-orange-500/10 blur-[120px] rounded-full pointer-events-none" />
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-indigo-500/10 blur-[120px] rounded-full pointer-events-none" />
+      <main>
+        <section className="mx-auto grid max-w-6xl gap-10 px-6 py-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:py-20">
+          <div>
+            <p className="mb-5 w-fit border-l-2 border-[#d97757] bg-stone-900 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-stone-300">
+              Job-costed expense packets
+            </p>
+            <h1 className="max-w-3xl text-5xl font-black leading-[0.95] tracking-normal text-stone-50 md:text-7xl">
+              Every job cost starts with the receipt.
+            </h1>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-stone-300">
+              CostPacket keeps receipts, task expenses, approvals, payout records,
+              and PDF backup tied to the right project before bookkeeping turns
+              into a week of message chasing.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/signup"
+                className="inline-flex items-center justify-center gap-2 rounded-md bg-[#d97757] px-5 py-3 text-sm font-bold text-[#141413] transition-colors hover:bg-[#e68a6b]"
+              >
+                Build a packet
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/login"
+                className="inline-flex items-center justify-center gap-2 rounded-md border border-stone-700 px-5 py-3 text-sm font-semibold text-stone-100 transition-colors hover:border-stone-500 hover:bg-stone-900"
+              >
+                Open workspace
+              </Link>
+            </div>
+          </div>
 
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/5 text-xs text-orange-400 mb-8 font-medium">
-           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
-          </span>
-          Modern Tech Stack for 2026 Resumes
-        </div>
-        
-        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 max-w-4xl text-white">
-          Manage <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Contractors</span>.<br />
-          Automate <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-indigo-600">Payments</span>.
-        </h1>
-        
-        <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mb-10 text-balance leading-relaxed">
-          The ultimate B2B SaaS platform to track construction subcontracts, parse receipts using AI, and automate payouts.
-        </p>
-        
-        <div className="flex sm:flex-row flex-col gap-4">
-          <Link href="/signup" className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-orange-500 text-white font-medium hover:bg-orange-600 transition-all shadow-xl shadow-orange-500/20 group">
-            Start for Free
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </Link>
-          <Link href="/login" className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-white/5 border border-white/10 text-white font-medium hover:bg-white/10 transition-all">
-            Sign In
-          </Link>
-        </div>
+          <div className="border border-stone-800 bg-[#171813] p-5 shadow-2xl shadow-black/30">
+            <div className="flex items-center justify-between border-b border-stone-800 pb-4">
+              <div>
+                <p className="text-xs uppercase tracking-wide text-stone-500">Packet</p>
+                <h2 className="text-xl font-bold">Kitchen remodel - March</h2>
+              </div>
+              <span className="rounded-sm bg-emerald-500/15 px-2 py-1 text-xs font-bold text-emerald-300">
+                Approved
+              </span>
+            </div>
+            <div className="divide-y divide-stone-800">
+              {[
+                ['Task', 'Cabinet install', '$1,800'],
+                ['Receipt', 'Lumber yard', '$426.18'],
+                ['Receipt', 'Hardware supplies', '$119.42'],
+                ['Payout', 'Subcontractor transfer', '$1,800'],
+              ].map(([kind, label, amount]) => (
+                <div key={label} className="grid grid-cols-[96px_1fr_auto] gap-3 py-4 text-sm">
+                  <span className="font-mono text-xs uppercase text-stone-500">{kind}</span>
+                  <span className="text-stone-200">{label}</span>
+                  <span className="font-semibold text-stone-50">{amount}</span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 grid grid-cols-3 gap-3 text-center">
+              <div className="bg-stone-900 p-3">
+                <p className="text-xs text-stone-500">Receipts</p>
+                <p className="text-lg font-bold">12</p>
+              </div>
+              <div className="bg-stone-900 p-3">
+                <p className="text-xs text-stone-500">Pending</p>
+                <p className="text-lg font-bold">$545</p>
+              </div>
+              <div className="bg-stone-900 p-3">
+                <p className="text-xs text-stone-500">Packet</p>
+                <p className="text-lg font-bold">PDF</p>
+              </div>
+            </div>
+          </div>
+        </section>
 
-        {/* Feature grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-24 max-w-5xl w-full text-left">
-          <div className="p-6 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-md hover:bg-white/10 transition-colors">
-            <div className="w-12 h-12 rounded-lg bg-orange-500/20 text-orange-500 flex items-center justify-center mb-4">
-              <CheckCircle className="w-6 h-6" />
-            </div>
-            <h3 className="font-semibold text-lg text-white mb-2">Project Tracking</h3>
-            <p className="text-zinc-400 text-sm">Assign tasks to plumbers and electricians. Real-time updates directly from the job site.</p>
+        <section className="border-t border-stone-800 bg-[#141413]">
+          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-4 px-6 py-10 md:grid-cols-3">
+            <Feature
+              icon={Receipt}
+              title="Receipts land on the job"
+              text="Upload a receipt, parse the amount, and keep the backup tied to the task that created the cost."
+            />
+            <Feature
+              icon={CheckCircle}
+              title="Approvals stay explicit"
+              text="Contractors review pending expenses before they become payout or bookkeeping noise."
+            />
+            <Feature
+              icon={BarChart3}
+              title="Packets leave cleanly"
+              text="Export expense packets when a client, accountant, or subcontractor needs the paper trail."
+            />
           </div>
-          <div className="p-6 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-md hover:bg-white/10 transition-colors">
-            <div className="w-12 h-12 rounded-lg bg-indigo-500/20 text-indigo-500 flex items-center justify-center mb-4">
-              <Receipt className="w-6 h-6" />
-            </div>
-            <h3 className="font-semibold text-lg text-white mb-2">AI Vision Receipts</h3>
-            <p className="text-zinc-400 text-sm">Snap a photo of hardware store bills. AI extracts line items, totals, and automatically logs expenses.</p>
-          </div>
-          <div className="p-6 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-md hover:bg-white/10 transition-colors">
-            <div className="w-12 h-12 rounded-lg bg-green-500/20 text-green-500 flex items-center justify-center mb-4">
-              <BarChart3 className="w-6 h-6" />
-            </div>
-            <h3 className="font-semibold text-lg text-white mb-2">Stripe Connect</h3>
-            <p className="text-zinc-400 text-sm">Single click approvals that automatically route money to the subcontractor's bank account.</p>
-          </div>
-        </div>
+        </section>
       </main>
     </div>
-  );
+  )
+}
+
+function Feature({
+  icon: Icon,
+  title,
+  text,
+}: {
+  icon: ComponentType<SVGProps<SVGSVGElement>>
+  title: string
+  text: string
+}) {
+  return (
+    <div className="border border-stone-800 bg-[#181914] p-5">
+      <Icon className="mb-4 h-5 w-5 text-[#d97757]" />
+      <h3 className="font-bold text-stone-50">{title}</h3>
+      <p className="mt-2 text-sm leading-6 text-stone-400">{text}</p>
+    </div>
+  )
 }

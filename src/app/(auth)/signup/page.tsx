@@ -3,12 +3,12 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Hammer, Mail, Lock, User, ChevronDown, Loader2 } from 'lucide-react'
+import { Receipt, Mail, Lock, User, Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase'
 
 const ROLES = [
-  { value: 'CONTRACTOR', label: 'Contractor', description: 'Manage projects & teams' },
-  { value: 'SUBCONTRACTOR', label: 'Subcontractor', description: 'Work on assigned tasks' },
+  { value: 'CONTRACTOR', label: 'Contractor', description: 'Approve expenses' },
+  { value: 'SUBCONTRACTOR', label: 'Subcontractor', description: 'Submit job costs' },
 ]
 
 export default function SignupPage() {
@@ -60,17 +60,17 @@ export default function SignupPage() {
         {/* Logo */}
         <div className="flex items-center justify-center gap-2 mb-8">
           <div className="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center">
-            <Hammer className="w-5 h-5 text-orange-500" />
+            <Receipt className="w-5 h-5 text-orange-500" />
           </div>
           <span className="text-xl font-bold text-white tracking-tight">
-            BuildOps <span className="text-indigo-400">Lite</span>
+            CostPacket
           </span>
         </div>
 
         {/* Card */}
         <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-md">
           <h1 className="text-2xl font-bold text-white mb-1">Create your account</h1>
-          <p className="text-zinc-400 text-sm mb-6">Join thousands of contractors managing smarter.</p>
+          <p className="text-zinc-400 text-sm mb-6">Keep receipts and approvals tied to the right job.</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Name */}

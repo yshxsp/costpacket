@@ -1,70 +1,55 @@
-# 🏗️ BuildOps Lite — Construction Operations Dashboard
+# CostPacket
 
-BuildOps Lite is a premium, lightweight operational dashboard built for the construction industry. It streamlines project management, task tracking, and expense approvals with AI-powered insights and a modern, mobile-first experience.
-
----
-
-## 🚀 Key Features
-
-- **📱 Full PWA Support:** Installable on iOS and Android for a native mobile experience.
-- **🤖 AI Receipt Parsing:** Automatic vendor, amount, and item extraction using Google Gemini AI.
-- **🔐 Role-Based Access:** Distinct workflows for Contractors (Admins) and Subcontractors.
-- **💳 Payment Integration:** One-click payouts and transaction history via Stripe Connect.
-- **🌓 Dynamic UI:** Premium Dark Mode with OLED support, plus 5+ languages.
-- **⚡ Performance First:** Built with Next.js 16 (Turbopack) and Supabase for real-time updates.
+CostPacket is a focused expense approval and job-costing workspace for small
+contractors. It keeps receipts, task expenses, approvals, payout records, and
+PDF packets tied to the job before the back office turns into spreadsheets and
+message threads.
 
 ---
 
-## 🛠 Tech Stack
+## Key Features
 
-- **Framework:** [Next.js 16](https://nextjs.org/) (App Router, Turbopack)
+- **Job-costed expense inbox:** Review receipts and expenses by project, task,
+  submitter, and status.
+- **AI receipt parsing:** Extract vendor, amount, and description from receipt
+  photos with Gemini Vision.
+- **Approval workflow:** Contractors can approve or reject pending expenses with
+  server-side authorization checks.
+- **Payout records:** Track subcontractor payouts and Stripe transfer IDs.
+- **PDF export:** Generate expense packets for bookkeeping, client review, or
+  payment backup.
+- **Mobile-first PWA:** Installable dashboard for field and office workflows.
+
+---
+
+## Tech Stack
+
+- **Framework:** [Next.js 16](https://nextjs.org/) App Router
 - **Runtime:** [React 19](https://react.dev/)
-- **Database & Auth:** [Supabase](https://supabase.com/) (Postgres + RLS)
+- **Database & Auth:** [Supabase](https://supabase.com/) Postgres + Auth + Storage
 - **AI Engine:** [Google Gemini AI](https://aistudio.google.com/)
 - **Styling:** [Tailwind CSS 4](https://tailwindcss.com/)
-- **Animations:** [Framer Motion](https://framer.com/motion)
-- **State:** [Zustand](https://zustand-demo.pmnd.rs/)
-- **Icons:** [Lucide React](https://lucide.dev/)
+- **Payments:** [Stripe](https://stripe.com/)
 
 ---
 
-## 📦 Getting Started
+## Getting Started
 
-### 1. Installation
 ```bash
 git clone https://github.com/yshxsp/buildops-lite.git
 cd buildops-lite
 npm install
-```
-
-### 2. Environment Setup
-Copy the example environment file and fill in your credentials from Supabase, Stripe, and Google AI Studio.
-```bash
 cp .env.example .env.local
-```
-
-### 3. Development
-```bash
 npm run dev
 ```
 
 ---
 
-## 🚀 Deployment
+## Product Direction
 
-The project is optimized for [Vercel](https://vercel.com).
-1. Connect your GitHub repository.
-2. Add your `.env` variables in the Vercel Dashboard.
-3. Update your **Supabase Redirect URL** to point to your Vercel deployment domain.
+The product is intentionally not a full Procore-style construction management
+suite. The current wedge is narrower: job-costed receipts, expense approvals,
+and payout packets for small contractors.
 
----
-
-## 🛡 Security
-
-- **Safe History:** Repository history is clean and contains no sensitive API keys.
-- **Row Level Security:** All database operations are secured via Supabase RLS.
-- **Server-Side Validation:** Critical mutations are handled through secure Server Actions.
-
-## 📜 License
-
-This project is licensed under the MIT License.
+Avoid adding fleet telemetry, GPS equipment tracking, or autonomous task
+completion flows unless customer discovery proves a direct revenue path.

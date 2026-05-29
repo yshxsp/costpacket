@@ -2,13 +2,13 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'BuildOps Lite',
-    short_name: 'BuildOps',
-    description: 'B2B SaaS platform for construction management',
+    name: 'CostPacket',
+    short_name: 'CostPacket',
+    description: 'Job-costed expense packets for small contractors',
     start_url: '/',
     display: 'standalone',
     background_color: '#09090b',
-    theme_color: '#f97316',
+    theme_color: '#d97757',
     icons: [
       {
         src: '/icon.svg',

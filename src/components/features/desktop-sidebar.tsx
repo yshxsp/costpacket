@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Hammer, LayoutDashboard, FolderKanban, ClipboardList, Receipt, CreditCard, Settings, LogOut, User } from 'lucide-react'
+import { LayoutDashboard, FolderKanban, ClipboardList, Receipt, CreditCard, Settings, LogOut, User } from 'lucide-react'
 import { logout } from '@/app/(auth)/actions'
 import { useTranslation } from '@/lib/i18n'
 import { SettingsModal } from './settings-modal'
@@ -26,10 +26,10 @@ export function DesktopSidebar({ displayName, role }: { displayName: string, rol
         <div className="px-5 py-5 border-b border-white/5">
           <Link href="/dashboard" className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center">
-              <Hammer className="w-4 h-4 text-orange-500" />
+              <Receipt className="w-4 h-4 text-orange-500" />
             </div>
             <span className="font-bold text-white text-sm tracking-tight">
-              BuildOps <span className="text-indigo-400">Lite</span>
+              CostPacket
             </span>
           </Link>
         </div>

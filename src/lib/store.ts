@@ -20,7 +20,7 @@ export const useAppStore = create<AppState>()(
       setLang: (lang) => set({ lang }),
     }),
     {
-      name: 'buildops-lite-settings',
+      name: 'costpacket-settings',
     }
   )
 )

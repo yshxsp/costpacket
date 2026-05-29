@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Hammer, Mail, Lock, Loader2 } from 'lucide-react'
+import { Receipt, Mail, Lock, Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase'
 
 export default function LoginPage() {
@@ -43,10 +43,10 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="flex items-center justify-center gap-2 mb-8">
           <div className="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center">
-            <Hammer className="w-5 h-5 text-orange-500" />
+            <Receipt className="w-5 h-5 text-orange-500" />
           </div>
           <span className="text-xl font-bold text-white tracking-tight">
-            BuildOps <span className="text-indigo-400">Lite</span>
+            CostPacket
           </span>
         </div>
 

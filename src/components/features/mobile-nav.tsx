@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Menu, X, Hammer, LayoutDashboard, FolderKanban, ClipboardList, Receipt, CreditCard, LogOut, Settings, User } from 'lucide-react'
+import { Menu, X, LayoutDashboard, FolderKanban, ClipboardList, Receipt, CreditCard, LogOut, Settings, User } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { logout } from '@/app/(auth)/actions'
 import { useTranslation } from '@/lib/i18n'
@@ -28,10 +28,10 @@ export function MobileNav({ displayName, role }: { displayName: string, role: st
       <div className="flex items-center justify-between p-4 border-b border-white/5 bg-black/40 backdrop-blur-md">
         <Link href="/dashboard" className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center">
-            <Hammer className="w-4 h-4 text-orange-500" />
+            <Receipt className="w-4 h-4 text-orange-500" />
           </div>
           <span className="font-bold text-white text-sm tracking-tight">
-            BuildOps <span className="text-indigo-400">Lite</span>
+            CostPacket
           </span>
         </Link>
         <button onClick={() => setOpen(true)} className="p-2 text-zinc-400 hover:text-white">
