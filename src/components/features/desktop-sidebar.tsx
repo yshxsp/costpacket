@@ -22,13 +22,13 @@ export function DesktopSidebar({ displayName, role }: { displayName: string, rol
 
   return (
     <>
-      <aside className="hidden md:flex w-60 flex-shrink-0 border-r border-white/5 flex-col bg-black/40 backdrop-blur-md">
-        <div className="px-5 py-5 border-b border-white/5">
+      <aside className="hidden md:flex w-60 flex-shrink-0 border-r border-border flex-col bg-[#11120e]">
+        <div className="px-5 py-5 border-b border-border">
           <Link href="/dashboard" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center">
-              <Receipt className="w-4 h-4 text-orange-500" />
+            <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center">
+              <Receipt className="w-4 h-4 text-primary" />
             </div>
-            <span className="font-bold text-white text-sm tracking-tight">
+            <span className="font-display font-bold text-foreground text-sm tracking-tight">
               CostPacket
             </span>
           </Link>
@@ -39,7 +39,7 @@ export function DesktopSidebar({ displayName, role }: { displayName: string, rol
             <Link
               key={href}
               href={href}
-              className="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-all text-sm font-medium group"
+              className="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-foreground hover:bg-muted/40 transition-all text-sm font-medium group"
             >
               <Icon className="w-4 h-4 flex-shrink-0" />
               {label}
@@ -47,24 +47,24 @@ export function DesktopSidebar({ displayName, role }: { displayName: string, rol
           ))}
         </nav>
 
-        <div className="px-3 py-4 border-t border-white/5">
+        <div className="px-3 py-4 border-t border-border">
           <button
             onClick={() => setSettingsOpen(true)}
-            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-500 hover:text-indigo-400 hover:bg-indigo-500/5 transition-all text-sm font-medium mb-2"
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-500 hover:text-secondary hover:bg-secondary/10 transition-all text-sm font-medium mb-2"
           >
             <Settings className="w-4 h-4" />
             {t('settings')}
           </button>
           
-          <div className="px-3 py-2 mb-1 border-t border-white/5 pt-3">
-            <p className="text-sm font-medium text-white truncate">{displayName}</p>
+          <div className="px-3 py-2 mb-1 border-t border-border pt-3">
+            <p className="text-sm font-medium text-foreground truncate">{displayName}</p>
             <p className="text-xs text-zinc-500 mt-0.5">{role}</p>
           </div>
 
           <form action={logout}>
             <button
               type="submit"
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-500 hover:text-red-400 hover:bg-red-500/5 transition-all text-sm font-medium"
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-500 hover:text-red-400 hover:bg-red-500/10 transition-all text-sm font-medium"
             >
               <LogOut className="w-4 h-4" />
               {t('signout')}

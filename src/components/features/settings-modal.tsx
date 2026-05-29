@@ -54,24 +54,24 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/60"
             onClick={onClose}
           />
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative w-full max-w-md bg-zinc-950 border border-white/10 rounded-2xl shadow-2xl overflow-hidden"
+            className="relative w-full max-w-md bg-card border border-border rounded-lg shadow-2xl overflow-hidden"
           >
             {/* Header */}
-            <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
+            <div className="px-6 py-4 border-b border-border flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Settings className="w-5 h-5 text-indigo-400" />
-                <h2 className="text-lg font-bold text-white">App Settings</h2>
+                <Settings className="w-5 h-5 text-secondary" />
+                <h2 className="text-lg font-bold text-foreground">App Settings</h2>
               </div>
               <button 
                 onClick={onClose}
-                className="p-2 -mr-2 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                className="p-2 -mr-2 text-zinc-400 hover:text-foreground hover:bg-muted/40 rounded-lg transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -91,8 +91,8 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
                         onClick={() => handleThemeChange(t.value)}
                         className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
                           active 
-                            ? 'bg-indigo-500/10 border-indigo-500/50 text-indigo-400' 
-                            : 'bg-white/5 border-white/5 text-zinc-400 hover:bg-white/10 hover:text-zinc-200'
+                            ? 'bg-secondary/10 border-secondary/50 text-secondary'
+                            : 'bg-muted/20 border-border text-zinc-400 hover:bg-muted/60 hover:text-zinc-200'
                         }`}
                       >
                         <t.icon className="w-4 h-4" />
@@ -115,8 +115,8 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
                         onClick={() => setLang(l.value)}
                         className={`text-left p-3 rounded-xl border transition-all ${
                           active 
-                            ? 'bg-orange-500/10 border-orange-500/50 text-orange-400' 
-                            : 'bg-white/5 border-white/5 text-zinc-400 hover:bg-white/10 hover:text-zinc-200'
+                            ? 'bg-primary/10 border-primary/50 text-primary'
+                            : 'bg-muted/20 border-border text-zinc-400 hover:bg-muted/60 hover:text-zinc-200'
                         }`}
                       >
                         <span className="text-sm font-medium">{l.label}</span>
@@ -128,7 +128,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
             </div>
             
             {/* Footer */}
-            <div className="px-6 py-4 border-t border-white/5 bg-white/[0.02]">
+            <div className="px-6 py-4 border-t border-border bg-muted/20">
               <p className="text-xs text-zinc-500 text-center">Settings are saved locally on this device.</p>
             </div>
           </motion.div>

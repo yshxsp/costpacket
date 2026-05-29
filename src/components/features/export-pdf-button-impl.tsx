@@ -42,7 +42,7 @@ export default function ExportPdfButtonImpl({ expenses }: ExportPdfButtonImplPro
   return (
     <button
       onClick={handleExport}
-      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-500/10 text-indigo-400 text-sm font-medium hover:bg-indigo-500/20 transition-all border border-indigo-500/20"
+      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary/10 text-secondary text-sm font-medium hover:bg-secondary/20 transition-all border border-secondary/20"
       type="button"
     >
       <Download className="w-4 h-4" />

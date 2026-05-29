@@ -60,7 +60,7 @@ export default function NewProjectPage() {
       {/* Back */}
       <Link
         href="/projects"
-        className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors mb-8"
+        className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-foreground transition-colors mb-8"
       >
         <ArrowLeft className="w-4 h-4" />
         Back to Projects
@@ -68,22 +68,22 @@ export default function NewProjectPage() {
 
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
-        <div className="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center">
-          <FolderKanban className="w-5 h-5 text-indigo-400" />
+        <div className="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
+          <FolderKanban className="w-5 h-5 text-secondary" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-white">New Project</h1>
+          <h1 className="text-2xl font-bold text-foreground">New Project</h1>
           <p className="text-zinc-400 text-sm">Fill in the details to create a new project</p>
         </div>
       </div>
 
       {/* Form Card */}
-      <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-md">
+      <div className="bg-card border border-border rounded-lg p-8">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Project Name */}
           <div className="space-y-1.5">
             <label htmlFor="name" className="text-sm font-medium text-zinc-300">
-              Project Name <span className="text-orange-500">*</span>
+              Project Name <span className="text-primary">*</span>
             </label>
             <input
               id="name"
@@ -91,7 +91,7 @@ export default function NewProjectPage() {
               type="text"
               required
               placeholder="e.g. Downtown Office Renovation"
-              className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all"
+              className="w-full px-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
             />
           </div>
 
@@ -105,7 +105,7 @@ export default function NewProjectPage() {
               name="description"
               rows={3}
               placeholder="Brief summary of this project…"
-              className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all resize-none"
+              className="w-full px-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all resize-none"
             />
           </div>
 
@@ -123,7 +123,7 @@ export default function NewProjectPage() {
                 min="0"
                 step="0.01"
                 placeholder="0.00"
-                className="w-full pl-7 pr-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all"
+                className="w-full pl-7 pr-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
               />
             </div>
           </div>
@@ -139,8 +139,8 @@ export default function NewProjectPage() {
                   onClick={() => setStatus(opt.value)}
                   className={`p-3 rounded-lg border text-left transition-all ${
                     status === opt.value
-                      ? 'border-orange-500/60 bg-orange-500/10 text-white'
-                      : 'border-white/10 bg-white/5 text-zinc-400 hover:bg-white/10'
+                      ? 'border-primary/60 bg-primary/10 text-foreground'
+                      : 'border-border bg-card text-zinc-400 hover:bg-muted/60'
                   }`}
                 >
                   <div className="font-medium text-sm">{opt.label}</div>
@@ -162,7 +162,7 @@ export default function NewProjectPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-orange-500 text-white font-medium text-sm hover:bg-orange-600 transition-all shadow-lg shadow-orange-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:bg-[#c96c4f] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
@@ -178,7 +178,7 @@ export default function NewProjectPage() {
             </button>
             <Link
               href="/projects"
-              className="px-5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-zinc-400 hover:text-white hover:bg-white/10 text-sm font-medium transition-all"
+              className="px-5 py-2.5 rounded-lg bg-card border border-border text-zinc-400 hover:text-foreground hover:bg-muted/60 text-sm font-medium transition-all"
             >
               Cancel
             </Link>

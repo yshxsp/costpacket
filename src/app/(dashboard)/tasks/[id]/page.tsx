@@ -11,7 +11,7 @@ import { PayoutButton } from '@/components/features/payout-button'
 const statusConfig = {
   PENDING: { label: 'Pending', color: 'text-zinc-400', bg: 'bg-zinc-500/10', icon: Clock },
   IN_PROGRESS: { label: 'In Progress', color: 'text-blue-400', bg: 'bg-blue-500/10', icon: CircleDot },
-  REVIEW: { label: 'In Review', color: 'text-orange-400', bg: 'bg-orange-500/10', icon: Eye },
+  REVIEW: { label: 'In Review', color: 'text-primary', bg: 'bg-primary/10', icon: Eye },
   COMPLETED: { label: 'Completed', color: 'text-green-400', bg: 'bg-green-500/10', icon: CheckCircle2 },
 } as const
 
@@ -71,7 +71,7 @@ export default async function TaskDetailPage({
       {/* Back */}
       <Link
         href="/tasks"
-        className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors mb-6"
+        className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-foreground transition-colors mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
         All Tasks
@@ -80,15 +80,15 @@ export default async function TaskDetailPage({
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-8">
         <div className="flex items-start gap-4">
-          <div className={`w-12 h-12 rounded-xl ${cfg.bg} flex items-center justify-center flex-shrink-0`}>
+          <div className={`w-12 h-12 rounded-lg ${cfg.bg} flex items-center justify-center flex-shrink-0`}>
             <cfg.icon className={`w-6 h-6 ${cfg.color}`} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">{task.title}</h1>
+            <h1 className="text-2xl font-bold text-foreground mb-1">{task.title}</h1>
             {project && (
               <Link
                 href={`/projects/${project.id}`}
-                className="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-indigo-400 transition-colors"
+                className="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-secondary transition-colors"
               >
                 <FolderKanban className="w-4 h-4" />
                 {project.name}
@@ -107,20 +107,20 @@ export default async function TaskDetailPage({
         <div className="lg:col-span-2 space-y-5">
           {/* Description */}
           {task.description && (
-            <div className="p-5 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-md">
+            <div className="p-5 rounded-lg bg-card border border-border">
               <h2 className="text-sm font-medium text-zinc-400 mb-2">Description</h2>
-              <p className="text-white text-sm leading-relaxed">{task.description}</p>
+              <p className="text-foreground text-sm leading-relaxed">{task.description}</p>
             </div>
           )}
 
           {/* Expenses */}
-          <div className="p-5 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-md">
+          <div className="p-5 rounded-lg bg-card border border-border">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-white">Expenses</h2>
+              <h2 className="font-semibold text-foreground">Expenses</h2>
               {isAssignee && (
                 <Link
                   href={`/expenses/new?task_id=${task.id}`}
-                  className="inline-flex items-center gap-1.5 text-xs text-orange-400 hover:text-orange-300 transition-colors font-medium"
+                  className="inline-flex items-center gap-1.5 text-xs text-primary hover:text-primary transition-colors font-medium"
                 >
                   <Receipt className="w-3.5 h-3.5" />
                   Submit Expense
@@ -137,15 +137,15 @@ export default async function TaskDetailPage({
                   return (
                     <div
                       key={exp.id}
-                      className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5"
+                      className="flex items-center justify-between p-3 rounded-lg bg-muted/20 border border-border"
                     >
                       <div className="min-w-0">
-                        <p className="text-sm text-white font-medium truncate">{exp.description}</p>
+                        <p className="text-sm text-foreground font-medium truncate">{exp.description}</p>
                         {exp.vendor && <p className="text-xs text-zinc-500">{exp.vendor}</p>}
                       </div>
                       <div className="flex items-center gap-3 flex-shrink-0 ml-3">
                         <span className={`text-xs font-medium ${eCfg.color}`}>{eCfg.label}</span>
-                        <span className="text-sm font-semibold text-white">${Number(exp.amount).toLocaleString()}</span>
+                        <span className="text-sm font-semibold text-foreground">${Number(exp.amount).toLocaleString()}</span>
                       </div>
                     </div>
                   )
@@ -159,30 +159,30 @@ export default async function TaskDetailPage({
         <div className="space-y-4">
           {/* Stats */}
           {[
-            { label: 'Task Amount', value: `$${Number(task.amount).toLocaleString()}`, icon: DollarSign, color: 'text-orange-400', bg: 'bg-orange-500/10' },
+            { label: 'Task Amount', value: `$${Number(task.amount).toLocaleString()}`, icon: DollarSign, color: 'text-primary', bg: 'bg-primary/10' },
             { label: 'Expenses Logged', value: `$${totalExpenses.toLocaleString()}`, icon: Receipt, color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
           ].map((s) => (
-            <div key={s.label} className="p-4 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-md flex items-center gap-3">
+            <div key={s.label} className="p-4 rounded-lg bg-card border border-border flex items-center gap-3">
               <div className={`w-9 h-9 rounded-lg ${s.bg} flex items-center justify-center flex-shrink-0`}>
                 <s.icon className={`w-4 h-4 ${s.color}`} />
               </div>
               <div>
-                <div className="text-lg font-bold text-white">{s.value}</div>
+                <div className="text-lg font-bold text-foreground">{s.value}</div>
                 <div className="text-xs text-zinc-500">{s.label}</div>
               </div>
             </div>
           ))}
 
           {/* Assignee */}
-          <div className="p-4 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-md">
+          <div className="p-4 rounded-lg bg-card border border-border">
             <h3 className="text-xs font-medium text-zinc-500 mb-3 uppercase tracking-wide">Assignee</h3>
             {assignee ? (
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-indigo-500/30 flex items-center justify-center text-indigo-300 text-sm font-bold flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center text-secondary text-sm font-bold flex-shrink-0">
                   {assignee.name?.[0]?.toUpperCase() ?? assignee.email?.[0]?.toUpperCase() ?? '?'}
                 </div>
                 <div>
-                  <p className="text-sm text-white">{assignee.name ?? assignee.email}</p>
+                  <p className="text-sm text-foreground">{assignee.name ?? assignee.email}</p>
                 </div>
               </div>
             ) : (
@@ -194,7 +194,7 @@ export default async function TaskDetailPage({
           </div>
 
           {/* Metadata */}
-          <div className="p-4 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-md space-y-3">
+          <div className="p-4 rounded-lg bg-card border border-border space-y-3">
             <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-wide">Details</h3>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
@@ -211,7 +211,7 @@ export default async function TaskDetailPage({
             
             {/* Payout Actions */}
             {isOwner && task.status === 'COMPLETED' && (
-              <div className="pt-3 border-t border-white/5 mt-3">
+              <div className="pt-3 border-t border-border mt-3">
                 {existingPayment ? (
                   <div className="w-full flex justify-center py-2.5 rounded-lg bg-green-500/10 text-green-400 text-sm font-medium border border-green-500/20">
                     <CheckCircle2 className="w-4 h-4 mr-2" />

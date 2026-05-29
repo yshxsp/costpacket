@@ -1,6 +1,6 @@
 # CostPacket — Project Cleanup And Revenue Direction
 
-> Updated: May 29, 2026. This file replaces the old broad BuildOps Lite status
+> Updated: May 29, 2026. This file replaces the old broad construction-dashboard status
 > report with the current product direction and implementation priorities.
 
 ## Product Thesis

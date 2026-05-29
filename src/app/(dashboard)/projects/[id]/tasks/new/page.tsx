@@ -38,18 +38,18 @@ export default async function NewTaskPage({
     <div className="p-8 max-w-2xl mx-auto">
       <Link
         href={`/projects/${id}`}
-        className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors mb-8"
+        className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-foreground transition-colors mb-8"
       >
         <ArrowLeft className="w-4 h-4" />
         Back to {project.name}
       </Link>
 
       <div className="flex items-center gap-3 mb-8">
-        <div className="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center">
-          <ClipboardList className="w-5 h-5 text-orange-400" />
+        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+          <ClipboardList className="w-5 h-5 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-white">Add Task</h1>
+          <h1 className="text-2xl font-bold text-foreground">Add Task</h1>
           <p className="text-zinc-400 text-sm">Create a task under {project.name}</p>
         </div>
       </div>

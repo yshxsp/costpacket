@@ -8,7 +8,7 @@ import {
 } from 'lucide-react'
 
 const statusConfig = {
-  ACTIVE: { label: 'Active', icon: Clock, color: 'text-orange-400', bg: 'bg-orange-500/10', dot: 'bg-orange-400' },
+  ACTIVE: { label: 'Active', icon: Clock, color: 'text-primary', bg: 'bg-primary/10', dot: 'bg-primary' },
   COMPLETED: { label: 'Completed', icon: CheckCircle2, color: 'text-green-400', bg: 'bg-green-500/10', dot: 'bg-green-400' },
   ON_HOLD: { label: 'On Hold', icon: PauseCircle, color: 'text-yellow-400', bg: 'bg-yellow-500/10', dot: 'bg-yellow-400' },
 } as const
@@ -60,7 +60,7 @@ export default async function ProjectsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-1">Projects</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-1">Projects</h1>
           <p className="text-zinc-400 text-sm">
             {projects?.length ?? 0} project{projects?.length !== 1 ? 's' : ''} in your workspace
           </p>
@@ -68,7 +68,7 @@ export default async function ProjectsPage() {
         {role !== 'SUBCONTRACTOR' && (
           <Link
             href="/projects/new"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-500 text-white text-sm font-medium hover:bg-orange-600 transition-all shadow-lg shadow-orange-500/20"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-[#c96c4f] transition-all"
           >
             <Plus className="w-4 h-4" />
             New Project
@@ -90,19 +90,19 @@ export default async function ProjectsPage() {
               <Link
                 key={project.id}
                 href={`/projects/${project.id}`}
-                className="group p-6 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-md hover:bg-white/8 hover:border-white/10 transition-all flex flex-col gap-4"
+                className="group p-6 rounded-lg bg-card border border-border hover:bg-muted/50 transition-all flex flex-col gap-4"
               >
                 {/* Top row */}
                 <div className="flex items-start justify-between">
-                  <div className="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center flex-shrink-0">
-                    <FolderKanban className="w-5 h-5 text-indigo-400" />
+                  <div className="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
+                    <FolderKanban className="w-5 h-5 text-secondary" />
                   </div>
                   <ArrowUpRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-300 transition-colors" />
                 </div>
 
                 {/* Name + description */}
                 <div>
-                  <h2 className="font-semibold text-white text-base leading-tight mb-1 group-hover:text-orange-300 transition-colors">
+                  <h2 className="font-semibold text-foreground text-base leading-tight mb-1 group-hover:text-primary transition-colors">
                     {project.name}
                   </h2>
                   {project.description && (
@@ -125,9 +125,9 @@ export default async function ProjectsPage() {
                 {/* Progress bar */}
                 {tasks.total > 0 && (
                   <div className="space-y-1">
-                    <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
+                    <div className="w-full h-1.5 rounded-full bg-muted/60 overflow-hidden">
                       <div
-                        className="h-full rounded-full bg-gradient-to-r from-orange-500 to-orange-400 transition-all"
+                        className="h-full rounded-full bg-gradient-to-r from-primary to-[#e2a083] transition-all"
                         style={{ width: `${pct}%` }}
                       />
                     </div>
@@ -136,7 +136,7 @@ export default async function ProjectsPage() {
                 )}
 
                 {/* Status badge */}
-                <div className="pt-1 border-t border-white/5 flex items-center justify-between">
+                <div className="pt-1 border-t border-border flex items-center justify-between">
                   <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${cfg.color}`}>
                     <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
                     {cfg.label}
@@ -156,11 +156,11 @@ export default async function ProjectsPage() {
 
 function EmptyState({ role }: { role: string }) {
   return (
-    <div className="mt-4 p-12 rounded-2xl border border-dashed border-white/10 text-center flex flex-col items-center">
-      <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-4">
-        <FolderKanban className="w-8 h-8 text-indigo-400" />
+    <div className="mt-4 p-12 rounded-lg border border-dashed border-border text-center flex flex-col items-center">
+      <div className="w-16 h-16 rounded-lg bg-secondary/10 flex items-center justify-center mb-4">
+        <FolderKanban className="w-8 h-8 text-secondary" />
       </div>
-      <p className="text-white font-semibold mb-1">No projects yet</p>
+      <p className="text-foreground font-semibold mb-1">No projects yet</p>
       <p className="text-zinc-500 text-sm mb-6 max-w-xs">
         {role !== 'SUBCONTRACTOR'
           ? 'Create your first project and start assigning tasks to your team.'
@@ -169,7 +169,7 @@ function EmptyState({ role }: { role: string }) {
       {role !== 'SUBCONTRACTOR' && (
         <Link
           href="/projects/new"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-orange-500 text-white text-sm font-medium hover:bg-orange-600 transition-all shadow-lg shadow-orange-500/20"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-[#c96c4f] transition-all"
         >
           <Plus className="w-4 h-4" />
           Create Project

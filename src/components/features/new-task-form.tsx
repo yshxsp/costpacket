@@ -68,12 +68,12 @@ export function NewTaskForm({
   }
 
   return (
-    <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-md">
+    <div className="bg-card border border-border rounded-lg p-8">
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Title */}
         <div className="space-y-1.5">
           <label htmlFor="title" className="text-sm font-medium text-zinc-300">
-            Task Title <span className="text-orange-500">*</span>
+            Task Title <span className="text-primary">*</span>
           </label>
           <input
             id="title"
@@ -81,7 +81,7 @@ export function NewTaskForm({
             type="text"
             required
             placeholder="e.g. Install electrical wiring — Floor 2"
-            className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all"
+            className="w-full px-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
           />
         </div>
 
@@ -95,7 +95,7 @@ export function NewTaskForm({
             name="description"
             rows={3}
             placeholder="Scope of work, materials, special instructions…"
-            className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all resize-none"
+            className="w-full px-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all resize-none"
           />
         </div>
 
@@ -113,7 +113,7 @@ export function NewTaskForm({
               min="0"
               step="0.01"
               placeholder="0.00"
-              className="w-full pl-7 pr-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all"
+              className="w-full pl-7 pr-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
             />
           </div>
         </div>
@@ -129,7 +129,7 @@ export function NewTaskForm({
                 id="assignee_id"
                 name="assignee_id"
                 defaultValue=""
-                className="w-full appearance-none px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all pr-9"
+                className="w-full appearance-none px-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all pr-9"
               >
                 <option value="" className="bg-zinc-900">Unassigned</option>
                 {assignees.map((a) => (
@@ -154,8 +154,8 @@ export function NewTaskForm({
                 onClick={() => setStatus(opt.value)}
                 className={`py-2 px-3 rounded-lg border text-left text-sm transition-all ${
                   status === opt.value
-                    ? 'border-orange-500/60 bg-orange-500/10 text-white font-medium'
-                    : 'border-white/10 bg-white/5 text-zinc-400 hover:bg-white/10'
+                    ? 'border-primary/60 bg-primary/10 text-foreground font-medium'
+                    : 'border-border bg-card text-zinc-400 hover:bg-muted/60'
                 }`}
               >
                 {opt.label}
@@ -176,7 +176,7 @@ export function NewTaskForm({
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-orange-500 text-white font-medium text-sm hover:bg-orange-600 transition-all shadow-lg shadow-orange-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:bg-[#c96c4f] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <>
@@ -192,7 +192,7 @@ export function NewTaskForm({
           </button>
           <Link
             href={`/projects/${projectId}`}
-            className="px-5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-zinc-400 hover:text-white hover:bg-white/10 text-sm font-medium transition-all"
+            className="px-5 py-2.5 rounded-lg bg-card border border-border text-zinc-400 hover:text-foreground hover:bg-muted/60 text-sm font-medium transition-all"
           >
             Cancel
           </Link>

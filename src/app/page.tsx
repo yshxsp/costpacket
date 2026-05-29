@@ -14,7 +14,7 @@ export default function Home() {
             CostPacket
           </Link>
           <div className="flex items-center gap-4">
-            <Link href="/login" className="text-sm font-medium text-stone-300 transition-colors hover:text-white">
+            <Link href="/login" className="text-sm font-medium text-stone-300 transition-colors hover:text-stone-50">
               Log in
             </Link>
             <Link

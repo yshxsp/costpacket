@@ -52,7 +52,7 @@ export function ProfileForm({
               type="text"
               readOnly
               value={initialEmail}
-              className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-zinc-400 text-sm cursor-not-allowed"
+              className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-muted/30 border border-border text-zinc-400 text-sm cursor-not-allowed"
             />
           </div>
         </div>
@@ -64,19 +64,19 @@ export function ProfileForm({
               type="text"
               readOnly
               value={role}
-              className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-zinc-400 text-sm cursor-not-allowed"
+              className="w-full px-4 py-2.5 rounded-lg bg-muted/30 border border-border text-zinc-400 text-sm cursor-not-allowed"
             />
           </div>
         </div>
       </div>
 
-      <hr className="border-white/5" />
+      <hr className="border-border" />
 
       {/* Editable Fields */}
       <div className="space-y-4">
         <div className="space-y-1.5">
           <label htmlFor="name" className="text-sm font-medium text-zinc-300">
-            Full Name <span className="text-orange-500">*</span>
+            Full Name <span className="text-primary">*</span>
           </label>
           <div className="relative">
             <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
@@ -87,7 +87,7 @@ export function ProfileForm({
               required
               defaultValue={initialName}
               placeholder="e.g. John Smith"
-              className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all"
+              className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
             />
           </div>
         </div>
@@ -104,7 +104,7 @@ export function ProfileForm({
               type="text"
               defaultValue={initialStripeId}
               placeholder="acct_1Ou..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all"
+              className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
             />
           </div>
           <p className="text-xs text-zinc-500 mt-1">Needed if you are a subcontractor receiving payments.</p>
@@ -115,7 +115,7 @@ export function ProfileForm({
         <button
           type="submit"
           disabled={loading}
-          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-orange-500 text-white font-medium text-sm hover:bg-orange-600 transition-all shadow-lg shadow-orange-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:bg-[#c96c4f] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? (
             <>

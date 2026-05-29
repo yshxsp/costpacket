@@ -59,10 +59,9 @@ export default async function ExpensesPage({
 
   return (
     <div className="p-8 max-w-6xl mx-auto">
-      {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-1">Expenses</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-1">Expenses</h1>
           <p className="text-zinc-400 text-sm">
             {expenses?.length ?? 0} expense{expenses?.length !== 1 ? 's' : ''} · ${totals.total.toLocaleString()} total
           </p>
@@ -71,7 +70,7 @@ export default async function ExpensesPage({
           <ExportPdfButton expenses={expenses || []} />
           <Link
             href="/expenses/new"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-500 text-white text-sm font-medium hover:bg-orange-600 transition-all shadow-lg shadow-orange-500/20"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-[#c96c4f] transition-all"
           >
             <Plus className="w-4 h-4" />
             Submit Expense
@@ -79,22 +78,20 @@ export default async function ExpensesPage({
         </div>
       </div>
 
-      {/* Summary cards */}
       <div className="grid grid-cols-3 gap-4 mb-8">
         {[
           { label: 'Pending Review', value: totals.pending, color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
           { label: 'Approved', value: totals.approved, color: 'text-green-400', bg: 'bg-green-500/10' },
-          { label: 'Total Amount', value: `$${totals.total.toLocaleString()}`, color: 'text-orange-400', bg: 'bg-orange-500/10' },
+          { label: 'Total Amount', value: `$${totals.total.toLocaleString()}`, color: 'text-primary', bg: 'bg-primary/10' },
         ].map((s) => (
-          <div key={s.label} className="p-5 rounded-2xl bg-white/5 border border-white/5">
+          <div key={s.label} className="p-5 rounded-lg bg-card border border-border">
             <div className={`text-2xl font-bold ${s.color} mb-1`}>{s.value}</div>
             <div className="text-xs text-zinc-500">{s.label}</div>
           </div>
         ))}
       </div>
 
-      {/* Status filter */}
-      <div className="flex items-center gap-1 p-1 rounded-xl bg-white/5 border border-white/5 w-fit mb-6">
+      <div className="flex items-center gap-1 p-1 rounded-lg bg-card border border-border w-fit mb-6">
         <FilterLink href="?" active={!filterStatus} label="All" />
         {(Object.keys(statusConfig) as StatusKey[]).map((s) => (
           <FilterLink
@@ -107,17 +104,16 @@ export default async function ExpensesPage({
         ))}
       </div>
 
-      {/* Expense list */}
       {!expenses || expenses.length === 0 ? (
-        <div className="p-12 rounded-2xl border border-dashed border-white/10 text-center flex flex-col items-center">
-          <div className="w-16 h-16 rounded-2xl bg-yellow-500/10 flex items-center justify-center mb-4">
+        <div className="p-12 rounded-lg border border-dashed border-border text-center flex flex-col items-center">
+          <div className="w-16 h-16 rounded-lg bg-yellow-500/10 flex items-center justify-center mb-4">
             <Receipt className="w-8 h-8 text-yellow-400" />
           </div>
-          <p className="text-white font-semibold mb-1">No expenses found</p>
+          <p className="text-foreground font-semibold mb-1">No expenses found</p>
           <p className="text-zinc-500 text-sm mb-5">Submit a receipt to log expenses against a task.</p>
           <Link
             href="/expenses/new"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-orange-500 text-white text-sm font-medium hover:bg-orange-600 transition-all"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-[#c96c4f] transition-all"
           >
             <Plus className="w-4 h-4" />
             Submit Expense
@@ -135,21 +131,21 @@ export default async function ExpensesPage({
             return (
               <div
                 key={exp.id}
-                className="p-5 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-md flex flex-col sm:flex-row sm:items-center gap-4"
+                className="p-5 rounded-lg bg-card border border-border flex flex-col sm:flex-row sm:items-center gap-4"
               >
-                <div className={`w-10 h-10 rounded-xl ${cfg.bg} flex items-center justify-center flex-shrink-0`}>
+                <div className={`w-10 h-10 rounded-lg ${cfg.bg} flex items-center justify-center flex-shrink-0`}>
                   <cfg.icon className={`w-5 h-5 ${cfg.color}`} />
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
-                    <p className="font-medium text-white text-sm">{exp.description}</p>
-                    <span className="text-base font-bold text-white flex-shrink-0">${Number(exp.amount).toLocaleString()}</span>
+                    <p className="font-medium text-foreground text-sm">{exp.description}</p>
+                    <span className="text-base font-bold text-foreground flex-shrink-0">${Number(exp.amount).toLocaleString()}</span>
                   </div>
                   <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1">
                     {exp.vendor && <span className="text-xs text-zinc-500">{exp.vendor}</span>}
                     {task && (
-                      <Link href={`/tasks/${task.id}`} className="text-xs text-zinc-500 hover:text-indigo-400 flex items-center gap-0.5">
+                      <Link href={`/tasks/${task.id}`} className="text-xs text-zinc-500 hover:text-secondary flex items-center gap-0.5">
                         <ArrowUpRight className="w-3 h-3" />
                         {task.title}
                       </Link>
@@ -176,7 +172,7 @@ export default async function ExpensesPage({
                       href={exp.receipt_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-zinc-400 hover:text-white transition-colors"
+                      className="text-xs text-zinc-400 hover:text-foreground transition-colors"
                     >
                       View Receipt
                     </a>
@@ -196,7 +192,7 @@ function FilterLink({ href, active, label, color }: { href: string; active: bool
     <Link
       href={href}
       className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-        active ? 'bg-white/10 text-white' : `text-zinc-500 hover:text-zinc-300 ${color ?? ''}`
+        active ? 'bg-muted/60 text-foreground' : `text-zinc-500 hover:text-zinc-300 ${color ?? ''}`
       }`}
     >
       {label}

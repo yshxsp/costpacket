@@ -33,7 +33,7 @@ export default async function DashboardLayout({
       <DesktopSidebar displayName={displayName} role={role} />
 
       {/* Main content */}
-      <main className="flex-1 overflow-y-auto relative bg-zinc-950">
+      <main className="flex-1 overflow-y-auto relative bg-background">
         <PageTransition>
           {children}
         </PageTransition>

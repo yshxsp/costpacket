@@ -19,16 +19,16 @@ export default async function SettingsPage() {
   return (
     <div className="p-8 max-w-2xl mx-auto">
       <div className="flex items-center gap-3 mb-8">
-        <div className="w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center border border-white/10">
+        <div className="w-10 h-10 rounded-lg bg-card flex items-center justify-center border border-border">
           <Settings className="w-5 h-5 text-zinc-300" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-white">Settings</h1>
+          <h1 className="text-2xl font-bold text-foreground">Settings</h1>
           <p className="text-zinc-400 text-sm">Manage your profile and payment details</p>
         </div>
       </div>
 
-      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8 backdrop-blur-md">
+      <div className="bg-card border border-border rounded-lg p-6 md:p-8">
         <ProfileForm 
           initialName={profile.name ?? ''} 
           initialEmail={profile.email ?? ''}

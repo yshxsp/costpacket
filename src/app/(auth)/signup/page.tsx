@@ -51,29 +51,22 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
-      {/* Background glows */}
-      <div className="absolute top-1/4 left-1/3 w-[500px] h-[300px] bg-indigo-500/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[300px] h-[300px] bg-orange-500/10 blur-[120px] rounded-full pointer-events-none" />
-
-      <div className="w-full max-w-md relative">
-        {/* Logo */}
+    <div className="min-h-screen flex items-center justify-center bg-background px-4 py-8">
+      <div className="w-[17rem] max-w-full sm:w-[24rem]">
         <div className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center">
-            <Receipt className="w-5 h-5 text-orange-500" />
+          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+            <Receipt className="w-5 h-5 text-primary" />
           </div>
-          <span className="text-xl font-bold text-white tracking-tight">
+          <span className="font-display text-xl font-bold text-foreground tracking-tight">
             CostPacket
           </span>
         </div>
 
-        {/* Card */}
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-md">
-          <h1 className="text-2xl font-bold text-white mb-1">Create your account</h1>
+        <div className="bg-card border border-border rounded-lg p-6 shadow-[0_20px_60px_rgba(0,0,0,0.24)] sm:p-8">
+          <h1 className="text-2xl font-bold text-foreground mb-1">Create your account</h1>
           <p className="text-zinc-400 text-sm mb-6">Keep receipts and approvals tied to the right job.</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Name */}
             <div className="space-y-1.5">
               <label htmlFor="name" className="text-sm font-medium text-zinc-300">Full name</label>
               <div className="relative">
@@ -84,12 +77,11 @@ export default function SignupPage() {
                   type="text"
                   required
                   placeholder="John Smith"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
                 />
               </div>
             </div>
 
-            {/* Email */}
             <div className="space-y-1.5">
               <label htmlFor="email" className="text-sm font-medium text-zinc-300">Email address</label>
               <div className="relative">
@@ -101,12 +93,11 @@ export default function SignupPage() {
                   required
                   autoComplete="email"
                   placeholder="you@company.com"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
                 />
               </div>
             </div>
 
-            {/* Password */}
             <div className="space-y-1.5">
               <label htmlFor="password" className="text-sm font-medium text-zinc-300">Password</label>
               <div className="relative">
@@ -118,12 +109,11 @@ export default function SignupPage() {
                   required
                   autoComplete="new-password"
                   placeholder="Min. 6 characters"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
                 />
               </div>
             </div>
 
-            {/* Role selector */}
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-zinc-300">Your role</label>
               <div className="grid grid-cols-2 gap-2">
@@ -134,8 +124,8 @@ export default function SignupPage() {
                     onClick={() => setSelectedRole(role.value)}
                     className={`p-3 rounded-lg border text-left transition-all ${
                       selectedRole === role.value
-                        ? 'border-orange-500/60 bg-orange-500/10 text-white'
-                        : 'border-white/10 bg-white/5 text-zinc-400 hover:bg-white/10'
+                        ? 'border-primary/60 bg-primary/10 text-foreground'
+                        : 'border-border bg-card text-zinc-400 hover:bg-muted/60'
                     }`}
                   >
                     <div className="font-medium text-sm">{role.label}</div>
@@ -145,19 +135,17 @@ export default function SignupPage() {
               </div>
             </div>
 
-            {/* Error */}
             {error && (
               <div className="px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
                 {error}
               </div>
             )}
 
-            {/* Submit */}
             <button
               id="signup-submit"
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-orange-500 text-white font-medium text-sm hover:bg-orange-600 transition-all shadow-lg shadow-orange-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:bg-[#c96c4f] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
@@ -170,10 +158,9 @@ export default function SignupPage() {
             </button>
           </form>
 
-          {/* Footer */}
-          <p className="mt-6 text-center text-sm text-zinc-500">
+          <p className="mt-6 text-center text-xs text-zinc-500 sm:text-sm">
             Already have an account?{' '}
-            <Link href="/login" className="text-orange-400 hover:text-orange-300 transition-colors font-medium">
+            <Link href="/login" className="whitespace-nowrap text-primary hover:text-primary transition-colors font-medium">
               Sign in
             </Link>
           </p>

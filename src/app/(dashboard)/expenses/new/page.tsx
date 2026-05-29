@@ -116,30 +116,29 @@ export default function NewExpensePage() {
     <div className="p-8 max-w-2xl mx-auto">
       <Link
         href="/expenses"
-        className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors mb-8"
+        className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-foreground transition-colors mb-8"
       >
         <ArrowLeft className="w-4 h-4" />
         Back to Expenses
       </Link>
 
       <div className="flex items-center gap-3 mb-8">
-        <div className="w-10 h-10 rounded-xl bg-yellow-500/20 flex items-center justify-center">
-          <Receipt className="w-5 h-5 text-yellow-400" />
+        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+          <Receipt className="w-5 h-5 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-white">Submit Expense</h1>
+          <h1 className="text-2xl font-bold text-foreground">Submit Expense</h1>
           <p className="text-zinc-400 text-sm">Log an expense for review and payout</p>
         </div>
       </div>
 
-      <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-md">
+      <div className="bg-card border border-border rounded-lg p-8">
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* AI Parsing Upload */}
-          <div className="p-5 rounded-xl border border-dashed border-indigo-500/30 bg-indigo-500/5 relative overflow-hidden transition-all duration-300">
+          <div className="p-5 rounded-lg border border-dashed border-secondary/30 bg-secondary/10 relative overflow-hidden transition-all duration-300">
             {parsingAI && (
-              <div className="absolute inset-0 bg-indigo-500/10 backdrop-blur-sm z-10 flex flex-col items-center justify-center gap-2">
-                <Loader2 className="w-6 h-6 text-indigo-400 animate-spin" />
-                <span className="text-sm font-medium text-indigo-300">AI is scanning receipt...</span>
+              <div className="absolute inset-0 bg-card/95 z-10 flex flex-col items-center justify-center gap-2">
+                <Loader2 className="w-6 h-6 text-secondary animate-spin" />
+                <span className="text-sm font-medium text-secondary">Scanning receipt...</span>
               </div>
             )}
             <input 
@@ -152,12 +151,12 @@ export default function NewExpensePage() {
             <div className="flex flex-col items-center justify-center text-center gap-2 pointer-events-none">
               {!receiptUrl ? (
                 <>
-                  <div className="w-12 h-12 rounded-full bg-indigo-500/20 flex items-center justify-center mb-1">
-                    <ImagePlus className="w-6 h-6 text-indigo-400" />
+                  <div className="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center mb-1">
+                    <ImagePlus className="w-6 h-6 text-secondary" />
                   </div>
-                  <h3 className="text-white font-medium">Upload Receipt (Magic Autofill)</h3>
+                  <h3 className="text-foreground font-medium">Upload Receipt</h3>
                   <p className="text-zinc-400 text-xs max-w-xs leading-relaxed">
-                    Upload a photo of your receipt and our AI will instantly extract the vendor, amount, and details.
+                    Attach a receipt photo to prefill vendor, amount, and details.
                   </p>
                 </>
               ) : (
@@ -165,19 +164,19 @@ export default function NewExpensePage() {
                   <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center mb-1">
                     <CheckCircle2 className="w-6 h-6 text-green-400" />
                   </div>
-                  <h3 className="text-white font-medium">Receipt Processing Complete</h3>
+                  <h3 className="text-foreground font-medium">Receipt Processing Complete</h3>
                   <p className="text-green-400 text-xs font-medium">Click here to upload a different image.</p>
                 </>
               )}
             </div>
           </div>
 
-          <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent my-6" />
+          <div className="h-px w-full bg-gradient-to-r from-transparent via-border to-transparent my-6" />
 
           {/* Description */}
           <div className="space-y-1.5">
             <label htmlFor="description" className="text-sm font-medium text-zinc-300">
-              Description <span className="text-orange-500">*</span>
+              Description <span className="text-primary">*</span>
             </label>
             <input
               id="description"
@@ -187,7 +186,7 @@ export default function NewExpensePage() {
               value={formDataState.description}
               onChange={(e) => setFormDataState(s => ({ ...s, description: e.target.value }))}
               placeholder="e.g. Copper wiring — 200ft"
-              className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all"
+              className="w-full px-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
             />
           </div>
 
@@ -203,14 +202,14 @@ export default function NewExpensePage() {
               value={formDataState.vendor}
               onChange={(e) => setFormDataState(s => ({ ...s, vendor: e.target.value }))}
               placeholder="e.g. Home Depot"
-              className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all"
+              className="w-full px-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
             />
           </div>
 
           {/* Amount */}
           <div className="space-y-1.5">
             <label htmlFor="amount" className="text-sm font-medium text-zinc-300">
-              Amount (USD) <span className="text-orange-500">*</span>
+              Amount (USD) <span className="text-primary">*</span>
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-sm">$</span>
@@ -224,7 +223,7 @@ export default function NewExpensePage() {
                 value={formDataState.amount}
                 onChange={(e) => setFormDataState(s => ({ ...s, amount: e.target.value }))}
                 placeholder="0.00"
-                className="w-full pl-7 pr-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all"
+                className="w-full pl-7 pr-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
               />
             </div>
           </div>
@@ -240,7 +239,7 @@ export default function NewExpensePage() {
                 name="task_id"
                 defaultValue={defaultTaskId}
                 onFocus={loadTasks}
-                className="w-full appearance-none px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all pr-9"
+                className="w-full appearance-none px-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all pr-9"
               >
                 <option value="" className="bg-zinc-900">No task</option>
                 {tasks.map((t) => (
@@ -263,7 +262,7 @@ export default function NewExpensePage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-orange-500 text-white font-medium text-sm hover:bg-orange-600 transition-all shadow-lg shadow-orange-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:bg-[#c96c4f] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
@@ -279,7 +278,7 @@ export default function NewExpensePage() {
             </button>
             <Link
               href="/expenses"
-              className="px-5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-zinc-400 hover:text-white hover:bg-white/10 text-sm font-medium transition-all"
+              className="px-5 py-2.5 rounded-lg bg-card border border-border text-zinc-400 hover:text-foreground hover:bg-muted/60 text-sm font-medium transition-all"
             >
               Cancel
             </Link>

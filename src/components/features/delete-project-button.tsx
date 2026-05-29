@@ -35,7 +35,7 @@ export function DeleteProjectButton({ projectId }: { projectId: string }) {
       className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
         confirm
           ? 'bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/20'
-          : 'bg-white/5 border border-white/10 text-zinc-400 hover:text-red-400 hover:border-red-500/30'
+          : 'bg-card border border-border text-zinc-400 hover:text-red-400 hover:border-red-500/30'
       } disabled:opacity-50 disabled:cursor-not-allowed`}
     >
       {loading ? (

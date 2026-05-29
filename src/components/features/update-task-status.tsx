@@ -8,7 +8,7 @@ import { updateTaskStatus } from '@/app/actions/projects'
 const STATUS_OPTIONS = [
   { value: 'PENDING', label: 'Pending', color: 'text-zinc-400' },
   { value: 'IN_PROGRESS', label: 'In Progress', color: 'text-blue-400' },
-  { value: 'REVIEW', label: 'In Review', color: 'text-orange-400' },
+  { value: 'REVIEW', label: 'In Review', color: 'text-primary' },
   { value: 'COMPLETED', label: 'Completed', color: 'text-green-400' },
 ]
 
@@ -47,7 +47,7 @@ export function UpdateTaskStatusSelect({
       <button
         onClick={() => setOpen((o) => !o)}
         disabled={loading}
-        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-sm font-medium transition-all hover:bg-white/10 disabled:opacity-50"
+        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-card border border-border text-sm font-medium transition-all hover:bg-muted/60 disabled:opacity-50"
       >
         {loading ? (
           <Loader2 className="w-4 h-4 animate-spin text-zinc-400" />
@@ -58,15 +58,15 @@ export function UpdateTaskStatusSelect({
         <ChevronDown className="w-3.5 h-3.5 text-zinc-500" />
       </button>
       {open && (
-        <div className="absolute right-0 mt-1 w-44 rounded-xl bg-zinc-900 border border-white/10 shadow-xl z-10 overflow-hidden">
+        <div className="absolute right-0 mt-1 w-44 rounded-lg bg-card border border-border shadow-xl z-10 overflow-hidden">
           {STATUS_OPTIONS.map((opt) => (
             <button
               key={opt.value}
               onClick={() => handleUpdate(opt.value)}
               className={`w-full text-left px-4 py-2.5 text-sm flex items-center gap-2 transition-colors ${
                 opt.value === currentStatus
-                  ? 'bg-white/5'
-                  : 'hover:bg-white/5'
+                  ? 'bg-muted/40'
+                  : 'hover:bg-muted/40'
               }`}
             >
               <span className={`w-2 h-2 rounded-full flex-shrink-0 ${opt.color.replace('text-', 'bg-')}`} />

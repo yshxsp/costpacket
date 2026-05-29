@@ -9,7 +9,7 @@ import {
 const statusConfig = {
   PENDING: { label: 'Pending', color: 'text-zinc-400', bg: 'bg-zinc-500/10', dot: 'bg-zinc-400', icon: Clock },
   IN_PROGRESS: { label: 'In Progress', color: 'text-blue-400', bg: 'bg-blue-500/10', dot: 'bg-blue-400', icon: CircleDot },
-  REVIEW: { label: 'In Review', color: 'text-orange-400', bg: 'bg-orange-500/10', dot: 'bg-orange-400', icon: Eye },
+  REVIEW: { label: 'In Review', color: 'text-primary', bg: 'bg-primary/10', dot: 'bg-primary', icon: Eye },
   COMPLETED: { label: 'Completed', color: 'text-green-400', bg: 'bg-green-500/10', dot: 'bg-green-400', icon: CheckCircle2 },
 } as const
 
@@ -68,7 +68,7 @@ export default async function TasksPage({
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-1">Tasks</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-1">Tasks</h1>
           <p className="text-zinc-400 text-sm">
             {tasks?.length ?? 0} task{tasks?.length !== 1 ? 's' : ''} found
           </p>
@@ -78,7 +78,7 @@ export default async function TasksPage({
       {/* Filters */}
       <div className="flex flex-wrap gap-3 mb-6">
         {/* Status filter */}
-        <div className="flex items-center gap-1 p-1 rounded-xl bg-white/5 border border-white/5">
+        <div className="flex items-center gap-1 p-1 rounded-lg bg-card border border-border">
           <FilterLink href="?" active={!filterStatus} label="All" />
           {ALL_STATUSES.map((s) => (
             <FilterLink
@@ -93,7 +93,7 @@ export default async function TasksPage({
 
         {/* Project filter */}
         {projects && projects.length > 0 && (
-          <div className="flex items-center gap-1 p-1 rounded-xl bg-white/5 border border-white/5">
+          <div className="flex items-center gap-1 p-1 rounded-lg bg-card border border-border">
             <FilterLink
               href={filterStatus ? `?status=${filterStatus}` : '?'}
               active={!filterProject}
@@ -115,10 +115,10 @@ export default async function TasksPage({
       {!tasks || tasks.length === 0 ? (
         <EmptyState />
       ) : (
-        <div className="rounded-2xl bg-white/5 border border-white/5 backdrop-blur-md overflow-hidden">
+        <div className="rounded-lg bg-card border border-border overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-white/5">
+              <tr className="border-b border-border">
                 <th className="text-left px-5 py-3.5 text-xs font-medium text-zinc-500 uppercase tracking-wide">Task</th>
                 <th className="text-left px-5 py-3.5 text-xs font-medium text-zinc-500 uppercase tracking-wide hidden md:table-cell">Project</th>
                 <th className="text-left px-5 py-3.5 text-xs font-medium text-zinc-500 uppercase tracking-wide hidden sm:table-cell">Assignee</th>
@@ -127,7 +127,7 @@ export default async function TasksPage({
                 <th className="px-5 py-3.5" />
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-border">
               {tasks.map((task) => {
                 const cfg = statusConfig[task.status as StatusKey] ?? statusConfig.PENDING
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -135,15 +135,15 @@ export default async function TasksPage({
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const assignee = (task.users as any) as { name?: string; email?: string } | null
                 return (
-                  <tr key={task.id} className="group hover:bg-white/5 transition-colors">
+                  <tr key={task.id} className="group hover:bg-muted/40 transition-colors">
                     <td className="px-5 py-4">
-                      <p className="text-sm font-medium text-white group-hover:text-orange-300 transition-colors">{task.title}</p>
+                      <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{task.title}</p>
                     </td>
                     <td className="px-5 py-4 hidden md:table-cell">
                       {project ? (
                         <Link
                           href={`/projects/${project.id}`}
-                          className="inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-indigo-400 transition-colors"
+                          className="inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-secondary transition-colors"
                         >
                           <FolderKanban className="w-3 h-3" />
                           {project.name}
@@ -164,12 +164,12 @@ export default async function TasksPage({
                       </span>
                     </td>
                     <td className="px-5 py-4 text-right">
-                      <span className="text-sm font-medium text-white">${Number(task.amount).toLocaleString()}</span>
+                      <span className="text-sm font-medium text-foreground">${Number(task.amount).toLocaleString()}</span>
                     </td>
                     <td className="px-5 py-4">
                       <Link
                         href={`/tasks/${task.id}`}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-white"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-foreground"
                       >
                         <ArrowUpRight className="w-3.5 h-3.5" />
                         Open
@@ -202,7 +202,7 @@ function FilterLink({
       href={href}
       className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
         active
-          ? 'bg-white/10 text-white'
+          ? 'bg-muted/60 text-foreground'
           : `text-zinc-500 hover:text-zinc-300 ${color ?? ''}`
       }`}
     >
@@ -213,11 +213,11 @@ function FilterLink({
 
 function EmptyState() {
   return (
-    <div className="mt-4 p-12 rounded-2xl border border-dashed border-white/10 text-center flex flex-col items-center">
-      <div className="w-16 h-16 rounded-2xl bg-orange-500/10 flex items-center justify-center mb-4">
-        <ClipboardList className="w-8 h-8 text-orange-400" />
+    <div className="mt-4 p-12 rounded-lg border border-dashed border-border text-center flex flex-col items-center">
+      <div className="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+        <ClipboardList className="w-8 h-8 text-primary" />
       </div>
-      <p className="text-white font-semibold mb-1">No tasks found</p>
+      <p className="text-foreground font-semibold mb-1">No tasks found</p>
       <p className="text-zinc-500 text-sm">Try adjusting your filters or create a task from a project.</p>
     </div>
   )

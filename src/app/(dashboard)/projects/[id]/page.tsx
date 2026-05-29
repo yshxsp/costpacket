@@ -11,12 +11,12 @@ import { UpdateProjectStatusButton } from '@/components/features/update-project-
 const taskStatusConfig = {
   PENDING: { label: 'Pending', color: 'text-zinc-400', bg: 'bg-zinc-500/10', icon: Clock },
   IN_PROGRESS: { label: 'In Progress', color: 'text-blue-400', bg: 'bg-blue-500/10', icon: CircleDot },
-  REVIEW: { label: 'In Review', color: 'text-orange-400', bg: 'bg-orange-500/10', icon: Eye },
+  REVIEW: { label: 'In Review', color: 'text-primary', bg: 'bg-primary/10', icon: Eye },
   COMPLETED: { label: 'Completed', color: 'text-green-400', bg: 'bg-green-500/10', icon: CheckCircle2 },
 } as const
 
 const projectStatusConfig = {
-  ACTIVE: { label: 'Active', color: 'text-orange-400', dot: 'bg-orange-400' },
+  ACTIVE: { label: 'Active', color: 'text-primary', dot: 'bg-primary' },
   COMPLETED: { label: 'Completed', color: 'text-green-400', dot: 'bg-green-400' },
   ON_HOLD: { label: 'On Hold', color: 'text-yellow-400', dot: 'bg-yellow-400' },
 } as const
@@ -73,7 +73,7 @@ export default async function ProjectDetailPage({
       {/* Back */}
       <Link
         href="/projects"
-        className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors mb-6"
+        className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-foreground transition-colors mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
         All Projects
@@ -82,12 +82,12 @@ export default async function ProjectDetailPage({
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-8">
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center flex-shrink-0">
-            <FolderKanban className="w-6 h-6 text-indigo-400" />
+          <div className="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
+            <FolderKanban className="w-6 h-6 text-secondary" />
           </div>
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <h1 className="text-2xl font-bold text-white">{project.name}</h1>
+              <h1 className="text-2xl font-bold text-foreground">{project.name}</h1>
               <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${pStatus.color}`}>
                 <span className={`w-1.5 h-1.5 rounded-full ${pStatus.dot}`} />
                 {pStatus.label}
@@ -104,7 +104,7 @@ export default async function ProjectDetailPage({
             <UpdateProjectStatusButton projectId={project.id} currentStatus={project.status} />
             <Link
               href={`/projects/${project.id}/tasks/new`}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-orange-500 text-white text-sm font-medium hover:bg-orange-600 transition-all shadow-lg shadow-orange-500/20"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-[#c96c4f] transition-all"
             >
               <Plus className="w-4 h-4" />
               Add Task
@@ -117,16 +117,16 @@ export default async function ProjectDetailPage({
       {/* KPI row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
-          { label: 'Budget', value: `$${Number(project.budget).toLocaleString()}`, icon: DollarSign, color: 'text-indigo-400', bg: 'bg-indigo-500/10' },
-          { label: 'Tasks', value: `${doneTasks} / ${totalTasks}`, icon: ClipboardList, color: 'text-orange-400', bg: 'bg-orange-500/10' },
+          { label: 'Budget', value: `$${Number(project.budget).toLocaleString()}`, icon: DollarSign, color: 'text-secondary', bg: 'bg-secondary/10' },
+          { label: 'Tasks', value: `${doneTasks} / ${totalTasks}`, icon: ClipboardList, color: 'text-primary', bg: 'bg-primary/10' },
           { label: 'Team Members', value: members?.length ?? 0, icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10' },
           { label: 'Expenses', value: `$${totalExpenses.toLocaleString()}`, icon: Receipt, color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
         ].map((s) => (
-          <div key={s.label} className="p-5 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-md">
+          <div key={s.label} className="p-5 rounded-lg bg-card border border-border">
             <div className={`w-9 h-9 rounded-lg ${s.bg} flex items-center justify-center mb-3`}>
               <s.icon className={`w-4 h-4 ${s.color}`} />
             </div>
-            <div className="text-xl font-bold text-white">{s.value}</div>
+            <div className="text-xl font-bold text-foreground">{s.value}</div>
             <div className="text-xs text-zinc-500 mt-0.5">{s.label}</div>
           </div>
         ))}
@@ -134,14 +134,14 @@ export default async function ProjectDetailPage({
 
       {/* Progress bar */}
       {totalTasks > 0 && (
-        <div className="p-5 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-md mb-8">
+        <div className="p-5 rounded-lg bg-card border border-border mb-8">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-medium text-white">Project Progress</span>
+            <span className="text-sm font-medium text-foreground">Project Progress</span>
             <span className="text-sm text-zinc-400">{pct}%</span>
           </div>
-          <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+          <div className="w-full h-2 rounded-full bg-muted/60 overflow-hidden">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-orange-500 to-orange-400 transition-all duration-700"
+              className="h-full rounded-full bg-gradient-to-r from-primary to-[#e2a083] transition-all duration-700"
               style={{ width: `${pct}%` }}
             />
           </div>
@@ -155,9 +155,9 @@ export default async function ProjectDetailPage({
       {/* Tasks + Members grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Tasks list */}
-        <div className="lg:col-span-2 p-6 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-md">
+        <div className="lg:col-span-2 p-6 rounded-lg bg-card border border-border">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="font-semibold text-white">Tasks</h2>
+            <h2 className="font-semibold text-foreground">Tasks</h2>
             {pendingExpenses > 0 && (
               <Link
                 href="/expenses"
@@ -178,13 +178,13 @@ export default async function ProjectDetailPage({
                   <Link
                     key={task.id}
                     href={`/tasks/${task.id}`}
-                    className="flex items-center justify-between p-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all group"
+                    className="flex items-center justify-between p-3.5 rounded-lg bg-muted/20 hover:bg-muted/60 border border-border transition-all group"
                   >
                     <div className="flex items-center gap-3">
                       <div className={`w-7 h-7 rounded-lg ${cfg.bg} flex items-center justify-center`}>
                         <cfg.icon className={`w-3.5 h-3.5 ${cfg.color}`} />
                       </div>
-                      <span className="text-sm text-white font-medium group-hover:text-orange-300 transition-colors">
+                      <span className="text-sm text-foreground font-medium group-hover:text-primary transition-colors">
                         {task.title}
                       </span>
                     </div>
@@ -200,8 +200,8 @@ export default async function ProjectDetailPage({
         </div>
 
         {/* Team members */}
-        <div className="p-6 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-md">
-          <h2 className="font-semibold text-white mb-5">Team</h2>
+        <div className="p-6 rounded-lg bg-card border border-border">
+          <h2 className="font-semibold text-foreground mb-5">Team</h2>
           {!members || members.length === 0 ? (
             <p className="text-zinc-500 text-sm">No members assigned.</p>
           ) : (
@@ -212,11 +212,11 @@ export default async function ProjectDetailPage({
                 const name = u?.name ?? u?.email ?? 'Unknown'
                 return (
                   <div key={m.user_id} className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-indigo-500/30 flex items-center justify-center text-indigo-300 text-sm font-bold flex-shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center text-secondary text-sm font-bold flex-shrink-0">
                       {initial}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm text-white font-medium truncate">{name}</p>
+                      <p className="text-sm text-foreground font-medium truncate">{name}</p>
                       <p className="text-xs text-zinc-500">{u?.role ?? m.role}</p>
                     </div>
                   </div>
