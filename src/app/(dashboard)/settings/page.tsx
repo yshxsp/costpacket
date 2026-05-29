@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
-import { Settings, User, CreditCard } from 'lucide-react'
+import { Settings } from 'lucide-react'
 import { ProfileForm } from '@/components/features/profile-form'
 
 export default async function SettingsPage() {

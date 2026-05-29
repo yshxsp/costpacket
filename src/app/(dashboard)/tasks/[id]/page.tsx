@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase-server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import {
-  ArrowLeft, ClipboardList, FolderKanban, Receipt,
+  ArrowLeft, FolderKanban, Receipt,
   DollarSign, User, CheckCircle2, Clock, CircleDot, Eye,
 } from 'lucide-react'
 import { UpdateTaskStatusSelect } from '@/components/features/update-task-status'

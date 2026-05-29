@@ -85,7 +85,7 @@ export async function updateTaskStatus(taskId: string, status: string) {
 
   if (!task) return { error: 'Task not found.' }
 
-  const projectOwner = (task.projects as any)?.owner_id
+  const projectOwner = (task.projects as { owner_id?: string } | null)?.owner_id
   const isOwner = projectOwner === user.id
   const isAssignee = task.assignee_id === user.id
 

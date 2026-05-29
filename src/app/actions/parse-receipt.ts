@@ -28,7 +28,7 @@ export async function parseReceipt(formData: FormData) {
   const fileExt = file.name.split('.').pop()
   const fileName = `${user.id}-${Date.now()}.${fileExt}`
   
-  const { data: uploadData, error: uploadError } = await supabase.storage
+  const { error: uploadError } = await supabase.storage
     .from('receipts')
     .upload(fileName, file)
 
@@ -86,7 +86,7 @@ export async function parseReceipt(formData: FormData) {
         description: parsed.description || '',
       }
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Gemini Parsing Error:", err)
     return { 
       error: 'Failed to parse receipt with AI. You can still submit manually.', 

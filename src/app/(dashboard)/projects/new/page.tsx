@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Hammer, ArrowLeft, FolderKanban, Loader2 } from 'lucide-react'
+import { ArrowLeft, FolderKanban, Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase'
 
 const STATUS_OPTIONS = [

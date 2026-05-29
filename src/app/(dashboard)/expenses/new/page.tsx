@@ -45,7 +45,7 @@ export default function NewExpensePage() {
           amount: res.parsedData.amount.toString(),
         })
       }
-    } catch (err) {
+    } catch {
       setError('Failed to process image')
     } finally {
       setParsingAI(false)

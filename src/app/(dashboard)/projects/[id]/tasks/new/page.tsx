@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase-server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Plus, ClipboardList } from 'lucide-react'
+import { ArrowLeft, ClipboardList } from 'lucide-react'
 import { NewTaskForm } from '@/components/features/new-task-form'
 
 export default async function NewTaskPage({
@@ -30,8 +30,7 @@ export default async function NewTaskPage({
     .eq('project_id', id)
 
   const assignees = (members ?? []).map((m) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const u = (m.users as any) as { id: string; name?: string; email?: string } | null
+    const u = m.users as { id?: string; name?: string; email?: string } | null
     return { id: m.user_id, label: u?.name ?? u?.email ?? m.user_id }
   })
 

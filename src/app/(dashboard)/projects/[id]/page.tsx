@@ -3,7 +3,7 @@ import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import {
   ArrowLeft, FolderKanban, ClipboardList, Users, DollarSign,
-  CheckCircle2, Clock, CircleDot, Eye, PauseCircle, Plus, Receipt,
+  CheckCircle2, Clock, CircleDot, Eye, Plus, Receipt,
 } from 'lucide-react'
 import { DeleteProjectButton } from '@/components/features/delete-project-button'
 import { UpdateProjectStatusButton } from '@/components/features/update-project-status'

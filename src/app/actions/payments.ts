@@ -6,7 +6,7 @@ import Stripe from 'stripe'
 
 // Initialize Stripe gracefully, so the application won't crash if the key is missing in .env
 const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2026-02-25.clover' as any })
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2026-02-25.clover' })
   : null
 
 export async function createPayment(taskId: string) {
@@ -38,7 +38,8 @@ export async function createPayment(taskId: string) {
   }
 
   // Security Check: Ensure caller actually owns the project the task belongs to
-  if ((task.projects as any)?.owner_id !== user.id) {
+  const project = task.projects as { owner_id?: string } | null
+  if (project?.owner_id !== user.id) {
     return { error: 'Unauthorized. You do not own the project for this task.' }
   }
 
@@ -57,7 +58,7 @@ export async function createPayment(taskId: string) {
     return { error: 'A payment already exists for this task.' }
   }
 
-  const assignee = task.users
+  const assignee = task.users as { id: string; stripe_account_id?: string | null } | null
   if (!assignee || Array.isArray(assignee)) {
     return { error: 'Task has no valid assignee to pay.' }
   }
@@ -88,10 +89,10 @@ export async function createPayment(taskId: string) {
       // Mock / Sandbox fallback
       console.warn("No STRIPE_SECRET_KEY or stripe_account_id found. Creating a mock successful payout.")
     }
-  } catch (stripeErr: any) {
+  } catch (stripeErr: unknown) {
     console.error("Stripe error:", stripeErr)
     paymentStatus = 'FAILED'
-    errorMsg = stripeErr.message || "Failed to communicate with Stripe."
+    errorMsg = stripeErr instanceof Error ? stripeErr.message : "Failed to communicate with Stripe."
   }
 
   // 4. Save Payment record in Supabase

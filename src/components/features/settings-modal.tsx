@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import type { ComponentType, SVGProps } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Settings, X, Moon, Sun, Monitor, AppWindow } from 'lucide-react'
 import { useAppStore, ThemeType, LangType } from '@/lib/store'
@@ -30,7 +30,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
     }
   }
 
-  const themes: { value: ThemeType; label: string; icon: React.FC<any> }[] = [
+  const themes: { value: ThemeType; label: string; icon: ComponentType<SVGProps<SVGSVGElement>> }[] = [
     { value: 'light', label: 'Light', icon: Sun },
     { value: 'dark', label: 'Dark (Gray)', icon: Moon },
     { value: 'oled', label: 'OLED Black', icon: Monitor },
