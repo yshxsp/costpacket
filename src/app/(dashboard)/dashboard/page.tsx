@@ -5,7 +5,6 @@ import {
   TrendingUp, AlertCircle, ArrowUpRight
 } from 'lucide-react'
 import Link from 'next/link'
-import { AssetTracker } from '@/components/features/asset-tracker'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -174,11 +173,6 @@ export default async function DashboardPage() {
           </div>
         </div>
       )}
-
-      {/* Hardware-to-Software Bridge (BuildOps Pro) */}
-      <div className="mt-8">
-        <AssetTracker />
-      </div>
 
       {/* Empty state nudge if no data */}
       {tasksTotal === 0 && (

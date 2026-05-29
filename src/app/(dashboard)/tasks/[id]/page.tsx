@@ -7,7 +7,6 @@ import {
 } from 'lucide-react'
 import { UpdateTaskStatusSelect } from '@/components/features/update-task-status'
 import { PayoutButton } from '@/components/features/payout-button'
-import { TaskVerification } from '@/components/features/task-verification'
 
 const statusConfig = {
   PENDING: { label: 'Pending', color: 'text-zinc-400', bg: 'bg-zinc-500/10', icon: Clock },
@@ -113,15 +112,6 @@ export default async function TaskDetailPage({
               <p className="text-white text-sm leading-relaxed">{task.description}</p>
             </div>
           )}
-
-          {/* AI Task Verification (BuildOps Pro) */}
-          <TaskVerification 
-            taskId={task.id} 
-            taskTitle={task.title}
-            existingImageUrl={task.verification_image_url}
-            aiStatus={task.ai_verification_status}
-            aiConfidence={task.ai_confidence}
-          />
 
           {/* Expenses */}
           <div className="p-5 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-md">

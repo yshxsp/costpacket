@@ -1,4 +1,4 @@
-# 🏗️ BuildOps Pro — Autonomous Construction Operations (BLAST Progress)
+# 🏗️ BuildOps Lite — BLAST Progress Report
 
 > Дата: 19 марта 2026 | Суммарный обзор текущего состояния проекта и дорожная карта
 

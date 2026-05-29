@@ -1,17 +1,17 @@
-# 🏗️ BuildOps Pro — Autonomous Construction Operations
+# 🏗️ BuildOps Lite — Construction Operations Dashboard
 
-BuildOps Pro is a next-generation operational platform that eliminates manual data entry through AI-powered verification and IoT automation. Built to provide a technological "Moat" in the 2026 construction SaaS market.
+BuildOps Lite is a premium, lightweight operational dashboard built for the construction industry. It streamlines project management, task tracking, and expense approvals with AI-powered insights and a modern, mobile-first experience.
 
 ---
 
 ## 🚀 Key Features
 
 - **📱 Full PWA Support:** Installable on iOS and Android for a native mobile experience.
-- **🤖 AI Task Verification:** Automated task completion via Gemini Vision photo analysis (eliminates manual reporting).
-- **🛰️ Hardware Bridge:** Real-time IoT Asset & Equipment tracking (Live GPS/Telemetry simulation).
 - **🤖 AI Receipt Parsing:** Automatic vendor, amount, and item extraction using Google Gemini AI.
 - **🔐 Role-Based Access:** Distinct workflows for Contractors (Admins) and Subcontractors.
 - **💳 Payment Integration:** One-click payouts and transaction history via Stripe Connect.
+- **🌓 Dynamic UI:** Premium Dark Mode with OLED support, plus 5+ languages.
+- **⚡ Performance First:** Built with Next.js 16 (Turbopack) and Supabase for real-time updates.
 
 ---
 

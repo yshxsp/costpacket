@@ -3,9 +3,10 @@
 import { Download } from 'lucide-react'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
+import type { ExpenseForPdf } from './export-pdf-button'
 
 interface ExportPdfButtonImplProps {
-  expenses: any[]
+  expenses: ExpenseForPdf[]
 }
 
 export default function ExportPdfButtonImpl({ expenses }: ExportPdfButtonImplProps) {
@@ -18,28 +19,21 @@ export default function ExportPdfButtonImpl({ expenses }: ExportPdfButtonImplPro
     doc.setTextColor(100)
     doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 30)
 
-    const tableColumn = ["Date", "Vendor", "Description", "Amount", "Status"]
-    const tableRows: any[] = []
-
-    expenses.forEach(exp => {
-      const expDate = new Date(exp.created_at).toLocaleDateString()
-      const amount = `$${Number(exp.amount).toFixed(2)}`
-      const expData = [
-        expDate,
-        exp.vendor || 'N/A',
-        exp.description,
-        amount,
-        exp.status
-      ]
-      tableRows.push(expData)
-    })
+    const tableColumn = ['Date', 'Vendor', 'Description', 'Amount', 'Status']
+    const tableRows: string[][] = expenses.map((expense) => [
+      new Date(expense.created_at).toLocaleDateString(),
+      expense.vendor || 'N/A',
+      expense.description || '',
+      `$${Number(expense.amount).toFixed(2)}`,
+      expense.status,
+    ])
 
     autoTable(doc, {
       head: [tableColumn],
       body: tableRows,
       startY: 40,
       theme: 'striped',
-      headStyles: { fillColor: [99, 102, 241] }, // Indigo 500
+      headStyles: { fillColor: [99, 102, 241] },
     })
 
     doc.save('expenses_report.pdf')
@@ -49,6 +43,7 @@ export default function ExportPdfButtonImpl({ expenses }: ExportPdfButtonImplPro
     <button
       onClick={handleExport}
       className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-500/10 text-indigo-400 text-sm font-medium hover:bg-indigo-500/20 transition-all border border-indigo-500/20"
+      type="button"
     >
       <Download className="w-4 h-4" />
       Export PDF
