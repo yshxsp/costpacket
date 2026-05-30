@@ -26,54 +26,27 @@ export default async function DashboardPage() {
   let paymentsTotal = 0
 
   if (role === 'CONTRACTOR' || role === 'ADMIN') {
-    const { count: pc } = await supabase
-      .from('projects')
-      .select('*', { count: 'exact', head: true })
-      .eq('owner_id', user.id)
-    projectsCount = pc ?? 0
-
-    const { count: tt } = await supabase
-      .from('tasks')
-      .select('*', { count: 'exact', head: true })
-    tasksTotal = tt ?? 0
-
-    const { count: td } = await supabase
-      .from('tasks')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'COMPLETED')
-    tasksDone = td ?? 0
-
-    const { count: ep } = await supabase
-      .from('expenses')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'PENDING')
-    expensesPending = ep ?? 0
-
-    const { data: payments } = await supabase
-      .from('payments')
-      .select('amount')
-      .eq('status', 'PAID')
-    paymentsTotal = payments?.reduce((sum, p) => sum + Number(p.amount), 0) ?? 0
+    const [pc, tt, td, ep, pay] = await Promise.all([
+      supabase.from('projects').select('*', { count: 'exact', head: true }).eq('owner_id', user.id),
+      supabase.from('tasks').select('*', { count: 'exact', head: true }),
+      supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('status', 'COMPLETED'),
+      supabase.from('expenses').select('*', { count: 'exact', head: true }).eq('status', 'PENDING'),
+      supabase.from('payments').select('amount').eq('status', 'PAID'),
+    ])
+    projectsCount = pc.count ?? 0
+    tasksTotal = tt.count ?? 0
+    tasksDone = td.count ?? 0
+    expensesPending = ep.count ?? 0
+    paymentsTotal = pay.data?.reduce((sum, p) => sum + Number(p.amount), 0) ?? 0
   } else {
-    const { count: tt } = await supabase
-      .from('tasks')
-      .select('*', { count: 'exact', head: true })
-      .eq('assignee_id', user.id)
-    tasksTotal = tt ?? 0
-
-    const { count: td } = await supabase
-      .from('tasks')
-      .select('*', { count: 'exact', head: true })
-      .eq('assignee_id', user.id)
-      .eq('status', 'COMPLETED')
-    tasksDone = td ?? 0
-
-    const { data: payments } = await supabase
-      .from('payments')
-      .select('amount')
-      .eq('user_id', user.id)
-      .eq('status', 'PAID')
-    paymentsTotal = payments?.reduce((sum, p) => sum + Number(p.amount), 0) ?? 0
+    const [tt, td, pay] = await Promise.all([
+      supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('assignee_id', user.id),
+      supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('assignee_id', user.id).eq('status', 'COMPLETED'),
+      supabase.from('payments').select('amount').eq('user_id', user.id).eq('status', 'PAID'),
+    ])
+    tasksTotal = tt.count ?? 0
+    tasksDone = td.count ?? 0
+    paymentsTotal = pay.data?.reduce((sum, p) => sum + Number(p.amount), 0) ?? 0
   }
 
   const completionRate = tasksTotal > 0 ? Math.round((tasksDone / tasksTotal) * 100) : 0

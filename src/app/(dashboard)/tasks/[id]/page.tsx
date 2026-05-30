@@ -17,32 +17,28 @@ export default async function TaskDetailPage({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const { data: task } = await supabase
-    .from('tasks')
-    .select(`
-      *,
-      projects (id, name, owner_id),
-      users (id, name, email)
-    `)
-    .eq('id', id)
-    .single()
+  const [{ data: task }, { data: expenses }, { data: existingPayment }] = await Promise.all([
+    supabase
+      .from('tasks')
+      .select(`
+        *,
+        projects (id, name, owner_id),
+        users (id, name, email)
+      `)
+      .eq('id', id)
+      .single(),
+    supabase
+      .from('expenses')
+      .select('id, amount, description, vendor, status, created_at')
+      .eq('task_id', id)
+      .order('created_at', { ascending: false }),
+    supabase.from('payments').select('id, status').eq('task_id', id).maybeSingle(),
+  ])
 
   if (!task) notFound()
 
   const project = task.projects as { id: string; name: string; owner_id: string } | null
   const assignee = task.users as { name?: string; email?: string } | null
-
-  const { data: expenses } = await supabase
-    .from('expenses')
-    .select('id, amount, description, vendor, status, created_at')
-    .eq('task_id', id)
-    .order('created_at', { ascending: false })
-
-  const { data: existingPayment } = await supabase
-    .from('payments')
-    .select('id, status')
-    .eq('task_id', id)
-    .maybeSingle()
 
   const isOwner = project?.owner_id === user.id
   const isAssignee = task.assignee_id === user.id

@@ -74,9 +74,14 @@ export async function createPayment(taskId: string) {
   let errorMsg = null
 
   try {
-    if (stripe && assignee.stripe_account_id) {
-      // Real Stripe Connect Transfer (example logic for custom connected accounts)
-      // Transfer to the connected account:
+    if (stripe) {
+      // Real Stripe Connect transfer to the subcontractor's connected account.
+      if (!assignee.stripe_account_id) {
+        return {
+          error:
+            'This subcontractor has no Stripe account connected. Add their Stripe account ID before paying out.',
+        }
+      }
       const transfer = await stripe.transfers.create({
         amount: Math.round(payoutAmount * 100), // convert to cents
         currency: 'usd',
@@ -86,8 +91,8 @@ export async function createPayment(taskId: string) {
       stripePayoutId = transfer.id
       paymentStatus = 'PAID'
     } else {
-      // Mock / Sandbox fallback
-      console.warn("No STRIPE_SECRET_KEY or stripe_account_id found. Creating a mock successful payout.")
+      // No Stripe key configured (local/dev): record a mock payout.
+      console.warn('No STRIPE_SECRET_KEY configured — recording a mock payout (dev only).')
     }
   } catch (stripeErr: unknown) {
     console.error("Stripe error:", stripeErr)

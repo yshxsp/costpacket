@@ -18,19 +18,20 @@ export default async function ProjectDetailPage({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const { data: project } = await supabase.from('projects').select('*').eq('id', id).single()
+  const [{ data: project }, { data: tasks }, { data: members }] = await Promise.all([
+    supabase.from('projects').select('*').eq('id', id).single(),
+    supabase
+      .from('tasks')
+      .select('id, title, status, amount, assignee_id')
+      .eq('project_id', id)
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('project_members')
+      .select('user_id, role, users(id, name, email, role)')
+      .eq('project_id', id),
+  ])
+
   if (!project) notFound()
-
-  const { data: tasks } = await supabase
-    .from('tasks')
-    .select('id, title, status, amount, assignee_id')
-    .eq('project_id', id)
-    .order('created_at', { ascending: false })
-
-  const { data: members } = await supabase
-    .from('project_members')
-    .select('user_id, role, users(id, name, email, role)')
-    .eq('project_id', id)
 
   const { data: expenses } = await supabase
     .from('expenses')
