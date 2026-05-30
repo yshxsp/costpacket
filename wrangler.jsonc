@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "costpacket",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-05-29",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
+  }
+  // Runtime env (set as secrets, NOT committed):
+  //   wrangler secret put NEXT_PUBLIC_SUPABASE_URL
+  //   wrangler secret put NEXT_PUBLIC_SUPABASE_ANON_KEY
+  //   wrangler secret put STRIPE_SECRET_KEY
+  //   wrangler secret put GEMINI_API_KEY
+  // For local `npm run preview`, put the same keys in .dev.vars
+}

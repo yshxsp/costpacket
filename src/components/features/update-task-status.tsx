@@ -4,12 +4,13 @@ import { useState } from 'react'
 import { ChevronDown, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { updateTaskStatus } from '@/app/actions/projects'
+import { cn } from '@/lib/utils'
 
 const STATUS_OPTIONS = [
-  { value: 'PENDING', label: 'Pending', color: 'text-zinc-400' },
-  { value: 'IN_PROGRESS', label: 'In Progress', color: 'text-blue-400' },
-  { value: 'REVIEW', label: 'In Review', color: 'text-primary' },
-  { value: 'COMPLETED', label: 'Completed', color: 'text-green-400' },
+  { value: 'PENDING', label: 'Pending', dot: 'bg-pending', text: 'text-pending' },
+  { value: 'IN_PROGRESS', label: 'In Progress', dot: 'bg-pending', text: 'text-pending' },
+  { value: 'REVIEW', label: 'In Review', dot: 'bg-accent', text: 'text-accent' },
+  { value: 'COMPLETED', label: 'Completed', dot: 'bg-approved', text: 'text-approved' },
 ]
 
 export function UpdateTaskStatusSelect({
@@ -23,7 +24,10 @@ export function UpdateTaskStatusSelect({
   const [open, setOpen] = useState(false)
 
   async function handleUpdate(status: string) {
-    if (status === currentStatus) { setOpen(false); return }
+    if (status === currentStatus) {
+      setOpen(false)
+      return
+    }
     setLoading(true)
     setOpen(false)
     try {
@@ -47,30 +51,29 @@ export function UpdateTaskStatusSelect({
       <button
         onClick={() => setOpen((o) => !o)}
         disabled={loading}
-        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-card border border-border text-sm font-medium transition-all hover:bg-muted/60 disabled:opacity-50"
+        className="inline-flex h-10 items-center gap-2 rounded-[3px] border border-rule bg-surface px-4 text-sm font-medium transition-colors hover:bg-surface-sunken disabled:opacity-50"
       >
         {loading ? (
-          <Loader2 className="w-4 h-4 animate-spin text-zinc-400" />
+          <Loader2 className="h-4 w-4 animate-spin text-ink-muted" />
         ) : (
-          <span className={`w-2 h-2 rounded-full ${current.color.replace('text-', 'bg-')}`} />
+          <span className={cn('h-2 w-2 rounded-full', current.dot)} />
         )}
-        <span className={current.color}>{current.label}</span>
-        <ChevronDown className="w-3.5 h-3.5 text-zinc-500" />
+        <span className={current.text}>{current.label}</span>
+        <ChevronDown className="h-3.5 w-3.5 text-ink-faint" strokeWidth={1.75} />
       </button>
       {open && (
-        <div className="absolute right-0 mt-1 w-44 rounded-lg bg-card border border-border shadow-xl z-10 overflow-hidden">
+        <div className="absolute right-0 z-10 mt-1 w-44 overflow-hidden rounded-[3px] border border-rule bg-surface shadow-[0_20px_50px_-20px_rgba(27,26,22,0.5)]">
           {STATUS_OPTIONS.map((opt) => (
             <button
               key={opt.value}
               onClick={() => handleUpdate(opt.value)}
-              className={`w-full text-left px-4 py-2.5 text-sm flex items-center gap-2 transition-colors ${
-                opt.value === currentStatus
-                  ? 'bg-muted/40'
-                  : 'hover:bg-muted/40'
-              }`}
+              className={cn(
+                'flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm transition-colors hover:bg-surface-sunken',
+                opt.value === currentStatus && 'bg-surface-sunken'
+              )}
             >
-              <span className={`w-2 h-2 rounded-full flex-shrink-0 ${opt.color.replace('text-', 'bg-')}`} />
-              <span className={opt.color}>{opt.label}</span>
+              <span className={cn('h-2 w-2 flex-shrink-0 rounded-full', opt.dot)} />
+              <span className={opt.text}>{opt.label}</span>
             </button>
           ))}
         </div>

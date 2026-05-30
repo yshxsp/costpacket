@@ -1,20 +1,12 @@
 import { createClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import {
-  ClipboardList, ArrowUpRight, CheckCircle2,
-  Clock, CircleDot, Eye, FolderKanban,
-} from 'lucide-react'
+import { PageShell, PageHeader } from '@/components/ui/page'
+import { EmptyState } from '@/components/ui/empty'
+import { Stamp, statusTone, statusLabel } from '@/components/ui/status'
+import { cn } from '@/lib/utils'
 
-const statusConfig = {
-  PENDING: { label: 'Pending', color: 'text-zinc-400', bg: 'bg-zinc-500/10', dot: 'bg-zinc-400', icon: Clock },
-  IN_PROGRESS: { label: 'In Progress', color: 'text-blue-400', bg: 'bg-blue-500/10', dot: 'bg-blue-400', icon: CircleDot },
-  REVIEW: { label: 'In Review', color: 'text-primary', bg: 'bg-primary/10', dot: 'bg-primary', icon: Eye },
-  COMPLETED: { label: 'Completed', color: 'text-green-400', bg: 'bg-green-500/10', dot: 'bg-green-400', icon: CheckCircle2 },
-} as const
-
-type StatusKey = keyof typeof statusConfig
-const ALL_STATUSES = Object.keys(statusConfig) as StatusKey[]
+const ALL_STATUSES = ['PENDING', 'IN_PROGRESS', 'REVIEW', 'COMPLETED'] as const
 
 export default async function TasksPage({
   searchParams,
@@ -33,7 +25,6 @@ export default async function TasksPage({
     .single()
   const role = profile?.role ?? 'SUBCONTRACTOR'
 
-  // Build query
   let query = supabase
     .from('tasks')
     .select(`
@@ -48,7 +39,7 @@ export default async function TasksPage({
   if (role === 'SUBCONTRACTOR') {
     query = query.eq('assignee_id', user.id)
   }
-  if (filterStatus && ALL_STATUSES.includes(filterStatus as StatusKey)) {
+  if (filterStatus && (ALL_STATUSES as readonly string[]).includes(filterStatus)) {
     query = query.eq('status', filterStatus)
   }
   if (filterProject) {
@@ -57,47 +48,38 @@ export default async function TasksPage({
 
   const { data: tasks } = await query
 
-  // Unique projects for filter dropdown
   const { data: projects } = await supabase
     .from('projects')
     .select('id, name')
     .order('name')
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground mb-1">Tasks</h1>
-          <p className="text-zinc-400 text-sm">
-            {tasks?.length ?? 0} task{tasks?.length !== 1 ? 's' : ''} found
-          </p>
-        </div>
-      </div>
+    <PageShell>
+      <PageHeader
+        kicker="Ledger"
+        title="Tasks"
+        description={`${tasks?.length ?? 0} task${tasks?.length !== 1 ? 's' : ''} found`}
+      />
 
-      {/* Filters */}
-      <div className="flex flex-wrap gap-3 mb-6">
-        {/* Status filter */}
-        <div className="flex items-center gap-1 p-1 rounded-lg bg-card border border-border">
+      <div className="mb-6 flex flex-wrap gap-3">
+        <div className="flex items-center gap-1 rounded-[3px] border border-rule bg-surface p-1">
           <FilterLink href="?" active={!filterStatus} label="All" />
           {ALL_STATUSES.map((s) => (
             <FilterLink
               key={s}
               href={`?status=${s}${filterProject ? `&project=${filterProject}` : ''}`}
               active={filterStatus === s}
-              label={statusConfig[s].label}
-              color={statusConfig[s].color}
+              label={statusLabel(s)}
             />
           ))}
         </div>
 
-        {/* Project filter */}
         {projects && projects.length > 0 && (
-          <div className="flex items-center gap-1 p-1 rounded-lg bg-card border border-border">
+          <div className="flex items-center gap-1 rounded-[3px] border border-rule bg-surface p-1">
             <FilterLink
               href={filterStatus ? `?status=${filterStatus}` : '?'}
               active={!filterProject}
-              label="All Projects"
+              label="All projects"
             />
             {projects.map((p) => (
               <FilterLink
@@ -111,69 +93,61 @@ export default async function TasksPage({
         )}
       </div>
 
-      {/* Tasks table */}
       {!tasks || tasks.length === 0 ? (
-        <EmptyState />
+        <EmptyState
+          title="No tasks found"
+          description="Try adjusting your filters, or add a task from a project."
+        />
       ) : (
-        <div className="rounded-lg bg-card border border-border overflow-hidden">
+        <div className="overflow-hidden rounded-[3px] border border-rule bg-surface">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-border">
-                <th className="text-left px-5 py-3.5 text-xs font-medium text-zinc-500 uppercase tracking-wide">Task</th>
-                <th className="text-left px-5 py-3.5 text-xs font-medium text-zinc-500 uppercase tracking-wide hidden md:table-cell">Project</th>
-                <th className="text-left px-5 py-3.5 text-xs font-medium text-zinc-500 uppercase tracking-wide hidden sm:table-cell">Assignee</th>
-                <th className="text-left px-5 py-3.5 text-xs font-medium text-zinc-500 uppercase tracking-wide">Status</th>
-                <th className="text-right px-5 py-3.5 text-xs font-medium text-zinc-500 uppercase tracking-wide">Amount</th>
-                <th className="px-5 py-3.5" />
+              <tr className="border-b border-rule">
+                <Th>Task</Th>
+                <Th className="hidden md:table-cell">Project</Th>
+                <Th className="hidden sm:table-cell">Assignee</Th>
+                <Th>Status</Th>
+                <Th className="text-right">Amount</Th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
+            <tbody className="divide-y divide-rule">
               {tasks.map((task) => {
-                const cfg = statusConfig[task.status as StatusKey] ?? statusConfig.PENDING
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const project = (task.projects as any) as { id: string; name: string } | null
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const assignee = (task.users as any) as { name?: string; email?: string } | null
                 return (
-                  <tr key={task.id} className="group hover:bg-muted/40 transition-colors">
+                  <tr key={task.id} className="group transition-colors hover:bg-surface-sunken">
                     <td className="px-5 py-4">
-                      <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{task.title}</p>
+                      <Link
+                        href={`/tasks/${task.id}`}
+                        className="text-sm font-medium text-ink transition-colors group-hover:text-accent"
+                      >
+                        {task.title}
+                      </Link>
                     </td>
-                    <td className="px-5 py-4 hidden md:table-cell">
+                    <td className="hidden px-5 py-4 md:table-cell">
                       {project ? (
                         <Link
                           href={`/projects/${project.id}`}
-                          className="inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-secondary transition-colors"
+                          className="text-xs text-ink-muted transition-colors hover:text-accent"
                         >
-                          <FolderKanban className="w-3 h-3" />
                           {project.name}
                         </Link>
                       ) : (
-                        <span className="text-xs text-zinc-600">—</span>
+                        <span className="text-xs text-ink-faint">—</span>
                       )}
                     </td>
-                    <td className="px-5 py-4 hidden sm:table-cell">
-                      <span className="text-xs text-zinc-400">
+                    <td className="hidden px-5 py-4 sm:table-cell">
+                      <span className="text-xs text-ink-muted">
                         {assignee ? (assignee.name ?? assignee.email) : '—'}
                       </span>
                     </td>
                     <td className="px-5 py-4">
-                      <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${cfg.color}`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
-                        {cfg.label}
-                      </span>
+                      <Stamp tone={statusTone(task.status)}>{statusLabel(task.status)}</Stamp>
                     </td>
-                    <td className="px-5 py-4 text-right">
-                      <span className="text-sm font-medium text-foreground">${Number(task.amount).toLocaleString()}</span>
-                    </td>
-                    <td className="px-5 py-4">
-                      <Link
-                        href={`/tasks/${task.id}`}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-foreground"
-                      >
-                        <ArrowUpRight className="w-3.5 h-3.5" />
-                        Open
-                      </Link>
+                    <td className="px-5 py-4 text-right font-mono text-sm tabular-nums text-ink">
+                      ${Number(task.amount).toLocaleString()}
                     </td>
                   </tr>
                 )
@@ -182,43 +156,24 @@ export default async function TasksPage({
           </table>
         </div>
       )}
-    </div>
+    </PageShell>
   )
 }
 
-function FilterLink({
-  href,
-  active,
-  label,
-  color,
-}: {
-  href: string
-  active: boolean
-  label: string
-  color?: string
-}) {
+function Th({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <th className={cn('label px-5 py-3 text-left', className)}>{children}</th>
+}
+
+function FilterLink({ href, active, label }: { href: string; active: boolean; label: string }) {
   return (
     <Link
       href={href}
-      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-        active
-          ? 'bg-muted/60 text-foreground'
-          : `text-zinc-500 hover:text-zinc-300 ${color ?? ''}`
-      }`}
+      className={cn(
+        'rounded-[2px] px-3 py-1.5 text-xs font-medium transition-colors',
+        active ? 'bg-surface-sunken text-ink' : 'text-ink-muted hover:text-ink'
+      )}
     >
       {label}
     </Link>
-  )
-}
-
-function EmptyState() {
-  return (
-    <div className="mt-4 p-12 rounded-lg border border-dashed border-border text-center flex flex-col items-center">
-      <div className="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-        <ClipboardList className="w-8 h-8 text-primary" />
-      </div>
-      <p className="text-foreground font-semibold mb-1">No tasks found</p>
-      <p className="text-zinc-500 text-sm">Try adjusting your filters or create a task from a project.</p>
-    </div>
   )
 }

@@ -1,25 +1,11 @@
 import { createClient } from '@/lib/supabase-server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
-import {
-  ArrowLeft, FolderKanban, Receipt,
-  DollarSign, User, CheckCircle2, Clock, CircleDot, Eye,
-} from 'lucide-react'
+import { ArrowLeft, Receipt, User, CheckCircle2 } from 'lucide-react'
 import { UpdateTaskStatusSelect } from '@/components/features/update-task-status'
 import { PayoutButton } from '@/components/features/payout-button'
-
-const statusConfig = {
-  PENDING: { label: 'Pending', color: 'text-zinc-400', bg: 'bg-zinc-500/10', icon: Clock },
-  IN_PROGRESS: { label: 'In Progress', color: 'text-blue-400', bg: 'bg-blue-500/10', icon: CircleDot },
-  REVIEW: { label: 'In Review', color: 'text-primary', bg: 'bg-primary/10', icon: Eye },
-  COMPLETED: { label: 'Completed', color: 'text-green-400', bg: 'bg-green-500/10', icon: CheckCircle2 },
-} as const
-
-const expenseStatusConfig = {
-  PENDING: { label: 'Pending', color: 'text-yellow-400' },
-  APPROVED: { label: 'Approved', color: 'text-green-400' },
-  REJECTED: { label: 'Rejected', color: 'text-red-400' },
-} as const
+import { Card } from '@/components/ui/card'
+import { Stamp, statusTone, statusLabel } from '@/components/ui/status'
 
 export default async function TaskDetailPage({
   params,
@@ -31,7 +17,6 @@ export default async function TaskDetailPage({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  // Fetch task with relations
   const { data: task } = await supabase
     .from('tasks')
     .select(`
@@ -47,7 +32,6 @@ export default async function TaskDetailPage({
   const project = task.projects as { id: string; name: string; owner_id: string } | null
   const assignee = task.users as { name?: string; email?: string } | null
 
-  // Fetch expenses for this task
   const { data: expenses } = await supabase
     .from('expenses')
     .select('id, amount, description, vendor, status, created_at')
@@ -60,169 +44,146 @@ export default async function TaskDetailPage({
     .eq('task_id', id)
     .maybeSingle()
 
-  const cfg = statusConfig[task.status as keyof typeof statusConfig] ?? statusConfig.PENDING
   const isOwner = project?.owner_id === user.id
   const isAssignee = task.assignee_id === user.id
   const canEditStatus = isOwner || isAssignee
   const totalExpenses = expenses?.reduce((s, e) => s + Number(e.amount), 0) ?? 0
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      {/* Back */}
+    <div className="mx-auto max-w-4xl p-6 sm:p-8">
       <Link
         href="/tasks"
-        className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-foreground transition-colors mb-6"
+        className="mb-6 inline-flex items-center gap-2 text-sm text-ink-muted transition-colors hover:text-ink"
       >
-        <ArrowLeft className="w-4 h-4" />
-        All Tasks
+        <ArrowLeft className="h-4 w-4" strokeWidth={1.75} />
+        All tasks
       </Link>
 
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-8">
-        <div className="flex items-start gap-4">
-          <div className={`w-12 h-12 rounded-lg ${cfg.bg} flex items-center justify-center flex-shrink-0`}>
-            <cfg.icon className={`w-6 h-6 ${cfg.color}`} />
+      <div className="mb-8 flex flex-col gap-4 border-b border-rule pb-6 md:flex-row md:items-start md:justify-between">
+        <div>
+          <div className="flex items-center gap-3">
+            <h1 className="font-display text-3xl tracking-tight text-ink">{task.title}</h1>
+            <Stamp tone={statusTone(task.status)}>{statusLabel(task.status)}</Stamp>
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-foreground mb-1">{task.title}</h1>
-            {project && (
-              <Link
-                href={`/projects/${project.id}`}
-                className="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-secondary transition-colors"
-              >
-                <FolderKanban className="w-4 h-4" />
-                {project.name}
-              </Link>
-            )}
-          </div>
+          {project && (
+            <Link
+              href={`/projects/${project.id}`}
+              className="mt-1 inline-flex items-center gap-1.5 text-sm text-ink-muted transition-colors hover:text-accent"
+            >
+              {project.name}
+            </Link>
+          )}
         </div>
 
-        {canEditStatus && (
-          <UpdateTaskStatusSelect taskId={task.id} currentStatus={task.status} />
-        )}
+        {canEditStatus && <UpdateTaskStatusSelect taskId={task.id} currentStatus={task.status} />}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main info */}
-        <div className="lg:col-span-2 space-y-5">
-          {/* Description */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="space-y-5 lg:col-span-2">
           {task.description && (
-            <div className="p-5 rounded-lg bg-card border border-border">
-              <h2 className="text-sm font-medium text-zinc-400 mb-2">Description</h2>
-              <p className="text-foreground text-sm leading-relaxed">{task.description}</p>
-            </div>
+            <Card className="p-5">
+              <h2 className="label mb-2">Description</h2>
+              <p className="text-sm leading-relaxed text-ink">{task.description}</p>
+            </Card>
           )}
 
-          {/* Expenses */}
-          <div className="p-5 rounded-lg bg-card border border-border">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-foreground">Expenses</h2>
+          <Card className="p-5">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="font-display text-lg text-ink">Expenses</h2>
               {isAssignee && (
                 <Link
                   href={`/expenses/new?task_id=${task.id}`}
-                  className="inline-flex items-center gap-1.5 text-xs text-primary hover:text-primary transition-colors font-medium"
+                  className="inline-flex items-center gap-1.5 text-xs font-medium text-accent transition-colors hover:underline"
                 >
-                  <Receipt className="w-3.5 h-3.5" />
-                  Submit Expense
+                  <Receipt className="h-3.5 w-3.5" strokeWidth={1.75} />
+                  Submit expense
                 </Link>
               )}
             </div>
 
             {!expenses || expenses.length === 0 ? (
-              <p className="text-zinc-500 text-sm py-2">No expenses submitted yet.</p>
+              <p className="py-2 text-sm text-ink-muted">No expenses submitted yet.</p>
             ) : (
-              <div className="space-y-2">
-                {expenses.map((exp) => {
-                  const eCfg = expenseStatusConfig[exp.status as keyof typeof expenseStatusConfig] ?? expenseStatusConfig.PENDING
-                  return (
-                    <div
-                      key={exp.id}
-                      className="flex items-center justify-between p-3 rounded-lg bg-muted/20 border border-border"
-                    >
-                      <div className="min-w-0">
-                        <p className="text-sm text-foreground font-medium truncate">{exp.description}</p>
-                        {exp.vendor && <p className="text-xs text-zinc-500">{exp.vendor}</p>}
-                      </div>
-                      <div className="flex items-center gap-3 flex-shrink-0 ml-3">
-                        <span className={`text-xs font-medium ${eCfg.color}`}>{eCfg.label}</span>
-                        <span className="text-sm font-semibold text-foreground">${Number(exp.amount).toLocaleString()}</span>
-                      </div>
+              <div className="overflow-hidden rounded-[3px] border border-rule">
+                {expenses.map((exp) => (
+                  <div
+                    key={exp.id}
+                    className="flex items-center justify-between gap-3 border-b border-rule bg-surface px-4 py-3 last:border-0"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-ink">{exp.description}</p>
+                      {exp.vendor && <p className="text-xs text-ink-muted">{exp.vendor}</p>}
                     </div>
-                  )
-                })}
+                    <div className="flex flex-shrink-0 items-center gap-3">
+                      <Stamp tone={statusTone(exp.status)}>{statusLabel(exp.status)}</Stamp>
+                      <span className="font-mono text-sm font-semibold tabular-nums text-ink">
+                        ${Number(exp.amount).toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
-          </div>
+          </Card>
         </div>
 
-        {/* Sidebar */}
         <div className="space-y-4">
-          {/* Stats */}
-          {[
-            { label: 'Task Amount', value: `$${Number(task.amount).toLocaleString()}`, icon: DollarSign, color: 'text-primary', bg: 'bg-primary/10' },
-            { label: 'Expenses Logged', value: `$${totalExpenses.toLocaleString()}`, icon: Receipt, color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
-          ].map((s) => (
-            <div key={s.label} className="p-4 rounded-lg bg-card border border-border flex items-center gap-3">
-              <div className={`w-9 h-9 rounded-lg ${s.bg} flex items-center justify-center flex-shrink-0`}>
-                <s.icon className={`w-4 h-4 ${s.color}`} />
-              </div>
-              <div>
-                <div className="text-lg font-bold text-foreground">{s.value}</div>
-                <div className="text-xs text-zinc-500">{s.label}</div>
+          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[3px] border border-rule bg-rule lg:grid-cols-1">
+            <div className="bg-surface p-4">
+              <div className="label">Task amount</div>
+              <div className="mt-1 font-mono text-lg font-semibold tabular-nums text-ink">
+                ${Number(task.amount).toLocaleString()}
               </div>
             </div>
-          ))}
+            <div className="bg-surface p-4">
+              <div className="label">Expenses logged</div>
+              <div className="mt-1 font-mono text-lg font-semibold tabular-nums text-ink">
+                ${totalExpenses.toLocaleString()}
+              </div>
+            </div>
+          </div>
 
-          {/* Assignee */}
-          <div className="p-4 rounded-lg bg-card border border-border">
-            <h3 className="text-xs font-medium text-zinc-500 mb-3 uppercase tracking-wide">Assignee</h3>
+          <Card className="p-4">
+            <h3 className="label mb-3">Assignee</h3>
             {assignee ? (
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center text-secondary text-sm font-bold flex-shrink-0">
+                <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-rule bg-surface-sunken font-mono text-sm font-semibold text-ink">
                   {assignee.name?.[0]?.toUpperCase() ?? assignee.email?.[0]?.toUpperCase() ?? '?'}
                 </div>
-                <div>
-                  <p className="text-sm text-foreground">{assignee.name ?? assignee.email}</p>
-                </div>
+                <p className="text-sm text-ink">{assignee.name ?? assignee.email}</p>
               </div>
             ) : (
-              <div className="flex items-center gap-2 text-zinc-500">
-                <User className="w-4 h-4" />
+              <div className="flex items-center gap-2 text-ink-muted">
+                <User className="h-4 w-4" strokeWidth={1.75} />
                 <span className="text-sm">Unassigned</span>
               </div>
             )}
-          </div>
+          </Card>
 
-          {/* Metadata */}
-          <div className="p-4 rounded-lg bg-card border border-border space-y-3">
-            <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-wide">Details</h3>
+          <Card className="space-y-3 p-4">
+            <h3 className="label">Details</h3>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-zinc-500">Status</span>
-                <span className={cfg.color}>{cfg.label}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-zinc-500">Created</span>
-                <span className="text-zinc-300">
+                <span className="text-ink-muted">Created</span>
+                <span className="font-mono text-ink">
                   {new Date(task.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </span>
               </div>
             </div>
-            
-            {/* Payout Actions */}
+
             {isOwner && task.status === 'COMPLETED' && (
-              <div className="pt-3 border-t border-border mt-3">
+              <div className="mt-3 border-t border-rule pt-3">
                 {existingPayment ? (
-                  <div className="w-full flex justify-center py-2.5 rounded-lg bg-green-500/10 text-green-400 text-sm font-medium border border-green-500/20">
-                    <CheckCircle2 className="w-4 h-4 mr-2" />
-                    Payment {existingPayment.status}
+                  <div className="flex w-full items-center justify-center gap-2 rounded-[3px] border border-approved/30 bg-approved-soft py-2.5 text-sm font-medium text-approved">
+                    <CheckCircle2 className="h-4 w-4" strokeWidth={1.75} />
+                    Payment {existingPayment.status.toLowerCase()}
                   </div>
                 ) : (
                   <PayoutButton taskId={task.id} />
                 )}
               </div>
             )}
-          </div>
+          </Card>
         </div>
       </div>
     </div>

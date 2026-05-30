@@ -1,56 +1,179 @@
 @import "tailwindcss";
 
+/*
+  CostPacket — "Field Ledger" design system.
+  Warm paper + ink, blueprint-blue accent, stamp-ink status colors.
+  Light is the base theme; .dark and .oled override the custom properties.
+*/
+
 @theme {
-  --color-background: #0f100d;
-  --color-foreground: #faf9f5;
-  
-  --color-card: #171813;
-  --color-card-foreground: #faf9f5;
+  /* Type — wired from next/font CSS variables set on <html> */
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", monospace;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
 
-  --color-primary: #d97757;
-  --color-primary-foreground: #141413;
+  /* Paper + ink neutral ramp (one ramp, no zinc/stone mixing) */
+  --color-paper: #f1ece1;
+  --color-surface: #faf6ee;
+  --color-surface-sunken: #e8e1d2;
+  --color-ink: #1b1a16;
+  --color-ink-muted: #6c6557;
+  --color-ink-faint: #989083;
+  --color-rule: #d8cfbd;
+  --color-rule-strong: #c3b8a1;
 
-  --color-secondary: #6a9bcc;
-  --color-secondary-foreground: #141413;
-  
-  --color-muted: #3f4039;
-  --color-muted-foreground: #b0aea5;
+  /* Brand accent — blueprint blue (links, focus, active, the wordmark mark) */
+  --color-accent: #2348cf;
+  --color-accent-soft: #e6eafb;
 
-  --color-border: #2c2d27;
-  --radius: 0.5rem;
+  /* Status — rubber-stamp inks */
+  --color-approved: #1f7a3d;
+  --color-approved-soft: #e3efe5;
+  --color-pending: #a8530a;
+  --color-pending-soft: #f4e8d8;
+  --color-rejected: #b02a1f;
+  --color-rejected-soft: #f5e0dd;
+
+  /* Legacy aliases — keep existing color utilities (bg, text, border) working
+     while screens are migrated. Primary action = ink; secondary = blue. */
+  --color-background: var(--color-paper);
+  --color-foreground: var(--color-ink);
+  --color-card: var(--color-surface);
+  --color-card-foreground: var(--color-ink);
+  --color-primary: var(--color-ink);
+  --color-primary-foreground: #faf6ee;
+  --color-secondary: var(--color-accent);
+  --color-secondary-foreground: #ffffff;
+  --color-muted: var(--color-surface-sunken);
+  --color-muted-foreground: var(--color-ink-muted);
+  --color-border: var(--color-rule);
+
+  --radius: 0.25rem;
 }
 
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  /* faint newsprint grain over the paper color */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 h1,
 h2,
 h3,
 .font-display {
-  font-family: Poppins, Arial, Helvetica, sans-serif;
-  letter-spacing: 0;
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+  font-weight: 600;
 }
 
-* {
-  border-color: var(--color-border);
+/* Numerals: tabular by default wherever the mono face is used */
+.font-mono,
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
 }
 
-/* Themes */
-html.oled body {
-  --color-background: #000000;
-  --color-border: #111111;
+/* Default border color = the ledger rule token (Tailwind v4 defaults to currentColor) */
+*,
+::after,
+::before {
+  border-color: var(--color-rule);
 }
 
-html.light body {
-  --color-background: #faf9f5;
-  --color-foreground: #141413;
-  --color-card: #ffffff;
-  --color-card-foreground: #141413;
-  --color-muted: #e8e6dc;
-  --color-muted-foreground: #646158;
-  --color-border: #dad7cb;
+/* A small-caps, letter-spaced label used for kickers, table headers, meta */
+.label {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.6875rem;
+  color: var(--color-ink-muted);
+}
+
+/* Rubber-stamp status chip */
+.stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 0.125rem 0.5rem;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+}
+
+/* Faint ledger column ruling for receipt/packet surfaces */
+.ledger-rules {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent calc(2rem - 1px),
+    var(--color-rule) calc(2rem - 1px),
+    var(--color-rule) 2rem
+  );
+}
+
+/* ---- Dark "carbon" theme (also the base for OLED) ---- */
+.dark,
+.oled {
+  --color-paper: #15140f;
+  --color-surface: #1d1c15;
+  --color-surface-sunken: #100f0a;
+  --color-ink: #f1ece1;
+  --color-ink-muted: #a39c8b;
+  --color-ink-faint: #6c6557;
+  --color-rule: #312e24;
+  --color-rule-strong: #423d2f;
+
+  --color-accent: #93a6ff;
+  --color-accent-soft: #1a2147;
+
+  --color-approved: #6dbf86;
+  --color-approved-soft: #16241a;
+  --color-pending: #d99449;
+  --color-pending-soft: #2a1f12;
+  --color-rejected: #e08178;
+  --color-rejected-soft: #2a1513;
+
+  --color-primary: #f1ece1;
+  --color-primary-foreground: #15140f;
+  --color-secondary: var(--color-accent);
+  --color-secondary-foreground: #15140f;
+}
+
+/* ---- OLED: dark tokens above + true black ---- */
+.oled {
+  --color-paper: #000000;
+  --color-surface: #0b0b09;
+  --color-surface-sunken: #050504;
+  --color-rule: #1a1a14;
+  --color-rule-strong: #2a2920;
+}
+
+/* Page-load reveal (staggered via inline animation-delay) */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.reveal {
+  animation: reveal-up 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    animation: none;
+  }
 }

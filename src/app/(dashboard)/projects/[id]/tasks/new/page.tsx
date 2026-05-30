@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase-server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, ClipboardList } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { NewTaskForm } from '@/components/features/new-task-form'
 
 export default async function NewTaskPage({
@@ -14,7 +14,6 @@ export default async function NewTaskPage({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  // Verify project exists and user is owner
   const { data: project } = await supabase
     .from('projects')
     .select('id, name, owner_id')
@@ -23,7 +22,6 @@ export default async function NewTaskPage({
 
   if (!project || project.owner_id !== user.id) notFound()
 
-  // Fetch subcontractors / team for assignment
   const { data: members } = await supabase
     .from('project_members')
     .select('user_id, users(id, name, email)')
@@ -35,23 +33,19 @@ export default async function NewTaskPage({
   })
 
   return (
-    <div className="p-8 max-w-2xl mx-auto">
+    <div className="mx-auto max-w-2xl p-6 sm:p-8">
       <Link
         href={`/projects/${id}`}
-        className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-foreground transition-colors mb-8"
+        className="mb-6 inline-flex items-center gap-2 text-sm text-ink-muted transition-colors hover:text-ink"
       >
-        <ArrowLeft className="w-4 h-4" />
+        <ArrowLeft className="h-4 w-4" strokeWidth={1.75} />
         Back to {project.name}
       </Link>
 
-      <div className="flex items-center gap-3 mb-8">
-        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-          <ClipboardList className="w-5 h-5 text-primary" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Add Task</h1>
-          <p className="text-zinc-400 text-sm">Create a task under {project.name}</p>
-        </div>
+      <div className="mb-6 border-b border-rule pb-6">
+        <p className="label mb-2">New task</p>
+        <h1 className="font-display text-3xl text-ink">Add a task</h1>
+        <p className="mt-1 text-sm text-ink-muted">Create a task under {project.name}.</p>
       </div>
 
       <NewTaskForm projectId={id} assignees={assignees} />

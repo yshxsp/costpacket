@@ -1,10 +1,10 @@
 import { createClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
-import {
-  FolderKanban, CheckCircle2, Clock, DollarSign,
-  TrendingUp, AlertCircle, ArrowUpRight
-} from 'lucide-react'
 import Link from 'next/link'
+import { PageShell, PageHeader } from '@/components/ui/page'
+import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { EmptyState } from '@/components/ui/empty'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -19,7 +19,6 @@ export default async function DashboardPage() {
 
   const role = profile?.role ?? 'SUBCONTRACTOR'
 
-  // Fetch stats based on role
   let projectsCount = 0
   let tasksTotal = 0
   let tasksDone = 0
@@ -56,7 +55,6 @@ export default async function DashboardPage() {
       .eq('status', 'PAID')
     paymentsTotal = payments?.reduce((sum, p) => sum + Number(p.amount), 0) ?? 0
   } else {
-    // Subcontractor: only their assigned tasks and earnings
     const { count: tt } = await supabase
       .from('tasks')
       .select('*', { count: 'exact', head: true })
@@ -79,127 +77,109 @@ export default async function DashboardPage() {
   }
 
   const completionRate = tasksTotal > 0 ? Math.round((tasksDone / tasksTotal) * 100) : 0
+  const isContractor = role !== 'SUBCONTRACTOR'
 
-  const stats = role !== 'SUBCONTRACTOR'
+  const stats = isContractor
     ? [
-        { label: 'Active Projects', value: projectsCount, icon: FolderKanban, color: 'text-secondary', bg: 'bg-secondary/10', href: '/projects' },
-        { label: 'Tasks Completed', value: `${tasksDone} / ${tasksTotal}`, icon: CheckCircle2, color: 'text-green-400', bg: 'bg-green-500/10', href: '/tasks' },
-        { label: 'Pending Expenses', value: expensesPending, icon: AlertCircle, color: 'text-yellow-400', bg: 'bg-yellow-500/10', href: '/expenses' },
-        { label: 'Total Paid Out', value: `$${paymentsTotal.toLocaleString()}`, icon: DollarSign, color: 'text-primary', bg: 'bg-primary/10', href: '/payments' },
+        { label: 'Active projects', value: projectsCount, href: '/projects' },
+        { label: 'Tasks completed', value: `${tasksDone} / ${tasksTotal}`, href: '/tasks' },
+        { label: 'Pending expenses', value: expensesPending, href: '/expenses' },
+        { label: 'Total paid out', value: `$${paymentsTotal.toLocaleString()}`, href: '/payments' },
       ]
     : [
-        { label: 'My Tasks', value: tasksTotal, icon: ClipboardList2, color: 'text-secondary', bg: 'bg-secondary/10', href: '/tasks' },
-        { label: 'Completed', value: tasksDone, icon: CheckCircle2, color: 'text-green-400', bg: 'bg-green-500/10', href: '/tasks' },
-        { label: 'Completion Rate', value: `${completionRate}%`, icon: TrendingUp, color: 'text-primary', bg: 'bg-primary/10', href: '/tasks' },
-        { label: 'Total Earned', value: `$${paymentsTotal.toLocaleString()}`, icon: DollarSign, color: 'text-green-400', bg: 'bg-green-500/10', href: '/payments' },
+        { label: 'My tasks', value: tasksTotal, href: '/tasks' },
+        { label: 'Completed', value: tasksDone, href: '/tasks' },
+        { label: 'Completion rate', value: `${completionRate}%`, href: '/tasks' },
+        { label: 'Total earned', value: `$${paymentsTotal.toLocaleString()}`, href: '/payments' },
       ]
 
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
   const firstName = profile?.name?.split(' ')[0] ?? 'there'
+  const dateline = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground mb-1">
-          {greeting}, {firstName}
-        </h1>
-        <p className="text-zinc-400 text-sm">
-          Receipt packets, approvals, and payouts at a glance.
-        </p>
-      </div>
+    <PageShell>
+      <PageHeader
+        kicker={dateline}
+        title={`${greeting}, ${firstName}`}
+        description="Receipt packets, approvals, and payouts at a glance."
+      />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[3px] border border-rule bg-rule lg:grid-cols-4">
         {stats.map((stat) => (
           <Link
             key={stat.label}
             href={stat.href}
-            className="group p-5 rounded-lg bg-card border border-border hover:bg-muted/50 transition-all"
+            className="group bg-surface p-5 transition-colors hover:bg-surface-sunken"
           >
-            <div className="flex items-start justify-between mb-3">
-              <div className={`w-10 h-10 rounded-lg ${stat.bg} flex items-center justify-center`}>
-                <stat.icon className={`w-5 h-5 ${stat.color}`} />
-              </div>
-              <ArrowUpRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
+            <div className="label">{stat.label}</div>
+            <div className="mt-2 font-mono text-2xl font-semibold tabular-nums text-ink">
+              {stat.value}
             </div>
-            <div className="text-2xl font-bold text-foreground mb-1">{stat.value}</div>
-            <div className="text-xs text-zinc-500 font-medium">{stat.label}</div>
+            <div className="mt-1 font-mono text-xs text-ink-faint opacity-0 transition-opacity group-hover:opacity-100">
+              View →
+            </div>
           </Link>
         ))}
       </div>
 
-      {role !== 'SUBCONTRACTOR' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div className="p-6 rounded-lg bg-card border border-border">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-foreground">Task Completion</h2>
-              <span className="text-sm text-zinc-400">{completionRate}%</span>
+      {isContractor && (
+        <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <Card className="p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="font-display text-lg text-ink">Task completion</h2>
+              <span className="font-mono text-sm tabular-nums text-ink-muted">{completionRate}%</span>
             </div>
-            <div className="w-full h-2 rounded-full bg-muted/60 overflow-hidden">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-primary to-[#e2a083] transition-all duration-700"
-                style={{ width: `${completionRate}%` }}
-              />
+            <div className="h-2 w-full overflow-hidden rounded-full bg-surface-sunken">
+              <div className="h-full bg-accent transition-all duration-700" style={{ width: `${completionRate}%` }} />
             </div>
-            <div className="flex justify-between mt-2 text-xs text-zinc-500">
+            <div className="mt-2 flex justify-between font-mono text-xs text-ink-faint">
               <span>{tasksDone} done</span>
               <span>{tasksTotal - tasksDone} remaining</span>
             </div>
-          </div>
+          </Card>
 
-          <div className="p-6 rounded-lg bg-card border border-border">
-            <h2 className="font-semibold text-foreground mb-4">Quick Actions</h2>
-            <div className="space-y-2">
+          <Card className="p-6">
+            <h2 className="mb-4 font-display text-lg text-ink">Quick actions</h2>
+            <div className="divide-y divide-rule">
               {[
-                { label: 'Create new project', href: '/projects/new', color: 'text-secondary' },
-                { label: 'Review pending expenses', href: '/expenses', color: 'text-yellow-400' },
-                { label: 'Process payments', href: '/payments', color: 'text-green-400' },
+                { label: 'Create a new project', href: '/projects/new' },
+                { label: 'Review pending expenses', href: '/expenses' },
+                { label: 'Process payments', href: '/payments' },
               ].map((action) => (
                 <Link
                   key={action.href}
                   href={action.href}
-                  className={`flex items-center gap-2 text-sm ${action.color} hover:underline transition-all`}
+                  className="group flex items-center justify-between py-2.5 text-sm text-ink transition-colors hover:text-accent"
                 >
-                  <ArrowUpRight className="w-3.5 h-3.5" />
                   {action.label}
+                  <span className="font-mono text-ink-faint transition-colors group-hover:text-accent">→</span>
                 </Link>
               ))}
             </div>
-          </div>
+          </Card>
         </div>
       )}
 
       {tasksTotal === 0 && (
-        <div className="mt-8 p-8 rounded-lg border border-dashed border-border text-center">
-          <Clock className="w-10 h-10 text-zinc-600 mx-auto mb-3" />
-          <p className="text-zinc-400 font-medium">No data yet</p>
-          <p className="text-zinc-600 text-sm mt-1">
-            {role !== 'SUBCONTRACTOR'
-              ? 'Create your first project to get started.'
-              : 'You have no tasks assigned yet.'}
-          </p>
-          {role !== 'SUBCONTRACTOR' && (
-            <Link
-              href="/projects/new"
-              className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-[#c96c4f] transition-all"
-            >
-              <FolderKanban className="w-4 h-4" />
-              New Project
-            </Link>
-          )}
+        <div className="mt-4">
+          <EmptyState
+            title="No data yet"
+            description={
+              isContractor
+                ? 'Create your first project to get started.'
+                : 'You have no tasks assigned yet.'
+            }
+          >
+            {isContractor && (
+              <Button asChild>
+                <Link href="/projects/new">New project</Link>
+              </Button>
+            )}
+          </EmptyState>
         </div>
       )}
-    </div>
-  )
-}
-
-// Inline fallback icon (not exported from lucide as ClipboardList2)
-function ClipboardList2(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-      <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
-      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
-      <path d="M12 11h4M12 16h4M8 11h.01M8 16h.01" />
-    </svg>
+    </PageShell>
   )
 }

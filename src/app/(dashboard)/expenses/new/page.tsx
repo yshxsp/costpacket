@@ -3,8 +3,11 @@
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Receipt, Loader2, ChevronDown, ImagePlus, CheckCircle2 } from 'lucide-react'
+import { ArrowLeft, Receipt, Loader2, ImagePlus, CheckCircle2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase'
+import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Field, Input, Select } from '@/components/ui/field'
 
 export default function NewExpensePage() {
   const router = useRouter()
@@ -17,8 +20,7 @@ export default function NewExpensePage() {
   const [error, setError] = useState<string | null>(null)
   const [tasks, setTasks] = useState<{ id: string; title: string }[]>([])
   const [tasksLoaded, setTasksLoaded] = useState(false)
-  
-  // Use uncontrolled refs or state for form fields to handle auto-fill
+
   const [formDataState, setFormDataState] = useState({ description: '', vendor: '', amount: '' })
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,14 +29,14 @@ export default function NewExpensePage() {
 
     setParsingAI(true)
     setError(null)
-    
+
     try {
       const data = new FormData()
       data.append('file', file)
-      
+
       const { parseReceipt } = await import('@/app/actions/parse-receipt')
       const res = await parseReceipt(data)
-      
+
       if (res.receiptUrl) setReceiptUrl(res.receiptUrl)
       if (res.error) {
         setError(res.error)
@@ -86,7 +88,10 @@ export default function NewExpensePage() {
 
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { router.push('/login'); return }
+    if (!user) {
+      router.push('/login')
+      return
+    }
 
     const { error: insertError } = await supabase.from('expenses').insert({
       description,
@@ -113,107 +118,84 @@ export default function NewExpensePage() {
   }
 
   return (
-    <div className="p-8 max-w-2xl mx-auto">
+    <div className="mx-auto max-w-2xl p-6 sm:p-8">
       <Link
         href="/expenses"
-        className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-foreground transition-colors mb-8"
+        className="mb-6 inline-flex items-center gap-2 text-sm text-ink-muted transition-colors hover:text-ink"
       >
-        <ArrowLeft className="w-4 h-4" />
-        Back to Expenses
+        <ArrowLeft className="h-4 w-4" strokeWidth={1.75} />
+        Back to expenses
       </Link>
 
-      <div className="flex items-center gap-3 mb-8">
-        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-          <Receipt className="w-5 h-5 text-primary" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Submit Expense</h1>
-          <p className="text-zinc-400 text-sm">Log an expense for review and payout</p>
-        </div>
+      <div className="mb-6 border-b border-rule pb-6">
+        <p className="label mb-2">New expense</p>
+        <h1 className="font-display text-3xl text-ink">Submit an expense</h1>
+        <p className="mt-1 text-sm text-ink-muted">Attach a receipt to auto-fill, then log it for review.</p>
       </div>
 
-      <div className="bg-card border border-border rounded-lg p-8">
+      <Card className="p-6 md:p-8">
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="p-5 rounded-lg border border-dashed border-secondary/30 bg-secondary/10 relative overflow-hidden transition-all duration-300">
+          {/* Receipt dropzone */}
+          <div className="relative overflow-hidden rounded-[3px] border border-dashed border-rule-strong bg-surface-sunken">
             {parsingAI && (
-              <div className="absolute inset-0 bg-card/95 z-10 flex flex-col items-center justify-center gap-2">
-                <Loader2 className="w-6 h-6 text-secondary animate-spin" />
-                <span className="text-sm font-medium text-secondary">Scanning receipt...</span>
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-surface/95">
+                <Loader2 className="h-6 w-6 animate-spin text-accent" />
+                <span className="label text-accent">Scanning receipt…</span>
               </div>
             )}
-            <input 
-              type="file" 
-              accept="image/*" 
+            <input
+              type="file"
+              accept="image/*"
               onChange={handleFileChange}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+              className="absolute inset-0 h-full w-full cursor-pointer opacity-0 disabled:cursor-not-allowed"
               disabled={parsingAI}
             />
-            <div className="flex flex-col items-center justify-center text-center gap-2 pointer-events-none">
+            <div className="pointer-events-none flex flex-col items-center justify-center gap-2 px-6 py-8 text-center">
               {!receiptUrl ? (
                 <>
-                  <div className="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center mb-1">
-                    <ImagePlus className="w-6 h-6 text-secondary" />
-                  </div>
-                  <h3 className="text-foreground font-medium">Upload Receipt</h3>
-                  <p className="text-zinc-400 text-xs max-w-xs leading-relaxed">
-                    Attach a receipt photo to prefill vendor, amount, and details.
+                  <ImagePlus className="h-7 w-7 text-ink-faint" strokeWidth={1.5} />
+                  <h3 className="font-medium text-ink">Upload receipt</h3>
+                  <p className="max-w-xs text-xs leading-relaxed text-ink-muted">
+                    Attach a photo and we&apos;ll prefill vendor, amount, and description.
                   </p>
                 </>
               ) : (
                 <>
-                  <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center mb-1">
-                    <CheckCircle2 className="w-6 h-6 text-green-400" />
-                  </div>
-                  <h3 className="text-foreground font-medium">Receipt Processing Complete</h3>
-                  <p className="text-green-400 text-xs font-medium">Click here to upload a different image.</p>
+                  <CheckCircle2 className="h-7 w-7 text-approved" strokeWidth={1.5} />
+                  <h3 className="font-medium text-ink">Receipt attached</h3>
+                  <p className="text-xs font-medium text-approved">Click to upload a different image.</p>
                 </>
               )}
             </div>
           </div>
 
-          <div className="h-px w-full bg-gradient-to-r from-transparent via-border to-transparent my-6" />
-
-          {/* Description */}
-          <div className="space-y-1.5">
-            <label htmlFor="description" className="text-sm font-medium text-zinc-300">
-              Description <span className="text-primary">*</span>
-            </label>
-            <input
+          <Field label="Description" htmlFor="description">
+            <Input
               id="description"
               name="description"
               type="text"
               required
               value={formDataState.description}
-              onChange={(e) => setFormDataState(s => ({ ...s, description: e.target.value }))}
+              onChange={(e) => setFormDataState((s) => ({ ...s, description: e.target.value }))}
               placeholder="e.g. Copper wiring — 200ft"
-              className="w-full px-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
             />
-          </div>
+          </Field>
 
-          {/* Vendor */}
-          <div className="space-y-1.5">
-            <label htmlFor="vendor" className="text-sm font-medium text-zinc-300">
-              Vendor / Store <span className="text-zinc-600">(optional)</span>
-            </label>
-            <input
+          <Field label="Vendor / store" htmlFor="vendor" hint="Optional.">
+            <Input
               id="vendor"
               name="vendor"
               type="text"
               value={formDataState.vendor}
-              onChange={(e) => setFormDataState(s => ({ ...s, vendor: e.target.value }))}
+              onChange={(e) => setFormDataState((s) => ({ ...s, vendor: e.target.value }))}
               placeholder="e.g. Home Depot"
-              className="w-full px-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
             />
-          </div>
+          </Field>
 
-          {/* Amount */}
-          <div className="space-y-1.5">
-            <label htmlFor="amount" className="text-sm font-medium text-zinc-300">
-              Amount (USD) <span className="text-primary">*</span>
-            </label>
+          <Field label="Amount (USD)" htmlFor="amount">
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-sm">$</span>
-              <input
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 font-mono text-sm text-ink-faint">$</span>
+              <Input
                 id="amount"
                 name="amount"
                 type="number"
@@ -221,70 +203,50 @@ export default function NewExpensePage() {
                 step="0.01"
                 required
                 value={formDataState.amount}
-                onChange={(e) => setFormDataState(s => ({ ...s, amount: e.target.value }))}
+                onChange={(e) => setFormDataState((s) => ({ ...s, amount: e.target.value }))}
                 placeholder="0.00"
-                className="w-full pl-7 pr-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
+                className="pl-7 font-mono tabular-nums"
               />
             </div>
-          </div>
+          </Field>
 
-          {/* Task */}
-          <div className="space-y-1.5">
-            <label htmlFor="task_id" className="text-sm font-medium text-zinc-300">
-              Linked Task <span className="text-zinc-600">(optional)</span>
-            </label>
-            <div className="relative">
-              <select
-                id="task_id"
-                name="task_id"
-                defaultValue={defaultTaskId}
-                onFocus={loadTasks}
-                className="w-full appearance-none px-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all pr-9"
-              >
-                <option value="" className="bg-zinc-900">No task</option>
-                {tasks.map((t) => (
-                  <option key={t.id} value={t.id} className="bg-zinc-900">{t.title}</option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
-            </div>
-          </div>
+          <Field label="Linked task" htmlFor="task_id" hint="Optional.">
+            <Select id="task_id" name="task_id" defaultValue={defaultTaskId} onFocus={loadTasks}>
+              <option value="">No task</option>
+              {tasks.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.title}
+                </option>
+              ))}
+            </Select>
+          </Field>
 
-          {/* Error */}
           {error && (
-            <div className="px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+            <div className="rounded-[3px] border border-rejected/30 bg-rejected-soft px-3 py-2 text-sm text-rejected">
               {error}
             </div>
           )}
 
-          {/* Actions */}
-          <div className="flex gap-3 pt-2">
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:bg-[#c96c4f] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
+          <div className="flex gap-3 pt-1">
+            <Button type="submit" disabled={loading} className="flex-1">
               {loading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                   Submitting…
                 </>
               ) : (
                 <>
-                  <Receipt className="w-4 h-4" />
-                  Submit Expense
+                  <Receipt className="h-4 w-4" strokeWidth={1.75} />
+                  Submit expense
                 </>
               )}
-            </button>
-            <Link
-              href="/expenses"
-              className="px-5 py-2.5 rounded-lg bg-card border border-border text-zinc-400 hover:text-foreground hover:bg-muted/60 text-sm font-medium transition-all"
-            >
-              Cancel
-            </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/expenses">Cancel</Link>
+            </Button>
           </div>
         </form>
-      </div>
+      </Card>
     </div>
   )
 }

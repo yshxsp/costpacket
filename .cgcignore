@@ -1,4 +1,4 @@
-# CodeGraphContext ignore rules for BuildOps Lite / CostPacket.
+# CodeGraphContext ignore rules for CostPacket.
 # Keep dependency, generated, binary, secret, and build output files out of the graph.
 
 # Generic

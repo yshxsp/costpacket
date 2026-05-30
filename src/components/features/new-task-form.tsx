@@ -3,8 +3,12 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ClipboardList, Loader2, ChevronDown } from 'lucide-react'
+import { ClipboardList, Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase'
+import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Field, Input, Textarea, Select } from '@/components/ui/field'
+import { cn } from '@/lib/utils'
 
 const STATUS_OPTIONS = [
   { value: 'PENDING', label: 'Pending' },
@@ -68,95 +72,50 @@ export function NewTaskForm({
   }
 
   return (
-    <div className="bg-card border border-border rounded-lg p-8">
+    <Card className="p-6 md:p-8">
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Title */}
-        <div className="space-y-1.5">
-          <label htmlFor="title" className="text-sm font-medium text-zinc-300">
-            Task Title <span className="text-primary">*</span>
-          </label>
-          <input
-            id="title"
-            name="title"
-            type="text"
-            required
-            placeholder="e.g. Install electrical wiring — Floor 2"
-            className="w-full px-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
-          />
-        </div>
+        <Field label="Task title" htmlFor="title">
+          <Input id="title" name="title" type="text" required placeholder="e.g. Install electrical wiring — Floor 2" />
+        </Field>
 
-        {/* Description */}
-        <div className="space-y-1.5">
-          <label htmlFor="description" className="text-sm font-medium text-zinc-300">
-            Description <span className="text-zinc-600">(optional)</span>
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            rows={3}
-            placeholder="Scope of work, materials, special instructions…"
-            className="w-full px-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all resize-none"
-          />
-        </div>
+        <Field label="Description" htmlFor="description" hint="Optional — scope, materials, instructions.">
+          <Textarea id="description" name="description" rows={3} placeholder="Scope of work, materials, special instructions…" />
+        </Field>
 
-        {/* Payment Amount */}
-        <div className="space-y-1.5">
-          <label htmlFor="amount" className="text-sm font-medium text-zinc-300">
-            Payment Amount (USD)
-          </label>
+        <Field label="Payment amount (USD)" htmlFor="amount">
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-sm">$</span>
-            <input
-              id="amount"
-              name="amount"
-              type="number"
-              min="0"
-              step="0.01"
-              placeholder="0.00"
-              className="w-full pl-7 pr-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
-            />
+            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 font-mono text-sm text-ink-faint">$</span>
+            <Input id="amount" name="amount" type="number" min="0" step="0.01" placeholder="0.00" className="pl-7 font-mono tabular-nums" />
           </div>
-        </div>
+        </Field>
 
-        {/* Assignee */}
         {assignees.length > 0 && (
-          <div className="space-y-1.5">
-            <label htmlFor="assignee_id" className="text-sm font-medium text-zinc-300">
-              Assign To <span className="text-zinc-600">(optional)</span>
-            </label>
-            <div className="relative">
-              <select
-                id="assignee_id"
-                name="assignee_id"
-                defaultValue=""
-                className="w-full appearance-none px-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all pr-9"
-              >
-                <option value="" className="bg-zinc-900">Unassigned</option>
-                {assignees.map((a) => (
-                  <option key={a.id} value={a.id} className="bg-zinc-900">
-                    {a.label}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
-            </div>
-          </div>
+          <Field label="Assign to" htmlFor="assignee_id" hint="Optional.">
+            <Select id="assignee_id" name="assignee_id" defaultValue="">
+              <option value="">Unassigned</option>
+              {assignees.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.label}
+                </option>
+              ))}
+            </Select>
+          </Field>
         )}
 
-        {/* Status */}
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-zinc-300">Initial Status</label>
+          <span className="block text-sm font-medium text-ink">Initial status</span>
           <div className="grid grid-cols-2 gap-2">
             {STATUS_OPTIONS.map((opt) => (
               <button
                 key={opt.value}
                 type="button"
                 onClick={() => setStatus(opt.value)}
-                className={`py-2 px-3 rounded-lg border text-left text-sm transition-all ${
+                className={cn(
+                  'rounded-[3px] border px-3 py-2 text-left text-sm transition-colors',
                   status === opt.value
-                    ? 'border-primary/60 bg-primary/10 text-foreground font-medium'
-                    : 'border-border bg-card text-zinc-400 hover:bg-muted/60'
-                }`}
+                    ? 'border-accent bg-accent-soft font-medium text-ink'
+                    : 'border-rule bg-surface text-ink-muted hover:bg-surface-sunken hover:text-ink'
+                )}
               >
                 {opt.label}
               </button>
@@ -164,40 +123,31 @@ export function NewTaskForm({
           </div>
         </div>
 
-        {/* Error */}
         {error && (
-          <div className="px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+          <div className="rounded-[3px] border border-rejected/30 bg-rejected-soft px-3 py-2 text-sm text-rejected">
             {error}
           </div>
         )}
 
-        {/* Actions */}
-        <div className="flex gap-3 pt-2">
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:bg-[#c96c4f] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
+        <div className="flex gap-3 pt-1">
+          <Button type="submit" disabled={loading} className="flex-1">
             {loading ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
                 Saving…
               </>
             ) : (
               <>
-                <ClipboardList className="w-4 h-4" />
-                Create Task
+                <ClipboardList className="h-4 w-4" strokeWidth={1.75} />
+                Create task
               </>
             )}
-          </button>
-          <Link
-            href={`/projects/${projectId}`}
-            className="px-5 py-2.5 rounded-lg bg-card border border-border text-zinc-400 hover:text-foreground hover:bg-muted/60 text-sm font-medium transition-all"
-          >
-            Cancel
-          </Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link href={`/projects/${projectId}`}>Cancel</Link>
+          </Button>
         </div>
       </form>
-    </div>
+    </Card>
   )
 }

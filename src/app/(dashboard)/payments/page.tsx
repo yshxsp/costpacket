@@ -1,15 +1,9 @@
 import { createClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
-import { CreditCard, CheckCircle2, Clock, AlertCircle, Loader } from 'lucide-react'
-
-const statusConfig = {
-  PENDING: { label: 'Pending', color: 'text-yellow-400', bg: 'bg-yellow-500/10', dot: 'bg-yellow-400', icon: Clock },
-  PROCESSING: { label: 'Processing', color: 'text-blue-400', bg: 'bg-blue-500/10', dot: 'bg-blue-400', icon: Loader },
-  PAID: { label: 'Paid', color: 'text-green-400', bg: 'bg-green-500/10', dot: 'bg-green-400', icon: CheckCircle2 },
-  FAILED: { label: 'Failed', color: 'text-red-400', bg: 'bg-red-500/10', dot: 'bg-red-400', icon: AlertCircle },
-} as const
-
-type StatusKey = keyof typeof statusConfig
+import { PageShell, PageHeader } from '@/components/ui/page'
+import { EmptyState } from '@/components/ui/empty'
+import { Stamp, statusTone, statusLabel } from '@/components/ui/status'
+import { cn } from '@/lib/utils'
 
 export default async function PaymentsPage() {
   const supabase = await createClient()
@@ -43,87 +37,78 @@ export default async function PaymentsPage() {
   const totalPaid = payments?.filter((p) => p.status === 'PAID').reduce((s, p) => s + Number(p.amount), 0) ?? 0
   const totalPending = payments?.filter((p) => p.status === 'PENDING').reduce((s, p) => s + Number(p.amount), 0) ?? 0
 
-  return (
-    <div className="p-8 max-w-6xl mx-auto">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground mb-1">Payments</h1>
-        <p className="text-zinc-400 text-sm">
-          {role === 'SUBCONTRACTOR' ? 'Your payment history' : 'All subcontractor payouts'}
-        </p>
-      </div>
+  const summary = [
+    { label: 'Total paid', value: `$${totalPaid.toLocaleString()}` },
+    { label: 'Pending', value: `$${totalPending.toLocaleString()}` },
+    { label: 'Transactions', value: payments?.length ?? 0 },
+    { label: 'Paid count', value: payments?.filter((p) => p.status === 'PAID').length ?? 0 },
+  ]
 
-      {/* Summary */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {[
-          { label: 'Total Paid', value: `$${totalPaid.toLocaleString()}`, color: 'text-green-400', bg: 'bg-green-500/10' },
-          { label: 'Pending', value: `$${totalPending.toLocaleString()}`, color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
-          { label: 'Total Transactions', value: payments?.length ?? 0, color: 'text-secondary', bg: 'bg-secondary/10' },
-          { label: 'Paid Count', value: payments?.filter((p) => p.status === 'PAID').length ?? 0, color: 'text-primary', bg: 'bg-primary/10' },
-        ].map((s) => (
-          <div key={s.label} className="p-5 rounded-lg bg-card border border-border">
-            <div className={`text-2xl font-bold ${s.color} mb-1`}>{s.value}</div>
-            <div className="text-xs text-zinc-500">{s.label}</div>
+  return (
+    <PageShell>
+      <PageHeader
+        kicker="Payouts"
+        title="Payments"
+        description={role === 'SUBCONTRACTOR' ? 'Your payment history' : 'All subcontractor payouts'}
+      />
+
+      <div className="mb-8 grid grid-cols-2 gap-px overflow-hidden rounded-[3px] border border-rule bg-rule lg:grid-cols-4">
+        {summary.map((s) => (
+          <div key={s.label} className="bg-surface p-5">
+            <div className="label">{s.label}</div>
+            <div className="mt-2 font-mono text-2xl font-semibold tabular-nums text-ink">{s.value}</div>
           </div>
         ))}
       </div>
 
-      {/* Payments list */}
       {!payments || payments.length === 0 ? (
-        <div className="p-12 rounded-lg border border-dashed border-border text-center flex flex-col items-center">
-          <div className="w-16 h-16 rounded-lg bg-secondary/10 flex items-center justify-center mb-4">
-            <CreditCard className="w-8 h-8 text-secondary" />
-          </div>
-          <p className="text-foreground font-semibold mb-1">No payments yet</p>
-          <p className="text-zinc-500 text-sm">Payments will appear here once tasks are completed and approved.</p>
-        </div>
+        <EmptyState
+          title="No payments yet"
+          description="Payouts appear here once tasks are completed and approved."
+        />
       ) : (
-        <div className="rounded-lg bg-card border border-border overflow-hidden">
+        <div className="overflow-hidden rounded-[3px] border border-rule bg-surface">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-border">
-                <th className="text-left px-5 py-3.5 text-xs font-medium text-zinc-500 uppercase tracking-wide">Task</th>
-                {role !== 'SUBCONTRACTOR' && (
-                  <th className="text-left px-5 py-3.5 text-xs font-medium text-zinc-500 uppercase tracking-wide hidden md:table-cell">Recipient</th>
-                )}
-                <th className="text-left px-5 py-3.5 text-xs font-medium text-zinc-500 uppercase tracking-wide">Status</th>
-                <th className="text-left px-5 py-3.5 text-xs font-medium text-zinc-500 uppercase tracking-wide hidden sm:table-cell">Date</th>
-                <th className="text-right px-5 py-3.5 text-xs font-medium text-zinc-500 uppercase tracking-wide">Amount</th>
+              <tr className="border-b border-rule">
+                <Th>Task</Th>
+                {role !== 'SUBCONTRACTOR' && <Th className="hidden md:table-cell">Recipient</Th>}
+                <Th>Status</Th>
+                <Th className="hidden sm:table-cell">Date</Th>
+                <Th className="text-right">Amount</Th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
+            <tbody className="divide-y divide-rule">
               {payments.map((pmt) => {
-                const cfg = statusConfig[pmt.status as StatusKey] ?? statusConfig.PENDING
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const task = (pmt.tasks as any) as { id: string; title: string } | null
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const recipient = (pmt.users as any) as { name?: string; email?: string } | null
                 return (
-                  <tr key={pmt.id} className="group hover:bg-muted/40 transition-colors">
+                  <tr key={pmt.id} className="transition-colors hover:bg-surface-sunken">
                     <td className="px-5 py-4">
-                      <p className="text-sm font-medium text-foreground">{task?.title ?? '—'}</p>
+                      <p className="text-sm font-medium text-ink">{task?.title ?? '—'}</p>
                       {pmt.stripe_payout_id && (
-                        <p className="text-xs text-zinc-600 font-mono mt-0.5 truncate max-w-[180px]">{pmt.stripe_payout_id}</p>
+                        <p className="mt-0.5 max-w-[180px] truncate font-mono text-xs text-ink-faint">
+                          {pmt.stripe_payout_id}
+                        </p>
                       )}
                     </td>
                     {role !== 'SUBCONTRACTOR' && (
-                      <td className="px-5 py-4 hidden md:table-cell">
-                        <span className="text-sm text-zinc-400">{recipient?.name ?? recipient?.email ?? '—'}</span>
+                      <td className="hidden px-5 py-4 md:table-cell">
+                        <span className="text-sm text-ink-muted">{recipient?.name ?? recipient?.email ?? '—'}</span>
                       </td>
                     )}
                     <td className="px-5 py-4">
-                      <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${cfg.color}`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
-                        {cfg.label}
-                      </span>
+                      <Stamp tone={statusTone(pmt.status)}>{statusLabel(pmt.status)}</Stamp>
                     </td>
-                    <td className="px-5 py-4 hidden sm:table-cell">
-                      <span className="text-xs text-zinc-500">
+                    <td className="hidden px-5 py-4 sm:table-cell">
+                      <span className="font-mono text-xs text-ink-muted">
                         {new Date(pmt.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                       </span>
                     </td>
-                    <td className="px-5 py-4 text-right">
-                      <span className="text-sm font-bold text-foreground">${Number(pmt.amount).toLocaleString()}</span>
+                    <td className="px-5 py-4 text-right font-mono text-sm font-semibold tabular-nums text-ink">
+                      ${Number(pmt.amount).toLocaleString()}
                     </td>
                   </tr>
                 )
@@ -132,6 +117,10 @@ export default async function PaymentsPage() {
           </table>
         </div>
       )}
-    </div>
+    </PageShell>
   )
+}
+
+function Th({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <th className={cn('label px-5 py-3 text-left', className)}>{children}</th>
 }

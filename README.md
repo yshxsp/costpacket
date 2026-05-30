@@ -30,18 +30,48 @@ message threads.
 - **AI Engine:** [Google Gemini AI](https://aistudio.google.com/)
 - **Styling:** [Tailwind CSS 4](https://tailwindcss.com/)
 - **Payments:** [Stripe](https://stripe.com/)
+- **Hosting:** [Cloudflare Workers](https://workers.cloudflare.com/) via the [OpenNext](https://opennext.js.org/cloudflare) adapter
 
 ---
 
 ## Getting Started
 
 ```bash
-git clone https://github.com/yshxsp/buildops-lite.git
-cd buildops-lite
+git clone https://github.com/yshxsp/costpacket.git
+cd costpacket
 npm install
 cp .env.example .env.local
 npm run dev
 ```
+
+---
+
+## Deployment (Cloudflare Workers)
+
+CostPacket runs on Cloudflare Workers through the OpenNext adapter.
+
+```bash
+# one-time: authenticate wrangler with your Cloudflare account
+npx wrangler login
+
+# set runtime secrets (read by the Worker at request time)
+npx wrangler secret put NEXT_PUBLIC_SUPABASE_URL
+npx wrangler secret put NEXT_PUBLIC_SUPABASE_ANON_KEY
+npx wrangler secret put STRIPE_SECRET_KEY
+npx wrangler secret put GEMINI_API_KEY
+
+# build + run locally on the Workers runtime
+npm run preview
+
+# build + deploy
+npm run deploy
+```
+
+For local `npm run preview`, copy `.dev.vars.example` to `.dev.vars` and fill it in.
+
+> **Note:** auth runs in an **Edge** `src/middleware.ts` (not Next 16's Node-runtime
+> `proxy.ts`). The OpenNext Cloudflare adapter does not yet support Node-runtime proxy
+> ([opennextjs-cloudflare#962](https://github.com/opennextjs/opennextjs-cloudflare/issues/962)).
 
 ---
 

@@ -4,26 +4,25 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[3px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        default:
-          "bg-primary text-primary-foreground shadow-sm hover:bg-[#c96c4f]",
-        destructive:
-          "bg-red-500 text-white shadow-sm hover:bg-red-600",
+        // Primary action = ink (confident, document-like)
+        default: "bg-ink text-paper hover:bg-ink/90 shadow-sm",
+        // Blueprint-blue accent
+        accent: "bg-accent text-white hover:bg-accent/90 shadow-sm",
         outline:
-          "border border-border bg-transparent text-foreground hover:bg-muted/60",
-        secondary:
-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-[#5f8ebd]",
-        ghost: "text-foreground hover:bg-muted/60",
-        link: "text-primary underline-offset-4 hover:underline",
+          "border border-rule-strong bg-transparent text-ink hover:bg-surface-sunken",
+        ghost: "text-ink hover:bg-muted",
+        destructive: "bg-rejected text-white hover:bg-rejected/90 shadow-sm",
+        link: "text-accent underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-9 px-4 py-2",
-        sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-10 rounded-md px-8",
-        icon: "h-9 w-9",
+        sm: "h-8 px-3 text-xs",
+        default: "h-10 px-4 text-sm",
+        lg: "h-12 px-6 text-sm",
+        icon: "h-10 w-10",
       },
     },
     defaultVariants: {

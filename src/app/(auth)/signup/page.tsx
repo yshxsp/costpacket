@@ -3,8 +3,13 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Receipt, Mail, Lock, User, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase'
+import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Field, Input } from '@/components/ui/field'
+import { Wordmark } from '@/components/ui/wordmark'
+import { cn } from '@/lib/utils'
 
 const ROLES = [
   { value: 'CONTRACTOR', label: 'Contractor', description: 'Approve expenses' },
@@ -51,120 +56,95 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4 py-8">
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
       <div className="w-full max-w-md">
-        <div className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-            <Receipt className="w-5 h-5 text-primary" />
-          </div>
-          <span className="font-display text-xl font-bold text-foreground tracking-tight">
-            CostPacket
-          </span>
+        <div className="mb-8 flex justify-center">
+          <Wordmark />
         </div>
 
-        <div className="bg-card border border-border rounded-lg p-7 shadow-[0_20px_60px_rgba(0,0,0,0.24)] sm:p-8">
-          <h1 className="text-2xl font-bold text-foreground mb-1">Create your account</h1>
-          <p className="text-zinc-400 text-sm mb-6">Keep receipts and approvals tied to the right job.</p>
+        <Card className="p-7 shadow-[0_24px_60px_-30px_rgba(27,26,22,0.45)] sm:p-8">
+          <h1 className="font-display text-2xl text-ink">Create your account</h1>
+          <p className="mb-6 mt-1 text-sm text-ink-muted">
+            Keep receipts and approvals tied to the right job.
+          </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-1.5">
-              <label htmlFor="name" className="text-sm font-medium text-zinc-300">Full name</label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  required
-                  placeholder="John Smith"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
-                />
-              </div>
-            </div>
+            <Field label="Full name" htmlFor="name">
+              <Input id="name" name="name" type="text" required placeholder="John Smith" />
+            </Field>
+
+            <Field label="Email address" htmlFor="email">
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                required
+                autoComplete="email"
+                placeholder="you@company.com"
+              />
+            </Field>
+
+            <Field label="Password" htmlFor="password">
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                required
+                autoComplete="new-password"
+                placeholder="Min. 6 characters"
+              />
+            </Field>
 
             <div className="space-y-1.5">
-              <label htmlFor="email" className="text-sm font-medium text-zinc-300">Email address</label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  autoComplete="email"
-                  placeholder="you@company.com"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <label htmlFor="password" className="text-sm font-medium text-zinc-300">Password</label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  autoComplete="new-password"
-                  placeholder="Min. 6 characters"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#11120e] border border-border text-foreground placeholder-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-zinc-300">Your role</label>
+              <span className="block text-sm font-medium text-ink">Your role</span>
               <div className="grid grid-cols-2 gap-2">
-                {ROLES.map((role) => (
-                  <button
-                    key={role.value}
-                    type="button"
-                    onClick={() => setSelectedRole(role.value)}
-                    className={`p-3 rounded-lg border text-left transition-all ${
-                      selectedRole === role.value
-                        ? 'border-primary/60 bg-primary/10 text-foreground'
-                        : 'border-border bg-card text-zinc-400 hover:bg-muted/60'
-                    }`}
-                  >
-                    <div className="font-medium text-sm">{role.label}</div>
-                    <div className="text-xs mt-0.5 opacity-70">{role.description}</div>
-                  </button>
-                ))}
+                {ROLES.map((role) => {
+                  const active = selectedRole === role.value
+                  return (
+                    <button
+                      key={role.value}
+                      type="button"
+                      onClick={() => setSelectedRole(role.value)}
+                      className={cn(
+                        'rounded-[3px] border p-3 text-left transition-colors',
+                        active
+                          ? 'border-accent bg-accent-soft text-ink'
+                          : 'border-rule bg-surface text-ink-muted hover:bg-surface-sunken hover:text-ink'
+                      )}
+                    >
+                      <div className="text-sm font-medium">{role.label}</div>
+                      <div className="mt-0.5 text-xs opacity-80">{role.description}</div>
+                    </button>
+                  )
+                })}
               </div>
             </div>
 
             {error && (
-              <div className="px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+              <div className="rounded-[3px] border border-rejected/30 bg-rejected-soft px-3 py-2 text-sm text-rejected">
                 {error}
               </div>
             )}
 
-            <button
-              id="signup-submit"
-              type="submit"
-              disabled={loading}
-              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:bg-[#c96c4f] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
+            <Button id="signup-submit" type="submit" disabled={loading} className="w-full">
               {loading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                   Creating account…
                 </>
               ) : (
                 'Create account'
               )}
-            </button>
+            </Button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-zinc-500">
+          <p className="mt-6 text-center text-sm text-ink-muted">
             Already have an account?{' '}
-            <Link href="/login" className="whitespace-nowrap text-primary hover:text-primary transition-colors font-medium">
+            <Link href="/login" className="whitespace-nowrap font-medium text-accent hover:underline">
               Sign in
             </Link>
           </p>
-        </div>
+        </Card>
       </div>
     </div>
   )

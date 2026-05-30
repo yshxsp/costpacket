@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { DollarSign, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { createPayment } from '@/app/actions/payments'
 
@@ -18,7 +18,7 @@ export function PayoutButton({ taskId }: { taskId: string }) {
         toast.error(res.error)
       } else {
         toast.success('Payout initiated successfully!', {
-          description: 'The funds are on the way to the subcontractor.'
+          description: 'The funds are on the way to the subcontractor.',
         })
         router.refresh()
       }
@@ -33,14 +33,10 @@ export function PayoutButton({ taskId }: { taskId: string }) {
     <button
       onClick={handlePayout}
       disabled={loading}
-      className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-green-500 text-white text-sm font-medium hover:bg-green-600 transition-all shadow-lg shadow-green-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="flex w-full items-center justify-center gap-2 rounded-[3px] bg-approved px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-approved/90 disabled:cursor-not-allowed disabled:opacity-50"
     >
-      {loading ? (
-        <Loader2 className="w-4 h-4 animate-spin" />
-      ) : (
-        <DollarSign className="w-4 h-4" />
-      )}
-      {loading ? 'Processing...' : 'Send Payout'}
+      {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+      {loading ? 'Processing…' : 'Send payout'}
     </button>
   )
 }

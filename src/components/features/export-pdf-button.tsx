@@ -19,10 +19,10 @@ const PdfButtonImpl = dynamic(() => import('./export-pdf-button-impl'), {
   ssr: false,
   loading: () => (
     <button
-      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary/10 text-secondary text-sm font-medium border border-secondary/20 opacity-50 cursor-wait"
+      className="inline-flex h-10 cursor-wait items-center gap-2 rounded-[3px] border border-rule bg-surface px-4 text-sm font-medium text-ink-muted opacity-60"
       type="button"
     >
-      <Loader2 className="w-4 h-4 animate-spin" />
+      <Loader2 className="h-4 w-4 animate-spin" />
       PDF
     </button>
   ),

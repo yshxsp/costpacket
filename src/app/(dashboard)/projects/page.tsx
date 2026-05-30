@@ -1,17 +1,11 @@
 import { createClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import {
-  FolderKanban, Plus, ArrowUpRight,
-  Clock, CheckCircle2, PauseCircle,
-  DollarSign, ClipboardList,
-} from 'lucide-react'
-
-const statusConfig = {
-  ACTIVE: { label: 'Active', icon: Clock, color: 'text-primary', bg: 'bg-primary/10', dot: 'bg-primary' },
-  COMPLETED: { label: 'Completed', icon: CheckCircle2, color: 'text-green-400', bg: 'bg-green-500/10', dot: 'bg-green-400' },
-  ON_HOLD: { label: 'On Hold', icon: PauseCircle, color: 'text-yellow-400', bg: 'bg-yellow-500/10', dot: 'bg-yellow-400' },
-} as const
+import { Plus } from 'lucide-react'
+import { PageShell, PageHeader } from '@/components/ui/page'
+import { Button } from '@/components/ui/button'
+import { EmptyState } from '@/components/ui/empty'
+import { Stamp, statusTone, statusLabel } from '@/components/ui/status'
 
 export default async function ProjectsPage() {
   const supabase = await createClient()
@@ -26,7 +20,6 @@ export default async function ProjectsPage() {
 
   const role = profile?.role ?? 'SUBCONTRACTOR'
 
-  // Fetch projects based on role
   let projectsQuery = supabase
     .from('projects')
     .select('id, name, description, budget, status, created_at, owner_id')
@@ -35,11 +28,9 @@ export default async function ProjectsPage() {
   if (role === 'CONTRACTOR') {
     projectsQuery = projectsQuery.eq('owner_id', user.id)
   }
-  // ADMIN sees all, SUBCONTRACTOR sees projects they're members of (handled by RLS)
 
   const { data: projects } = await projectsQuery
 
-  // Fetch task counts per project
   const projectIds = projects?.map((p) => p.id) ?? []
   const { data: taskCounts } = await supabase
     .from('tasks')
@@ -55,34 +46,46 @@ export default async function ProjectsPage() {
     return acc
   }, {})
 
-  return (
-    <div className="p-8 max-w-6xl mx-auto">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground mb-1">Projects</h1>
-          <p className="text-zinc-400 text-sm">
-            {projects?.length ?? 0} project{projects?.length !== 1 ? 's' : ''} in your workspace
-          </p>
-        </div>
-        {role !== 'SUBCONTRACTOR' && (
-          <Link
-            href="/projects/new"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-[#c96c4f] transition-all"
-          >
-            <Plus className="w-4 h-4" />
-            New Project
-          </Link>
-        )}
-      </div>
+  const canCreate = role !== 'SUBCONTRACTOR'
 
-      {/* Projects Grid */}
+  return (
+    <PageShell>
+      <PageHeader
+        kicker="Workspace"
+        title="Projects"
+        description={`${projects?.length ?? 0} project${projects?.length !== 1 ? 's' : ''} in your workspace`}
+      >
+        {canCreate && (
+          <Button asChild>
+            <Link href="/projects/new">
+              <Plus className="h-4 w-4" strokeWidth={1.75} />
+              New project
+            </Link>
+          </Button>
+        )}
+      </PageHeader>
+
       {!projects || projects.length === 0 ? (
-        <EmptyState role={role} />
+        <EmptyState
+          title="No projects yet"
+          description={
+            canCreate
+              ? 'Create your first project and start logging job costs against it.'
+              : 'You have not been added to any projects yet.'
+          }
+        >
+          {canCreate && (
+            <Button asChild>
+              <Link href="/projects/new">
+                <Plus className="h-4 w-4" strokeWidth={1.75} />
+                Create project
+              </Link>
+            </Button>
+          )}
+        </EmptyState>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {projects.map((project) => {
-            const cfg = statusConfig[project.status as keyof typeof statusConfig] ?? statusConfig.ACTIVE
             const tasks = tasksByProject[project.id] ?? { total: 0, done: 0 }
             const pct = tasks.total > 0 ? Math.round((tasks.done / tasks.total) * 100) : 0
 
@@ -90,58 +93,34 @@ export default async function ProjectsPage() {
               <Link
                 key={project.id}
                 href={`/projects/${project.id}`}
-                className="group p-6 rounded-lg bg-card border border-border hover:bg-muted/50 transition-all flex flex-col gap-4"
+                className="group flex flex-col rounded-[3px] border border-rule bg-surface p-5 transition-colors hover:bg-surface-sunken"
               >
-                {/* Top row */}
-                <div className="flex items-start justify-between">
-                  <div className="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
-                    <FolderKanban className="w-5 h-5 text-secondary" />
-                  </div>
-                  <ArrowUpRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-300 transition-colors" />
-                </div>
-
-                {/* Name + description */}
-                <div>
-                  <h2 className="font-semibold text-foreground text-base leading-tight mb-1 group-hover:text-primary transition-colors">
+                <div className="flex items-start justify-between gap-3">
+                  <h2 className="font-display text-lg leading-tight text-ink transition-colors group-hover:text-accent">
                     {project.name}
                   </h2>
-                  {project.description && (
-                    <p className="text-zinc-500 text-xs line-clamp-2">{project.description}</p>
-                  )}
+                  <Stamp tone={statusTone(project.status)}>{statusLabel(project.status)}</Stamp>
                 </div>
 
-                {/* Stats row */}
-                <div className="flex items-center gap-4 text-xs text-zinc-500">
-                  <span className="flex items-center gap-1">
-                    <DollarSign className="w-3.5 h-3.5" />
-                    ${Number(project.budget).toLocaleString()}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <ClipboardList className="w-3.5 h-3.5" />
-                    {tasks.done}/{tasks.total} tasks
-                  </span>
+                {project.description && (
+                  <p className="mt-2 line-clamp-2 text-sm text-ink-muted">{project.description}</p>
+                )}
+
+                <div className="mt-4 flex items-center gap-3 font-mono text-xs text-ink-muted">
+                  <span className="tabular-nums">${Number(project.budget).toLocaleString()}</span>
+                  <span className="text-rule-strong">·</span>
+                  <span className="tabular-nums">{tasks.done}/{tasks.total} tasks</span>
                 </div>
 
-                {/* Progress bar */}
                 {tasks.total > 0 && (
-                  <div className="space-y-1">
-                    <div className="w-full h-1.5 rounded-full bg-muted/60 overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-primary to-[#e2a083] transition-all"
-                        style={{ width: `${pct}%` }}
-                      />
-                    </div>
-                    <p className="text-xs text-zinc-600">{pct}% complete</p>
+                  <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-surface-sunken">
+                    <div className="h-full bg-accent" style={{ width: `${pct}%` }} />
                   </div>
                 )}
 
-                {/* Status badge */}
-                <div className="pt-1 border-t border-border flex items-center justify-between">
-                  <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${cfg.color}`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
-                    {cfg.label}
-                  </span>
-                  <span className="text-xs text-zinc-600">
+                <div className="mt-4 flex items-center justify-between border-t border-rule pt-3 text-xs text-ink-faint">
+                  <span className="tabular-nums">{tasks.total > 0 ? `${pct}% complete` : 'No tasks'}</span>
+                  <span className="font-mono">
                     {new Date(project.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                   </span>
                 </div>
@@ -150,31 +129,6 @@ export default async function ProjectsPage() {
           })}
         </div>
       )}
-    </div>
-  )
-}
-
-function EmptyState({ role }: { role: string }) {
-  return (
-    <div className="mt-4 p-12 rounded-lg border border-dashed border-border text-center flex flex-col items-center">
-      <div className="w-16 h-16 rounded-lg bg-secondary/10 flex items-center justify-center mb-4">
-        <FolderKanban className="w-8 h-8 text-secondary" />
-      </div>
-      <p className="text-foreground font-semibold mb-1">No projects yet</p>
-      <p className="text-zinc-500 text-sm mb-6 max-w-xs">
-        {role !== 'SUBCONTRACTOR'
-          ? 'Create your first project and start assigning tasks to your team.'
-          : 'You have not been added to any projects yet.'}
-      </p>
-      {role !== 'SUBCONTRACTOR' && (
-        <Link
-          href="/projects/new"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-[#c96c4f] transition-all"
-        >
-          <Plus className="w-4 h-4" />
-          Create Project
-        </Link>
-      )}
-    </div>
+    </PageShell>
   )
 }

@@ -42,3 +42,9 @@ next-env.d.ts
 
 # local codegraph output
 .codegraph/
+
+# cloudflare / opennext
+/.open-next/
+/.wrangler/
+.dev.vars
+cloudflare-env.d.ts

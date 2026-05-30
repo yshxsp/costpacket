@@ -14,10 +14,10 @@ export default function ExportPdfButtonImpl({ expenses }: ExportPdfButtonImplPro
     const doc = new jsPDF()
 
     doc.setFontSize(20)
-    doc.text('Expenses Report', 14, 22)
+    doc.text('CostPacket — Expense Packet', 14, 22)
     doc.setFontSize(11)
-    doc.setTextColor(100)
-    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 30)
+    doc.setTextColor(120)
+    doc.text(`Generated ${new Date().toLocaleDateString()}`, 14, 30)
 
     const tableColumn = ['Date', 'Vendor', 'Description', 'Amount', 'Status']
     const tableRows: string[][] = expenses.map((expense) => [
@@ -32,20 +32,21 @@ export default function ExportPdfButtonImpl({ expenses }: ExportPdfButtonImplPro
       head: [tableColumn],
       body: tableRows,
       startY: 40,
-      theme: 'striped',
-      headStyles: { fillColor: [99, 102, 241] },
+      theme: 'grid',
+      headStyles: { fillColor: [27, 26, 22], textColor: [241, 236, 225] },
+      styles: { fontSize: 9, cellPadding: 3 },
     })
 
-    doc.save('expenses_report.pdf')
+    doc.save('costpacket_expense_packet.pdf')
   }
 
   return (
     <button
       onClick={handleExport}
-      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary/10 text-secondary text-sm font-medium hover:bg-secondary/20 transition-all border border-secondary/20"
+      className="inline-flex h-10 items-center gap-2 rounded-[3px] border border-rule bg-surface px-4 text-sm font-medium text-ink transition-colors hover:bg-surface-sunken"
       type="button"
     >
-      <Download className="w-4 h-4" />
+      <Download className="h-4 w-4" strokeWidth={1.75} />
       Export PDF
     </button>
   )

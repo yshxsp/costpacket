@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { CheckCircle, XCircle, Loader2 } from 'lucide-react'
+import { Check, X, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { updateExpenseStatus } from '@/app/actions/expenses'
 
@@ -25,30 +25,22 @@ export function ApproveRejectButtons({ expenseId }: { expenseId: string }) {
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1.5">
       <button
         onClick={() => update('APPROVED')}
         disabled={!!loading}
         title="Approve"
-        className="w-8 h-8 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 flex items-center justify-center transition-all disabled:opacity-50"
+        className="flex h-8 w-8 items-center justify-center rounded-[3px] border border-approved/30 bg-approved-soft text-approved transition-colors hover:bg-approved/15 disabled:opacity-50"
       >
-        {loading === 'approve' ? (
-          <Loader2 className="w-4 h-4 animate-spin" />
-        ) : (
-          <CheckCircle className="w-4 h-4" />
-        )}
+        {loading === 'approve' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" strokeWidth={2} />}
       </button>
       <button
         onClick={() => update('REJECTED')}
         disabled={!!loading}
         title="Reject"
-        className="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 flex items-center justify-center transition-all disabled:opacity-50"
+        className="flex h-8 w-8 items-center justify-center rounded-[3px] border border-rejected/30 bg-rejected-soft text-rejected transition-colors hover:bg-rejected/15 disabled:opacity-50"
       >
-        {loading === 'reject' ? (
-          <Loader2 className="w-4 h-4 animate-spin" />
-        ) : (
-          <XCircle className="w-4 h-4" />
-        )}
+        {loading === 'reject' ? <Loader2 className="h-4 w-4 animate-spin" /> : <X className="h-4 w-4" strokeWidth={2} />}
       </button>
     </div>
   )

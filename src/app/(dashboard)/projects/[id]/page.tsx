@@ -1,25 +1,12 @@
 import { createClient } from '@/lib/supabase-server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
-import {
-  ArrowLeft, FolderKanban, ClipboardList, Users, DollarSign,
-  CheckCircle2, Clock, CircleDot, Eye, Plus, Receipt,
-} from 'lucide-react'
+import { ArrowLeft, Plus } from 'lucide-react'
 import { DeleteProjectButton } from '@/components/features/delete-project-button'
 import { UpdateProjectStatusButton } from '@/components/features/update-project-status'
-
-const taskStatusConfig = {
-  PENDING: { label: 'Pending', color: 'text-zinc-400', bg: 'bg-zinc-500/10', icon: Clock },
-  IN_PROGRESS: { label: 'In Progress', color: 'text-blue-400', bg: 'bg-blue-500/10', icon: CircleDot },
-  REVIEW: { label: 'In Review', color: 'text-primary', bg: 'bg-primary/10', icon: Eye },
-  COMPLETED: { label: 'Completed', color: 'text-green-400', bg: 'bg-green-500/10', icon: CheckCircle2 },
-} as const
-
-const projectStatusConfig = {
-  ACTIVE: { label: 'Active', color: 'text-primary', dot: 'bg-primary' },
-  COMPLETED: { label: 'Completed', color: 'text-green-400', dot: 'bg-green-400' },
-  ON_HOLD: { label: 'On Hold', color: 'text-yellow-400', dot: 'bg-yellow-400' },
-} as const
+import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Stamp, statusTone, statusLabel } from '@/components/ui/status'
 
 export default async function ProjectDetailPage({
   params,
@@ -31,29 +18,20 @@ export default async function ProjectDetailPage({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  // Fetch project
-  const { data: project } = await supabase
-    .from('projects')
-    .select('*')
-    .eq('id', id)
-    .single()
-
+  const { data: project } = await supabase.from('projects').select('*').eq('id', id).single()
   if (!project) notFound()
 
-  // Fetch tasks
   const { data: tasks } = await supabase
     .from('tasks')
     .select('id, title, status, amount, assignee_id')
     .eq('project_id', id)
     .order('created_at', { ascending: false })
 
-  // Fetch members
   const { data: members } = await supabase
     .from('project_members')
     .select('user_id, role, users(id, name, email, role)')
     .eq('project_id', id)
 
-  // Fetch expenses
   const { data: expenses } = await supabase
     .from('expenses')
     .select('id, amount, status, description, task_id')
@@ -64,146 +42,111 @@ export default async function ProjectDetailPage({
   const pct = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0
   const pendingExpenses = expenses?.filter((e) => e.status === 'PENDING').length ?? 0
   const totalExpenses = expenses?.reduce((sum, e) => sum + Number(e.amount), 0) ?? 0
-
-  const pStatus = projectStatusConfig[project.status as keyof typeof projectStatusConfig] ?? projectStatusConfig.ACTIVE
   const isOwner = project.owner_id === user.id
 
+  const kpis = [
+    { label: 'Budget', value: `$${Number(project.budget).toLocaleString()}` },
+    { label: 'Tasks', value: `${doneTasks} / ${totalTasks}` },
+    { label: 'Team', value: members?.length ?? 0 },
+    { label: 'Expenses', value: `$${totalExpenses.toLocaleString()}` },
+  ]
+
   return (
-    <div className="p-8 max-w-6xl mx-auto">
-      {/* Back */}
+    <div className="mx-auto max-w-6xl p-6 sm:p-8">
       <Link
         href="/projects"
-        className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-foreground transition-colors mb-6"
+        className="mb-6 inline-flex items-center gap-2 text-sm text-ink-muted transition-colors hover:text-ink"
       >
-        <ArrowLeft className="w-4 h-4" />
-        All Projects
+        <ArrowLeft className="h-4 w-4" strokeWidth={1.75} />
+        All projects
       </Link>
 
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-8">
-        <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
-            <FolderKanban className="w-6 h-6 text-secondary" />
+      <div className="mb-8 flex flex-col gap-4 border-b border-rule pb-6 md:flex-row md:items-start md:justify-between">
+        <div>
+          <div className="flex items-center gap-3">
+            <h1 className="font-display text-3xl tracking-tight text-ink">{project.name}</h1>
+            <Stamp tone={statusTone(project.status)}>{statusLabel(project.status)}</Stamp>
           </div>
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <h1 className="text-2xl font-bold text-foreground">{project.name}</h1>
-              <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${pStatus.color}`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${pStatus.dot}`} />
-                {pStatus.label}
-              </span>
-            </div>
-            {project.description && (
-              <p className="text-zinc-400 text-sm max-w-xl">{project.description}</p>
-            )}
-          </div>
+          {project.description && <p className="mt-1 max-w-xl text-sm text-ink-muted">{project.description}</p>}
         </div>
 
         {isOwner && (
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex flex-shrink-0 flex-wrap items-center gap-2">
             <UpdateProjectStatusButton projectId={project.id} currentStatus={project.status} />
-            <Link
-              href={`/projects/${project.id}/tasks/new`}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-[#c96c4f] transition-all"
-            >
-              <Plus className="w-4 h-4" />
-              Add Task
-            </Link>
+            <Button asChild>
+              <Link href={`/projects/${project.id}/tasks/new`}>
+                <Plus className="h-4 w-4" strokeWidth={1.75} />
+                Add task
+              </Link>
+            </Button>
             <DeleteProjectButton projectId={project.id} />
           </div>
         )}
       </div>
 
-      {/* KPI row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {[
-          { label: 'Budget', value: `$${Number(project.budget).toLocaleString()}`, icon: DollarSign, color: 'text-secondary', bg: 'bg-secondary/10' },
-          { label: 'Tasks', value: `${doneTasks} / ${totalTasks}`, icon: ClipboardList, color: 'text-primary', bg: 'bg-primary/10' },
-          { label: 'Team Members', value: members?.length ?? 0, icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-          { label: 'Expenses', value: `$${totalExpenses.toLocaleString()}`, icon: Receipt, color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
-        ].map((s) => (
-          <div key={s.label} className="p-5 rounded-lg bg-card border border-border">
-            <div className={`w-9 h-9 rounded-lg ${s.bg} flex items-center justify-center mb-3`}>
-              <s.icon className={`w-4 h-4 ${s.color}`} />
-            </div>
-            <div className="text-xl font-bold text-foreground">{s.value}</div>
-            <div className="text-xs text-zinc-500 mt-0.5">{s.label}</div>
+      <div className="mb-8 grid grid-cols-2 gap-px overflow-hidden rounded-[3px] border border-rule bg-rule lg:grid-cols-4">
+        {kpis.map((s) => (
+          <div key={s.label} className="bg-surface p-5">
+            <div className="label">{s.label}</div>
+            <div className="mt-2 font-mono text-xl font-semibold tabular-nums text-ink">{s.value}</div>
           </div>
         ))}
       </div>
 
-      {/* Progress bar */}
       {totalTasks > 0 && (
-        <div className="p-5 rounded-lg bg-card border border-border mb-8">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-medium text-foreground">Project Progress</span>
-            <span className="text-sm text-zinc-400">{pct}%</span>
+        <Card className="mb-8 p-5">
+          <div className="mb-3 flex items-center justify-between">
+            <span className="text-sm font-medium text-ink">Project progress</span>
+            <span className="font-mono text-sm tabular-nums text-ink-muted">{pct}%</span>
           </div>
-          <div className="w-full h-2 rounded-full bg-muted/60 overflow-hidden">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-primary to-[#e2a083] transition-all duration-700"
-              style={{ width: `${pct}%` }}
-            />
+          <div className="h-2 w-full overflow-hidden rounded-full bg-surface-sunken">
+            <div className="h-full bg-accent transition-all duration-700" style={{ width: `${pct}%` }} />
           </div>
-          <div className="flex justify-between mt-2 text-xs text-zinc-500">
+          <div className="mt-2 flex justify-between font-mono text-xs text-ink-faint">
             <span>{doneTasks} completed</span>
             <span>{totalTasks - doneTasks} remaining</span>
           </div>
-        </div>
+        </Card>
       )}
 
-      {/* Tasks + Members grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Tasks list */}
-        <div className="lg:col-span-2 p-6 rounded-lg bg-card border border-border">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="font-semibold text-foreground">Tasks</h2>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <Card className="p-6 lg:col-span-2">
+          <div className="mb-5 flex items-center justify-between">
+            <h2 className="font-display text-lg text-ink">Tasks</h2>
             {pendingExpenses > 0 && (
-              <Link
-                href="/expenses"
-                className="text-xs text-yellow-400 hover:text-yellow-300 transition-colors"
-              >
+              <Link href="/expenses" className="text-xs text-pending transition-colors hover:underline">
                 {pendingExpenses} pending expense{pendingExpenses > 1 ? 's' : ''}
               </Link>
             )}
           </div>
 
           {!tasks || tasks.length === 0 ? (
-            <p className="text-zinc-500 text-sm py-4 text-center">No tasks yet. Create the first one!</p>
+            <p className="py-4 text-center text-sm text-ink-muted">No tasks yet. Create the first one.</p>
           ) : (
-            <div className="space-y-2">
-              {tasks.map((task) => {
-                const cfg = taskStatusConfig[task.status as keyof typeof taskStatusConfig] ?? taskStatusConfig.PENDING
-                return (
-                  <Link
-                    key={task.id}
-                    href={`/tasks/${task.id}`}
-                    className="flex items-center justify-between p-3.5 rounded-lg bg-muted/20 hover:bg-muted/60 border border-border transition-all group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`w-7 h-7 rounded-lg ${cfg.bg} flex items-center justify-center`}>
-                        <cfg.icon className={`w-3.5 h-3.5 ${cfg.color}`} />
-                      </div>
-                      <span className="text-sm text-foreground font-medium group-hover:text-primary transition-colors">
-                        {task.title}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className={`text-xs font-medium ${cfg.color} hidden sm:block`}>{cfg.label}</span>
-                      <span className="text-xs text-zinc-500">${Number(task.amount).toLocaleString()}</span>
-                    </div>
-                  </Link>
-                )
-              })}
+            <div className="overflow-hidden rounded-[3px] border border-rule">
+              {tasks.map((task) => (
+                <Link
+                  key={task.id}
+                  href={`/tasks/${task.id}`}
+                  className="group flex items-center justify-between gap-3 border-b border-rule bg-surface px-4 py-3 transition-colors last:border-0 hover:bg-surface-sunken"
+                >
+                  <span className="truncate text-sm font-medium text-ink transition-colors group-hover:text-accent">
+                    {task.title}
+                  </span>
+                  <div className="flex flex-shrink-0 items-center gap-3">
+                    <Stamp tone={statusTone(task.status)}>{statusLabel(task.status)}</Stamp>
+                    <span className="font-mono text-sm tabular-nums text-ink">${Number(task.amount).toLocaleString()}</span>
+                  </div>
+                </Link>
+              ))}
             </div>
           )}
-        </div>
+        </Card>
 
-        {/* Team members */}
-        <div className="p-6 rounded-lg bg-card border border-border">
-          <h2 className="font-semibold text-foreground mb-5">Team</h2>
+        <Card className="p-6">
+          <h2 className="mb-5 font-display text-lg text-ink">Team</h2>
           {!members || members.length === 0 ? (
-            <p className="text-zinc-500 text-sm">No members assigned.</p>
+            <p className="text-sm text-ink-muted">No members assigned.</p>
           ) : (
             <div className="space-y-3">
               {members.map((m) => {
@@ -212,19 +155,19 @@ export default async function ProjectDetailPage({
                 const name = u?.name ?? u?.email ?? 'Unknown'
                 return (
                   <div key={m.user_id} className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center text-secondary text-sm font-bold flex-shrink-0">
+                    <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-rule bg-surface-sunken font-mono text-sm font-semibold text-ink">
                       {initial}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm text-foreground font-medium truncate">{name}</p>
-                      <p className="text-xs text-zinc-500">{u?.role ?? m.role}</p>
+                      <p className="truncate text-sm font-medium text-ink">{name}</p>
+                      <p className="label">{u?.role ?? m.role}</p>
                     </div>
                   </div>
                 )
               })}
             </div>
           )}
-        </div>
+        </Card>
       </div>
     </div>
   )

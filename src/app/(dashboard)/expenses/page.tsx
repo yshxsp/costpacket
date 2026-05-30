@@ -1,17 +1,16 @@
 import { createClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { Receipt, Plus, ArrowUpRight, CheckCircle2, XCircle, Clock } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { ApproveRejectButtons } from '@/components/features/approve-reject-expense'
 import { ExportPdfButton } from '@/components/features/export-pdf-button'
+import { PageShell, PageHeader } from '@/components/ui/page'
+import { Button } from '@/components/ui/button'
+import { EmptyState } from '@/components/ui/empty'
+import { Stamp, statusTone, statusLabel } from '@/components/ui/status'
+import { cn } from '@/lib/utils'
 
-const statusConfig = {
-  PENDING: { label: 'Pending', color: 'text-yellow-400', bg: 'bg-yellow-500/10', dot: 'bg-yellow-400', icon: Clock },
-  APPROVED: { label: 'Approved', color: 'text-green-400', bg: 'bg-green-500/10', dot: 'bg-green-400', icon: CheckCircle2 },
-  REJECTED: { label: 'Rejected', color: 'text-red-400', bg: 'bg-red-500/10', dot: 'bg-red-400', icon: XCircle },
-} as const
-
-type StatusKey = keyof typeof statusConfig
+const STATUSES = ['PENDING', 'APPROVED', 'REJECTED'] as const
 
 export default async function ExpensesPage({
   searchParams,
@@ -45,7 +44,7 @@ export default async function ExpensesPage({
   if (!isContractor) {
     query = query.eq('submitted_by_id', user.id)
   }
-  if (filterStatus && Object.keys(statusConfig).includes(filterStatus)) {
+  if (filterStatus && (STATUSES as readonly string[]).includes(filterStatus)) {
     query = query.eq('status', filterStatus)
   }
 
@@ -57,124 +56,103 @@ export default async function ExpensesPage({
     total: expenses?.reduce((s, e) => s + Number(e.amount), 0) ?? 0,
   }
 
-  return (
-    <div className="p-8 max-w-6xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground mb-1">Expenses</h1>
-          <p className="text-zinc-400 text-sm">
-            {expenses?.length ?? 0} expense{expenses?.length !== 1 ? 's' : ''} · ${totals.total.toLocaleString()} total
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <ExportPdfButton expenses={expenses || []} />
-          <Link
-            href="/expenses/new"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-[#c96c4f] transition-all"
-          >
-            <Plus className="w-4 h-4" />
-            Submit Expense
-          </Link>
-        </div>
-      </div>
+  const summary = [
+    { label: 'Pending review', value: totals.pending },
+    { label: 'Approved', value: totals.approved },
+    { label: 'Total amount', value: `$${totals.total.toLocaleString()}` },
+  ]
 
-      <div className="grid grid-cols-3 gap-4 mb-8">
-        {[
-          { label: 'Pending Review', value: totals.pending, color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
-          { label: 'Approved', value: totals.approved, color: 'text-green-400', bg: 'bg-green-500/10' },
-          { label: 'Total Amount', value: `$${totals.total.toLocaleString()}`, color: 'text-primary', bg: 'bg-primary/10' },
-        ].map((s) => (
-          <div key={s.label} className="p-5 rounded-lg bg-card border border-border">
-            <div className={`text-2xl font-bold ${s.color} mb-1`}>{s.value}</div>
-            <div className="text-xs text-zinc-500">{s.label}</div>
+  return (
+    <PageShell>
+      <PageHeader
+        kicker="Inbox"
+        title="Expenses"
+        description={`${expenses?.length ?? 0} expense${expenses?.length !== 1 ? 's' : ''} · $${totals.total.toLocaleString()} total`}
+      >
+        <ExportPdfButton expenses={expenses || []} />
+        <Button asChild>
+          <Link href="/expenses/new">
+            <Plus className="h-4 w-4" strokeWidth={1.75} />
+            Submit expense
+          </Link>
+        </Button>
+      </PageHeader>
+
+      <div className="mb-6 grid grid-cols-3 gap-px overflow-hidden rounded-[3px] border border-rule bg-rule">
+        {summary.map((s) => (
+          <div key={s.label} className="bg-surface p-5">
+            <div className="label">{s.label}</div>
+            <div className="mt-2 font-mono text-2xl font-semibold tabular-nums text-ink">{s.value}</div>
           </div>
         ))}
       </div>
 
-      <div className="flex items-center gap-1 p-1 rounded-lg bg-card border border-border w-fit mb-6">
+      <div className="mb-6 flex w-fit items-center gap-1 rounded-[3px] border border-rule bg-surface p-1">
         <FilterLink href="?" active={!filterStatus} label="All" />
-        {(Object.keys(statusConfig) as StatusKey[]).map((s) => (
-          <FilterLink
-            key={s}
-            href={`?status=${s}`}
-            active={filterStatus === s}
-            label={statusConfig[s].label}
-            color={statusConfig[s].color}
-          />
+        {STATUSES.map((s) => (
+          <FilterLink key={s} href={`?status=${s}`} active={filterStatus === s} label={statusLabel(s)} />
         ))}
       </div>
 
       {!expenses || expenses.length === 0 ? (
-        <div className="p-12 rounded-lg border border-dashed border-border text-center flex flex-col items-center">
-          <div className="w-16 h-16 rounded-lg bg-yellow-500/10 flex items-center justify-center mb-4">
-            <Receipt className="w-8 h-8 text-yellow-400" />
-          </div>
-          <p className="text-foreground font-semibold mb-1">No expenses found</p>
-          <p className="text-zinc-500 text-sm mb-5">Submit a receipt to log expenses against a task.</p>
-          <Link
-            href="/expenses/new"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-[#c96c4f] transition-all"
-          >
-            <Plus className="w-4 h-4" />
-            Submit Expense
-          </Link>
-        </div>
+        <EmptyState
+          title="No expenses found"
+          description="Submit a receipt to log an expense against a task."
+        >
+          <Button asChild>
+            <Link href="/expenses/new">
+              <Plus className="h-4 w-4" strokeWidth={1.75} />
+              Submit expense
+            </Link>
+          </Button>
+        </EmptyState>
       ) : (
-        <div className="space-y-3">
+        <div className="overflow-hidden rounded-[3px] border border-rule bg-surface">
           {expenses.map((exp) => {
-            const cfg = statusConfig[exp.status as StatusKey] ?? statusConfig.PENDING
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const task = (exp.tasks as any) as { id: string; title: string; projects: { id: string; name: string } | null } | null
+            const task = (exp.tasks as any) as { id: string; title: string } | null
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const submitter = (exp.users as any) as { name?: string; email?: string } | null
 
             return (
               <div
                 key={exp.id}
-                className="p-5 rounded-lg bg-card border border-border flex flex-col sm:flex-row sm:items-center gap-4"
+                className="flex flex-col gap-3 border-b border-rule px-5 py-4 last:border-0 sm:flex-row sm:items-center"
               >
-                <div className={`w-10 h-10 rounded-lg ${cfg.bg} flex items-center justify-center flex-shrink-0`}>
-                  <cfg.icon className={`w-5 h-5 ${cfg.color}`} />
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="font-medium text-foreground text-sm">{exp.description}</p>
-                    <span className="text-base font-bold text-foreground flex-shrink-0">${Number(exp.amount).toLocaleString()}</span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-baseline justify-between gap-3">
+                    <p className="truncate text-sm font-medium text-ink">{exp.description}</p>
+                    <span className="shrink-0 font-mono text-sm font-semibold tabular-nums text-ink">
+                      ${Number(exp.amount).toLocaleString()}
+                    </span>
                   </div>
-                  <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1">
-                    {exp.vendor && <span className="text-xs text-zinc-500">{exp.vendor}</span>}
+                  <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-ink-muted">
+                    {exp.vendor && <span>{exp.vendor}</span>}
                     {task && (
-                      <Link href={`/tasks/${task.id}`} className="text-xs text-zinc-500 hover:text-secondary flex items-center gap-0.5">
-                        <ArrowUpRight className="w-3 h-3" />
+                      <Link href={`/tasks/${task.id}`} className="transition-colors hover:text-accent">
                         {task.title}
                       </Link>
                     )}
                     {submitter && isContractor && (
-                      <span className="text-xs text-zinc-600">by {submitter.name ?? submitter.email}</span>
+                      <span className="text-ink-faint">by {submitter.name ?? submitter.email}</span>
                     )}
-                    <span className="text-xs text-zinc-600">
+                    <span className="font-mono text-ink-faint">
                       {new Date(exp.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                     </span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span className={`text-xs font-medium ${cfg.color} flex items-center gap-1`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
-                    {cfg.label}
-                  </span>
-                  {isContractor && exp.status === 'PENDING' && (
-                    <ApproveRejectButtons expenseId={exp.id} />
-                  )}
+                  <Stamp tone={statusTone(exp.status)}>{statusLabel(exp.status)}</Stamp>
+                  {isContractor && exp.status === 'PENDING' && <ApproveRejectButtons expenseId={exp.id} />}
                   {exp.receipt_url && (
                     <a
                       href={exp.receipt_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-zinc-400 hover:text-foreground transition-colors"
+                      className="text-xs text-accent transition-colors hover:underline"
                     >
-                      View Receipt
+                      Receipt
                     </a>
                   )}
                 </div>
@@ -183,17 +161,18 @@ export default async function ExpensesPage({
           })}
         </div>
       )}
-    </div>
+    </PageShell>
   )
 }
 
-function FilterLink({ href, active, label, color }: { href: string; active: boolean; label: string; color?: string }) {
+function FilterLink({ href, active, label }: { href: string; active: boolean; label: string }) {
   return (
     <Link
       href={href}
-      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-        active ? 'bg-muted/60 text-foreground' : `text-zinc-500 hover:text-zinc-300 ${color ?? ''}`
-      }`}
+      className={cn(
+        'rounded-[2px] px-3 py-1.5 text-xs font-medium transition-colors',
+        active ? 'bg-surface-sunken text-ink' : 'text-ink-muted hover:text-ink'
+      )}
     >
       {label}
     </Link>
