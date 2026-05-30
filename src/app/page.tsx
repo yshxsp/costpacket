@@ -124,11 +124,35 @@ export default function Home() {
       </main>
 
       <footer className="border-t border-rule-strong">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-6 py-8 sm:flex-row">
-          <Wordmark size="sm" />
-          <p className="font-mono text-xs text-ink-faint">
-            © {new Date().getFullYear()} CostPacket · Job-costed expense packets
-          </p>
+        <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-10 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <Wordmark size="sm" />
+            <p className="mt-3 max-w-sm text-sm text-ink-muted">
+              No trackers, no ads. Your job data and receipts stay in your account —
+              export your packets anytime.
+            </p>
+            {/* TODO: replace <BRAND> with the umbrella/maker name once decided */}
+            <p className="mt-2 font-mono text-xs text-ink-faint">
+              A personal project by {'<BRAND>'}.
+            </p>
+          </div>
+          <div className="flex flex-col gap-2 sm:items-end">
+            <nav className="flex items-center gap-4 text-sm">
+              <Link href="/privacy" className="text-ink-muted transition-colors hover:text-ink">
+                Privacy
+              </Link>
+              {/* TODO: replace hello@example.com with the real mailbox once <BRAND> domain + Zoho are live */}
+              <a
+                href="mailto:hello@example.com"
+                className="text-ink-muted transition-colors hover:text-ink"
+              >
+                Contact
+              </a>
+            </nav>
+            <p className="font-mono text-xs text-ink-faint">
+              © {new Date().getFullYear()} CostPacket
+            </p>
+          </div>
         </div>
       </footer>
     </div>
