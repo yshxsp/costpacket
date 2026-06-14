@@ -3,7 +3,10 @@ import { redirect } from 'next/navigation'
 import { PageShell, PageHeader } from '@/components/ui/page'
 import { EmptyState } from '@/components/ui/empty'
 import { Stamp, statusTone, statusLabel } from '@/components/ui/status'
+import { MarkPaidButton } from '@/components/features/mark-paid-button'
 import { cn } from '@/lib/utils'
+
+const SETTLED = ['PAID', 'MARKED_PAID']
 
 export default async function PaymentsPage() {
   const supabase = await createClient()
@@ -16,11 +19,12 @@ export default async function PaymentsPage() {
     .eq('id', user.id)
     .single()
   const role = profile?.role ?? 'SUBCONTRACTOR'
+  const canConfirm = role === 'ADMIN'
 
   let query = supabase
     .from('payments')
     .select(`
-      id, amount, status, created_at, stripe_payout_id,
+      id, amount, status, created_at, reference, paid_at,
       task_id,
       tasks (id, title),
       user_id,
@@ -34,14 +38,14 @@ export default async function PaymentsPage() {
 
   const { data: payments } = await query
 
-  const totalPaid = payments?.filter((p) => p.status === 'PAID').reduce((s, p) => s + Number(p.amount), 0) ?? 0
+  const totalPaid = payments?.filter((p) => SETTLED.includes(p.status)).reduce((s, p) => s + Number(p.amount), 0) ?? 0
   const totalPending = payments?.filter((p) => p.status === 'PENDING').reduce((s, p) => s + Number(p.amount), 0) ?? 0
 
   const summary = [
     { label: 'Total paid', value: `$${totalPaid.toLocaleString()}` },
     { label: 'Pending', value: `$${totalPending.toLocaleString()}` },
     { label: 'Transactions', value: payments?.length ?? 0 },
-    { label: 'Paid count', value: payments?.filter((p) => p.status === 'PAID').length ?? 0 },
+    { label: 'Paid count', value: payments?.filter((p) => SETTLED.includes(p.status)).length ?? 0 },
   ]
 
   return (
@@ -76,6 +80,7 @@ export default async function PaymentsPage() {
                 <Th>Status</Th>
                 <Th className="hidden sm:table-cell">Date</Th>
                 <Th className="text-right">Amount</Th>
+                {canConfirm && <Th className="text-right">Action</Th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-rule">
@@ -88,9 +93,9 @@ export default async function PaymentsPage() {
                   <tr key={pmt.id} className="transition-colors hover:bg-surface-sunken">
                     <td className="px-5 py-4">
                       <p className="text-sm font-medium text-ink">{task?.title ?? '—'}</p>
-                      {pmt.stripe_payout_id && (
-                        <p className="mt-0.5 max-w-[180px] truncate font-mono text-xs text-ink-faint">
-                          {pmt.stripe_payout_id}
+                      {pmt.status === 'MARKED_PAID' && (
+                        <p className="mt-0.5 max-w-[200px] truncate text-xs text-ink-faint">
+                          Recorded as paid manually{pmt.reference ? ` · ${pmt.reference}` : ''}
                         </p>
                       )}
                     </td>
@@ -110,6 +115,11 @@ export default async function PaymentsPage() {
                     <td className="px-5 py-4 text-right font-mono text-sm font-semibold tabular-nums text-ink">
                       ${Number(pmt.amount).toLocaleString()}
                     </td>
+                    {canConfirm && (
+                      <td className="px-5 py-4 text-right">
+                        {pmt.status === 'PENDING' ? <MarkPaidButton paymentId={pmt.id} /> : null}
+                      </td>
+                    )}
                   </tr>
                 )
               })}

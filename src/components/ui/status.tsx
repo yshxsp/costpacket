@@ -30,6 +30,7 @@ export function statusTone(status: string): Tone {
     case 'APPROVED':
     case 'COMPLETED':
     case 'PAID':
+    case 'MARKED_PAID':
     case 'ACTIVE':
       return 'approved'
     case 'PENDING':
@@ -38,6 +39,7 @@ export function statusTone(status: string): Tone {
       return 'pending'
     case 'REJECTED':
     case 'CANCELLED':
+    case 'CANCELED':
     case 'FAILED':
       return 'rejected'
     case 'TODO':

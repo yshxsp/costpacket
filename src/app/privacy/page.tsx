@@ -55,12 +55,14 @@ export default function PrivacyPage() {
           {/* TODO: state the exact Supabase region once confirmed, e.g. "in the EU (Frankfurt)". */}
           We do not sell or share your data with third parties. The only companies that
           process it on our behalf are: Supabase (database, file storage, sign-in), Google
-          Gemini (reading text from receipt images), and Stripe (payouts).
+          Gemini (reading text from receipt images), and Paddle (subscription billing).
         </Section>
 
         <Section title="Payments">
-          We never see or store your card numbers or bank credentials. Subcontractor payouts
-          are processed by Stripe, which handles all financial details.
+          Your CostPacket subscription is billed by Paddle, our Merchant of Record, which
+          handles card details — we never see or store them. Subcontractor payouts are tracked
+          as a manual ledger: you record when and how you paid (e.g. a bank transfer
+          reference). CostPacket does not move those funds.
         </Section>
 
         <Section title="Receipts">

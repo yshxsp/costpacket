@@ -2,17 +2,23 @@
 
 import { createClient } from '@/lib/supabase-server'
 import { revalidatePath } from 'next/cache'
-import Stripe from 'stripe'
 
-// Initialize Stripe gracefully, so the application won't crash if the key is missing in .env
-const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2026-02-25.clover' })
-  : null
+/**
+ * Manual payout ledger (beta).
+ *
+ * Automatic Stripe Connect transfers are deferred — moving money to connected
+ * accounts needs a reviewed Connect/KYC setup. For beta we record payouts and an
+ * ADMIN/owner confirms them by hand:
+ *   createPayment  → records a PENDING payout (no money moves)
+ *   markPayoutPaid → ADMIN/owner confirms it as MARKED_PAID (server-side, audited)
+ *   cancelPayout   → ADMIN/owner cancels a pending payout
+ *
+ * A payout is NEVER PAID without an explicit admin confirmation.
+ */
 
 export async function createPayment(taskId: string) {
   const supabase = await createClient()
 
-  // 1. Verify Authentication & Role
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Unauthorized' }
 
@@ -23,10 +29,9 @@ export async function createPayment(taskId: string) {
     .single()
 
   if (profile?.role !== 'CONTRACTOR') {
-    return { error: 'Only contractors can initiate payments.' }
+    return { error: 'Only contractors can record payouts.' }
   }
 
-  // 2. Fetch Task details
   const { data: task, error: taskError } = await supabase
     .from('tasks')
     .select('*, projects!project_id(owner_id), users!assignee_id(*)')
@@ -37,17 +42,16 @@ export async function createPayment(taskId: string) {
     return { error: 'Task not found.' }
   }
 
-  // Security Check: Ensure caller actually owns the project the task belongs to
+  // Caller must own the project the task belongs to.
   const project = task.projects as { owner_id?: string } | null
   if (project?.owner_id !== user.id) {
     return { error: 'Unauthorized. You do not own the project for this task.' }
   }
 
   if (task.status !== 'COMPLETED') {
-    return { error: 'Cannot pay out because the task is not marked as completed.' }
+    return { error: 'Cannot record a payout because the task is not marked as completed.' }
   }
 
-  // Check if a payment already exists for this task
   const { data: existingPayment } = await supabase
     .from('payments')
     .select('id, status')
@@ -55,10 +59,10 @@ export async function createPayment(taskId: string) {
     .maybeSingle()
 
   if (existingPayment) {
-    return { error: 'A payment already exists for this task.' }
+    return { error: 'A payout already exists for this task.' }
   }
 
-  const assignee = task.users as { id: string; stripe_account_id?: string | null } | null
+  const assignee = task.users as { id: string } | null
   if (!assignee || Array.isArray(assignee)) {
     return { error: 'Task has no valid assignee to pay.' }
   }
@@ -68,81 +72,66 @@ export async function createPayment(taskId: string) {
     return { error: 'Task has no valid amount configured.' }
   }
 
-  // 3. Initiate Stripe payout (only PAID once money actually moves)
-  // Default to PENDING: a row must never read PAID unless a real transfer
-  // succeeded, otherwise the UI tells a subcontractor they were paid when they
-  // weren't.
-  let stripePayoutId: string | null = null
-  let paymentStatus = 'PENDING'
-  let errorMsg = null
-
-  // Real transfers to connected accounts are money movement (Stripe Connect
-  // marketplace territory): without a reviewed Connect + KYC setup this is the
-  // fastest way to get the platform account banned. Keep record-only until
-  // STRIPE_PAYOUTS_ENABLED=true is set deliberately.
-  const payoutsEnabled = process.env.STRIPE_PAYOUTS_ENABLED === 'true'
-
-  try {
-    if (stripe && payoutsEnabled) {
-      // Real Stripe Connect transfer to the subcontractor's connected account.
-      if (!assignee.stripe_account_id) {
-        return {
-          error:
-            'This subcontractor has no Stripe account connected. Add their Stripe account ID before paying out.',
-        }
-      }
-      const transfer = await stripe.transfers.create(
-        {
-          amount: Math.round(payoutAmount * 100), // convert to cents
-          currency: 'usd',
-          destination: assignee.stripe_account_id,
-          description: `Payout for task: ${task.title}`,
-        },
-        // Idempotency: two concurrent payout requests can both pass the
-        // existing-payment check above before either inserts the
-        // unique(task_id) row. Keying the transfer by taskId makes Stripe
-        // collapse them into a SINGLE money movement instead of paying twice;
-        // the unique(task_id) index then keeps exactly one DB record.
-        { idempotencyKey: `payout:${taskId}` }
-      )
-      stripePayoutId = transfer.id
-      paymentStatus = 'PAID'
-    } else {
-      // Record-only: either no Stripe key (local/dev) or payouts deliberately
-      // off. No money moved, so the row stays PENDING with no payout id.
-      console.warn(
-        stripe
-          ? 'STRIPE_PAYOUTS_ENABLED is not "true" — recording the payout as PENDING without moving money.'
-          : 'No STRIPE_SECRET_KEY configured — recording the payout as PENDING (dev only).'
-      )
-    }
-  } catch (stripeErr: unknown) {
-    console.error("Stripe error:", stripeErr)
-    paymentStatus = 'FAILED'
-    errorMsg = stripeErr instanceof Error ? stripeErr.message : "Failed to communicate with Stripe."
-  }
-
-  // 4. Save Payment record in Supabase
+  // Record-only: no money moves here. The row stays PENDING until an ADMIN/owner
+  // confirms it via markPayoutPaid, so the UI never claims someone was paid.
   const { error: insertError } = await supabase.from('payments').insert({
     amount: payoutAmount,
-    stripe_payout_id: stripePayoutId,
-    status: paymentStatus,
+    status: 'PENDING',
     user_id: assignee.id,
     task_id: taskId,
   })
 
   if (insertError) {
-    console.error("Payment insert error:", insertError)
-    return { error: 'Failed to record payment in database.' }
-  }
-
-  if (paymentStatus === 'FAILED') {
-    return { error: `Stripe error: ${errorMsg}` }
+    console.error('Payout record error:', insertError)
+    return { error: 'Failed to record payout.' }
   }
 
   revalidatePath('/payments')
   revalidatePath(`/tasks/${taskId}`)
-  // `paid` lets the caller distinguish a real money movement from a recorded
-  // PENDING payout (payouts disabled) so the UI doesn't over-promise.
-  return { success: true, status: paymentStatus, paid: paymentStatus === 'PAID' }
+  return { success: true, status: 'PENDING' as const }
+}
+
+/**
+ * Confirm a payout as paid by hand. Authorization (ADMIN/owner of the payout's
+ * company), tenant scoping, and idempotency are all enforced server-side by the
+ * mark_payout_paid SECURITY DEFINER function.
+ */
+export async function markPayoutPaid(paymentId: string, reference?: string, note?: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Unauthorized' }
+
+  const { data, error } = await supabase.rpc('mark_payout_paid', {
+    p_payment_id: paymentId,
+    p_reference: reference?.trim() || null,
+    p_note: note?.trim() || null,
+  })
+
+  if (error) {
+    console.error('mark_payout_paid error:', error.message)
+    return { error: error.message }
+  }
+
+  revalidatePath('/payments')
+  return { success: true, status: data as string }
+}
+
+/** Cancel a pending payout (ADMIN/owner only, enforced server-side). */
+export async function cancelPayout(paymentId: string, note?: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Unauthorized' }
+
+  const { data, error } = await supabase.rpc('cancel_payout', {
+    p_payment_id: paymentId,
+    p_note: note?.trim() || null,
+  })
+
+  if (error) {
+    console.error('cancel_payout error:', error.message)
+    return { error: error.message }
+  }
+
+  revalidatePath('/payments')
+  return { success: true, status: data as string }
 }

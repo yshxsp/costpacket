@@ -13,7 +13,8 @@
     "test:rls": "node supabase/tests/run-test.mjs rls.test.sql",
     "test:tenant": "node supabase/tests/run-test.mjs tenant-integrity.test.sql",
     "test:invite": "node supabase/tests/run-test.mjs invites.test.sql",
-    "test:db": "npm run test:rls && npm run test:tenant && npm run test:invite"
+    "test:payout": "node supabase/tests/run-test.mjs payout.test.sql",
+    "test:db": "npm run test:rls && npm run test:tenant && npm run test:invite && npm run test:payout"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
@@ -30,7 +31,6 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "sonner": "^2.0.7",
-    "stripe": "^20.4.1",
     "tailwind-merge": "^3.5.0",
     "zustand": "^5.0.12"
   },

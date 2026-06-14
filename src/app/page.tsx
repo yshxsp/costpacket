@@ -83,7 +83,7 @@ export default function Home() {
                 ['Receipt', 'Lumber yard — framing + trim', 'Parsed from photo', '$426.18'],
                 ['Receipt', 'Hardware supplies', 'Parsed from photo', '$119.42'],
                 ['Task expense', 'Cabinet install — labor', 'Approved by you', '$1,800.00'],
-                ['Payout', 'Subcontractor transfer', 'Stripe · tr_1P…', '$1,800.00'],
+                ['Payout', 'Subcontractor transfer', 'Recorded as paid · wire', '$1,800.00'],
               ].map(([kind, label, meta, amount]) => (
                 <div
                   key={label}
