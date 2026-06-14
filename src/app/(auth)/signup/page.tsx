@@ -9,18 +9,11 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Field, Input } from '@/components/ui/field'
 import { Wordmark } from '@/components/ui/wordmark'
-import { cn } from '@/lib/utils'
-
-const ROLES = [
-  { value: 'CONTRACTOR', label: 'Contractor', description: 'Approve expenses' },
-  { value: 'SUBCONTRACTOR', label: 'Subcontractor', description: 'Submit job costs' },
-]
 
 export default function SignupPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [selectedRole, setSelectedRole] = useState('CONTRACTOR')
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -42,7 +35,10 @@ export default function SignupPage() {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { name, role: selectedRole } },
+      // Role is assigned server-side: a public signup creates a new company and
+      // its ADMIN owner (see the handle_new_user DB trigger). Never trust a
+      // client-sent role.
+      options: { data: { name } },
     })
 
     if (error) {
@@ -94,31 +90,6 @@ export default function SignupPage() {
                 placeholder="Min. 6 characters"
               />
             </Field>
-
-            <div className="space-y-1.5">
-              <span className="block text-sm font-medium text-ink">Your role</span>
-              <div className="grid grid-cols-2 gap-2">
-                {ROLES.map((role) => {
-                  const active = selectedRole === role.value
-                  return (
-                    <button
-                      key={role.value}
-                      type="button"
-                      onClick={() => setSelectedRole(role.value)}
-                      className={cn(
-                        'rounded-[3px] border p-3 text-left transition-colors',
-                        active
-                          ? 'border-accent bg-accent-soft text-ink'
-                          : 'border-rule bg-surface text-ink-muted hover:bg-surface-sunken hover:text-ink'
-                      )}
-                    >
-                      <div className="text-sm font-medium">{role.label}</div>
-                      <div className="mt-0.5 text-xs opacity-80">{role.description}</div>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
 
             {error && (
               <div className="rounded-[3px] border border-rejected/30 bg-rejected-soft px-3 py-2 text-sm text-rejected">

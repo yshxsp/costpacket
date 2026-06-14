@@ -11,12 +11,10 @@ import { Button } from '@/components/ui/button'
 export function ProfileForm({
   initialName,
   initialEmail,
-  initialStripeId,
   role,
 }: {
   initialName: string
   initialEmail: string
-  initialStripeId: string
   role: string
 }) {
   const router = useRouter()
@@ -60,19 +58,12 @@ export function ProfileForm({
           <Input id="name" name="name" type="text" required defaultValue={initialName} placeholder="e.g. John Smith" />
         </Field>
 
-        <Field
-          label="Stripe account ID"
-          htmlFor="stripe_account_id"
-          hint="Needed if you are a subcontractor receiving payouts."
-        >
-          <Input
-            id="stripe_account_id"
-            name="stripe_account_id"
-            type="text"
-            defaultValue={initialStripeId}
-            placeholder="acct_1Ou…"
-          />
-        </Field>
+        {/*
+          Payout account (stripe_account_id) is intentionally NOT editable here:
+          it must be set from a verified Stripe Connect onboarding return, not a
+          hand-typed value (RLS also locks the column server-side). A "Connect
+          payout account" button belongs here once that flow is built.
+        */}
       </div>
 
       <Button type="submit" disabled={loading} className="w-full">

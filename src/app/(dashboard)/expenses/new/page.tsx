@@ -3,11 +3,15 @@
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Receipt, Loader2, ImagePlus, CheckCircle2 } from 'lucide-react'
+import { ArrowLeft, Receipt, Loader2, ImagePlus, CheckCircle2, AlertTriangle } from 'lucide-react'
 import { createClient } from '@/lib/supabase'
+import { cn } from '@/lib/utils'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Field, Input, Select } from '@/components/ui/field'
+
+type Conf = 'high' | 'medium' | 'low'
+type ReceiptField = 'vendor' | 'amount' | 'description'
 
 export default function NewExpensePage() {
   const router = useRouter()
@@ -17,11 +21,30 @@ export default function NewExpensePage() {
   const [loading, setLoading] = useState(false)
   const [parsingAI, setParsingAI] = useState(false)
   const [receiptUrl, setReceiptUrl] = useState<string | null>(null)
+  const [receiptPath, setReceiptPath] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [tasks, setTasks] = useState<{ id: string; title: string }[]>([])
   const [tasksLoaded, setTasksLoaded] = useState(false)
 
   const [formDataState, setFormDataState] = useState({ description: '', vendor: '', amount: '' })
+
+  // Receipt-review state: which values came from the AI, how confident it was,
+  // and which fields the human has since edited (= taken ownership of). A field
+  // "needs review" while it's AI-filled, below high confidence, and untouched.
+  const [confidence, setConfidence] = useState<Record<ReceiptField, Conf> | null>(null)
+  const [legible, setLegible] = useState(true)
+  const [aiFilled, setAiFilled] = useState(false)
+  const [touched, setTouched] = useState<Record<ReceiptField, boolean>>({
+    vendor: false,
+    amount: false,
+    description: false,
+  })
+
+  const needsReview = (f: ReceiptField) =>
+    aiFilled && !touched[f] && confidence != null && confidence[f] !== 'high'
+
+  const markTouched = (f: ReceiptField) =>
+    setTouched((t) => (t[f] ? t : { ...t, [f]: true }))
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -38,14 +61,20 @@ export default function NewExpensePage() {
       const res = await parseReceipt(data)
 
       if (res.receiptUrl) setReceiptUrl(res.receiptUrl)
+      if (res.receiptPath) setReceiptPath(res.receiptPath)
       if (res.error) {
         setError(res.error)
+        setAiFilled(false)
       } else if (res.parsedData) {
         setFormDataState({
           description: res.parsedData.description,
           vendor: res.parsedData.vendor,
           amount: res.parsedData.amount.toString(),
         })
+        setConfidence(res.confidence ?? null)
+        setLegible(res.legible ?? true)
+        setAiFilled(true)
+        setTouched({ vendor: false, amount: false, description: false })
       }
     } catch {
       setError('Failed to process image')
@@ -98,7 +127,7 @@ export default function NewExpensePage() {
       vendor: vendor || null,
       amount,
       task_id: task_id || null,
-      receipt_url: receiptUrl,
+      receipt_path: receiptPath,
       submitted_by_id: user.id,
       status: 'PENDING',
     })
@@ -169,30 +198,68 @@ export default function NewExpensePage() {
             </div>
           </div>
 
-          <Field label="Description" htmlFor="description">
+          {aiFilled && (
+            <div
+              className={cn(
+                'flex gap-2.5 rounded-[3px] border px-3 py-2.5 text-xs leading-relaxed',
+                legible
+                  ? 'border-pending/40 bg-pending-soft text-pending'
+                  : 'border-rejected/40 bg-rejected-soft text-rejected'
+              )}
+            >
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={1.75} />
+              <span>
+                {legible
+                  ? 'Auto-filled from your receipt. These are AI suggestions — check each field; submitting confirms the values are correct.'
+                  : 'This image was hard to read. Double-check every field carefully — submitting confirms the values are correct.'}
+              </span>
+            </div>
+          )}
+
+          <Field
+            label="Description"
+            htmlFor="description"
+            hint={needsReview('description') ? 'AI was unsure — please verify.' : undefined}
+          >
             <Input
               id="description"
               name="description"
               type="text"
               required
               value={formDataState.description}
-              onChange={(e) => setFormDataState((s) => ({ ...s, description: e.target.value }))}
+              onChange={(e) => {
+                markTouched('description')
+                setFormDataState((s) => ({ ...s, description: e.target.value }))
+              }}
               placeholder="e.g. Copper wiring — 200ft"
+              className={cn(needsReview('description') && 'border-pending ring-1 ring-pending/30')}
             />
           </Field>
 
-          <Field label="Vendor / store" htmlFor="vendor" hint="Optional.">
+          <Field
+            label="Vendor / store"
+            htmlFor="vendor"
+            hint={needsReview('vendor') ? 'AI was unsure — please verify.' : 'Optional.'}
+          >
             <Input
               id="vendor"
               name="vendor"
               type="text"
               value={formDataState.vendor}
-              onChange={(e) => setFormDataState((s) => ({ ...s, vendor: e.target.value }))}
+              onChange={(e) => {
+                markTouched('vendor')
+                setFormDataState((s) => ({ ...s, vendor: e.target.value }))
+              }}
               placeholder="e.g. Home Depot"
+              className={cn(needsReview('vendor') && 'border-pending ring-1 ring-pending/30')}
             />
           </Field>
 
-          <Field label="Amount (USD)" htmlFor="amount">
+          <Field
+            label="Amount (USD)"
+            htmlFor="amount"
+            hint={needsReview('amount') ? 'AI was unsure about the total — double-check it.' : undefined}
+          >
             <div className="relative">
               <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 font-mono text-sm text-ink-faint">$</span>
               <Input
@@ -203,9 +270,15 @@ export default function NewExpensePage() {
                 step="0.01"
                 required
                 value={formDataState.amount}
-                onChange={(e) => setFormDataState((s) => ({ ...s, amount: e.target.value }))}
+                onChange={(e) => {
+                  markTouched('amount')
+                  setFormDataState((s) => ({ ...s, amount: e.target.value }))
+                }}
                 placeholder="0.00"
-                className="pl-7 font-mono tabular-nums"
+                className={cn(
+                  'pl-7 font-mono tabular-nums',
+                  needsReview('amount') && 'border-pending ring-1 ring-pending/30'
+                )}
               />
             </div>
           </Field>

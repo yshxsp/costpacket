@@ -33,7 +33,7 @@ export default async function ExpensesPage({
   let query = supabase
     .from('expenses')
     .select(`
-      id, amount, description, vendor, status, receipt_url, created_at,
+      id, amount, description, vendor, status, receipt_path, created_at,
       task_id,
       tasks (id, title, project_id, projects(id, name)),
       submitted_by_id,
@@ -49,6 +49,20 @@ export default async function ExpensesPage({
   }
 
   const { data: expenses } = await query
+
+  // Receipts live in a private bucket — mint short-lived signed URLs per row.
+  const receiptPaths = (expenses ?? [])
+    .map((e) => e.receipt_path as string | null)
+    .filter((p): p is string => Boolean(p))
+  const signedByPath = new Map<string, string>()
+  if (receiptPaths.length > 0) {
+    const { data: signed } = await supabase.storage
+      .from('receipts')
+      .createSignedUrls(receiptPaths, 60 * 60)
+    for (const s of signed ?? []) {
+      if (s.signedUrl && s.path) signedByPath.set(s.path, s.signedUrl)
+    }
+  }
 
   const totals = {
     pending: expenses?.filter((e) => e.status === 'PENDING').length ?? 0,
@@ -145,9 +159,9 @@ export default async function ExpensesPage({
                 <div className="flex items-center gap-3">
                   <Stamp tone={statusTone(exp.status)}>{statusLabel(exp.status)}</Stamp>
                   {isContractor && exp.status === 'PENDING' && <ApproveRejectButtons expenseId={exp.id} />}
-                  {exp.receipt_url && (
+                  {exp.receipt_path && signedByPath.get(exp.receipt_path) && (
                     <a
-                      href={exp.receipt_url}
+                      href={signedByPath.get(exp.receipt_path)!}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-xs text-accent transition-colors hover:underline"

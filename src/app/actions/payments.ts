@@ -73,8 +73,14 @@ export async function createPayment(taskId: string) {
   let paymentStatus = 'PAID' // Mock defaults to paid
   let errorMsg = null
 
+  // Real transfers to connected accounts are money movement (Stripe Connect
+  // marketplace territory): without a reviewed Connect + KYC setup this is the
+  // fastest way to get the platform account banned. Keep record-only until
+  // STRIPE_PAYOUTS_ENABLED=true is set deliberately.
+  const payoutsEnabled = process.env.STRIPE_PAYOUTS_ENABLED === 'true'
+
   try {
-    if (stripe) {
+    if (stripe && payoutsEnabled) {
       // Real Stripe Connect transfer to the subcontractor's connected account.
       if (!assignee.stripe_account_id) {
         return {
@@ -82,17 +88,29 @@ export async function createPayment(taskId: string) {
             'This subcontractor has no Stripe account connected. Add their Stripe account ID before paying out.',
         }
       }
-      const transfer = await stripe.transfers.create({
-        amount: Math.round(payoutAmount * 100), // convert to cents
-        currency: 'usd',
-        destination: assignee.stripe_account_id,
-        description: `Payout for task: ${task.title}`,
-      })
+      const transfer = await stripe.transfers.create(
+        {
+          amount: Math.round(payoutAmount * 100), // convert to cents
+          currency: 'usd',
+          destination: assignee.stripe_account_id,
+          description: `Payout for task: ${task.title}`,
+        },
+        // Idempotency: two concurrent payout requests can both pass the
+        // existing-payment check above before either inserts the
+        // unique(task_id) row. Keying the transfer by taskId makes Stripe
+        // collapse them into a SINGLE money movement instead of paying twice;
+        // the unique(task_id) index then keeps exactly one DB record.
+        { idempotencyKey: `payout:${taskId}` }
+      )
       stripePayoutId = transfer.id
       paymentStatus = 'PAID'
     } else {
-      // No Stripe key configured (local/dev): record a mock payout.
-      console.warn('No STRIPE_SECRET_KEY configured — recording a mock payout (dev only).')
+      // Record-only: either no Stripe key (local/dev) or payouts deliberately off.
+      console.warn(
+        stripe
+          ? 'STRIPE_PAYOUTS_ENABLED is not "true" — recording the payout without moving money.'
+          : 'No STRIPE_SECRET_KEY configured — recording a mock payout (dev only).'
+      )
     }
   } catch (stripeErr: unknown) {
     console.error("Stripe error:", stripeErr)

@@ -9,18 +9,18 @@ export async function updateProfile(formData: FormData) {
   if (!user) return { error: 'Unauthorized' }
 
   const name = formData.get('name') as string
-  const stripe_account_id = formData.get('stripe_account_id') as string
 
   if (!name || name.trim() === '') {
     return { error: 'Name cannot be empty' }
   }
 
+  // Only `name` is client-writable (RLS grants update(name) on users). The
+  // payout account (stripe_account_id) is intentionally NOT set here — it must
+  // come from a server-side Stripe Connect onboarding return, not a hand-typed
+  // form field, so funds can't be misrouted to an unverified account.
   const { error } = await supabase
     .from('users')
-    .update({ 
-      name: name.trim(), 
-      stripe_account_id: stripe_account_id ? stripe_account_id.trim() : null 
-    })
+    .update({ name: name.trim() })
     .eq('id', user.id)
 
   if (error) {

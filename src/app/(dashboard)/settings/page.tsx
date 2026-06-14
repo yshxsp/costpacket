@@ -29,7 +29,6 @@ export default async function SettingsPage() {
         <ProfileForm
           initialName={profile.name ?? ''}
           initialEmail={profile.email ?? ''}
-          initialStripeId={profile.stripe_account_id ?? ''}
           role={profile.role ?? 'SUBCONTRACTOR'}
         />
       </Card>

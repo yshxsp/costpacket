@@ -4,47 +4,12 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase-server'
 
-export async function login(formData: FormData) {
-  const supabase = await createClient()
-
-  const credentials = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
-  }
-
-  const { error } = await supabase.auth.signInWithPassword(credentials)
-
-  if (error) {
-    return { error: error.message }
-  }
-
-  revalidatePath('/', 'layout')
-  redirect('/dashboard')
-}
-
-export async function signup(formData: FormData) {
-  const supabase = await createClient()
-
-  const name = formData.get('name') as string
-  const email = formData.get('email') as string
-  const password = formData.get('password') as string
-  const role = (formData.get('role') as string) || 'CONTRACTOR'
-
-  const { error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: { name, role },
-    },
-  })
-
-  if (error) {
-    return { error: error.message }
-  }
-
-  revalidatePath('/', 'layout')
-  redirect('/dashboard')
-}
+// Login and signup run client-side in (auth)/login/page.tsx and
+// (auth)/signup/page.tsx via supabase.auth.*. There is intentionally no signup
+// server action here: role/company are assigned by the handle_new_user DB
+// trigger (a public signup is always a new company's ADMIN). A second signup
+// path that forwarded a client-sent role lived here and was removed — never
+// trust the client for authorization fields.
 
 export async function logout() {
   const supabase = await createClient()

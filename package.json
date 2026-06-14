@@ -7,10 +7,12 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
-    "codegraph:check": "node tooling/check-codegraph.mjs",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv"
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv",
+    "test:rls": "node supabase/tests/run-test.mjs rls.test.sql",
+    "test:tenant": "node supabase/tests/run-test.mjs tenant-integrity.test.sql",
+    "test:db": "npm run test:rls && npm run test:tenant"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
@@ -39,6 +41,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "^16.2.6",
+    "postgres": "^3.4.5",
     "tailwindcss": "^4",
     "typescript": "^5",
     "wrangler": "^4.95.0"
