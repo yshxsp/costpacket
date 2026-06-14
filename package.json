@@ -14,9 +14,13 @@
     "test:tenant": "node supabase/tests/run-test.mjs tenant-integrity.test.sql",
     "test:invite": "node supabase/tests/run-test.mjs invites.test.sql",
     "test:payout": "node supabase/tests/run-test.mjs payout.test.sql",
-    "test:db": "npm run test:rls && npm run test:tenant && npm run test:invite && npm run test:payout"
+    "test:billing": "node supabase/tests/run-test.mjs billing.test.sql",
+    "test:paywall": "node supabase/tests/run-test.mjs paywall.test.sql",
+    "test:paddle": "node tests/paddle-signature.test.mjs",
+    "test:db": "npm run test:rls && npm run test:tenant && npm run test:invite && npm run test:payout && npm run test:billing && npm run test:paywall"
   },
   "dependencies": {
+    "@paddle/paddle-js": "^1.4.2",
     "@radix-ui/react-slot": "^1.2.4",
     "@supabase/ssr": "^0.9.0",
     "@supabase/supabase-js": "^2.99.2",

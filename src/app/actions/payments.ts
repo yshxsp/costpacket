@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase-server'
 import { revalidatePath } from 'next/cache'
+import { requireActiveAccess } from '@/lib/billing'
 
 /**
  * Manual payout ledger (beta).
@@ -21,6 +22,9 @@ export async function createPayment(taskId: string) {
 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Unauthorized' }
+
+  const gate = await requireActiveAccess(supabase)
+  if (gate) return gate
 
   const { data: profile } = await supabase
     .from('users')
