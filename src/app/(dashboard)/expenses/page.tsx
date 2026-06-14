@@ -84,6 +84,13 @@ export default async function ExpensesPage({
         description={`${expenses?.length ?? 0} expense${expenses?.length !== 1 ? 's' : ''} · $${totals.total.toLocaleString()} total`}
       >
         <ExportPdfButton expenses={expenses || []} />
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- API download, not a page nav */}
+        <a
+          href="/api/export/expenses"
+          className="inline-flex items-center gap-2 rounded-[3px] border border-rule px-3 py-2 text-sm font-medium text-ink hover:bg-surface-sunken"
+        >
+          Export CSV
+        </a>
         <Button asChild>
           <Link href="/expenses/new">
             <Plus className="h-4 w-4" strokeWidth={1.75} />

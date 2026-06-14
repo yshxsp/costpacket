@@ -56,6 +56,18 @@ export default async function PaymentsPage() {
         description={role === 'SUBCONTRACTOR' ? 'Your payment history' : 'All subcontractor payouts'}
       />
 
+      {payments && payments.length > 0 && (
+        <div className="mb-6">
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- API download, not a page nav */}
+          <a
+            href="/api/export/payments"
+            className="inline-flex items-center gap-2 rounded-[3px] border border-rule px-3 py-1.5 text-xs font-medium text-ink hover:bg-surface-sunken"
+          >
+            Export CSV
+          </a>
+        </div>
+      )}
+
       <div className="mb-8 grid grid-cols-2 gap-px overflow-hidden rounded-[3px] border border-rule bg-rule lg:grid-cols-4">
         {summary.map((s) => (
           <div key={s.label} className="bg-surface p-5">

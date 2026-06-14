@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase-server'
+import { validateReceipt } from '@/lib/file-validation'
 
 export type FieldConfidence = 'high' | 'medium' | 'low'
 
@@ -15,15 +16,14 @@ export async function parseReceipt(formData: FormData) {
     return { error: 'No valid file provided' }
   }
 
-  // Security: Max 10MB file size
-  if (file.size > 10 * 1024 * 1024) {
-    return { error: 'File size exceeds 10MB limit' }
+  // Security: validate by real magic bytes + size — the browser Content-Type and
+  // file extension are spoofable, so we never trust them for an upload.
+  const head = new Uint8Array(await file.slice(0, 16).arrayBuffer())
+  const check = validateReceipt(file.size, head)
+  if (!check.ok) {
+    return { error: check.error }
   }
-
-  // Security: Only allow images
-  if (!file.type.startsWith('image/')) {
-    return { error: 'Only images are allowed for receipts' }
-  }
+  const sniffedMime = check.mime as string
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -44,7 +44,8 @@ export async function parseReceipt(formData: FormData) {
   }
 
   // 1. Upload to Supabase Storage under <company_id>/<uid>-<ts>.<ext>
-  const fileExt = file.name.split('.').pop()
+  // Extension derives from the SNIFFED type, not the user-supplied filename.
+  const fileExt = sniffedMime.split('/')[1] ?? 'bin'
   const receiptPath = `${profile.company_id}/${user.id}-${Date.now()}.${fileExt}`
 
   const { error: uploadError } = await supabase.storage
@@ -100,7 +101,7 @@ export async function parseReceipt(formData: FormData) {
         contents: [{
           parts: [
             { text: prompt },
-            { inlineData: { mimeType: file.type, data: base64Image } }
+            { inlineData: { mimeType: sniffedMime, data: base64Image } }
           ]
         }],
         generationConfig: {
