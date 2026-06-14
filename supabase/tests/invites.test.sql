@@ -21,7 +21,7 @@ declare
   invitee    uuid := '0e000000-0000-4000-8000-0000000000e4';
   contractor uuid := '0c000000-0000-4000-8000-0000000000c5';
   ca uuid; c_throwaway uuid; c_contractor uuid; tok text; joined uuid;
-  final_company uuid; final_role text;
+  final_company uuid; final_role text; revoke_id uuid; n int;
 begin
   -- ---- seed (as owner) ------------------------------------------------------
   insert into auth.users (id, email, raw_user_meta_data, aud, role) values
@@ -98,6 +98,29 @@ begin
     assert false, 'a contractor must not be able to issue an ADMIN invite';
   exception when insufficient_privilege then null; end;
 
+  -- ---- revoke: staff revoke a pending invite; non-staff cannot --------------
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', admin::text, 'role', 'authenticated')::text, true);
+  tok := public.create_invite('to-revoke@costpacket.test', 'SUBCONTRACTOR');
+  select id into revoke_id from public.invites where token = tok;
+  assert revoke_id is not null, 'admin can see the invite they created';
+
+  -- a subcontractor (non-staff) cannot revoke
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', invitee::text, 'role', 'authenticated')::text, true);
+  begin
+    perform public.revoke_invite(revoke_id);
+    assert false, 'a non-staff member must not revoke invites';
+  exception when insufficient_privilege then null; end;
+
+  -- admin revokes it
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', admin::text, 'role', 'authenticated')::text, true);
+  perform public.revoke_invite(revoke_id);
+
   reset role;
+  select count(*) into n from public.invites where id = revoke_id;
+  assert n = 0, 'a revoked invite must be deleted';
+
   raise notice 'COSTPACKET INVITE TEST PASSED';
 end $$;

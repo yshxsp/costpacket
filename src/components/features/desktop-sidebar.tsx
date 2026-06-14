@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, FolderKanban, ClipboardList, Receipt, CreditCard, Settings, LogOut, User, Wallet } from 'lucide-react'
+import { LayoutDashboard, FolderKanban, ClipboardList, Receipt, CreditCard, Settings, LogOut, User, Wallet, Users } from 'lucide-react'
 import { logout } from '@/app/(auth)/actions'
 import { useTranslation } from '@/lib/i18n'
 import { Wordmark } from '@/components/ui/wordmark'
@@ -22,6 +22,7 @@ export function DesktopSidebar({ displayName, role }: { displayName: string; rol
     { href: '/tasks', label: t('tasks'), icon: ClipboardList },
     { href: '/expenses', label: t('expenses'), icon: Receipt },
     { href: '/payments', label: t('payments'), icon: CreditCard },
+    ...(isStaff ? [{ href: '/members', label: 'Members', icon: Users }] : []),
     ...(isStaff ? [{ href: '/billing', label: 'Billing', icon: Wallet }] : []),
     { href: '/settings', label: 'Profile', icon: User },
   ]
