@@ -68,9 +68,12 @@ export async function createPayment(taskId: string) {
     return { error: 'Task has no valid amount configured.' }
   }
 
-  // 3. Initiate Stripe payout (or Mock if no keys)
-  let stripePayoutId = 'mock_po_' + Date.now()
-  let paymentStatus = 'PAID' // Mock defaults to paid
+  // 3. Initiate Stripe payout (only PAID once money actually moves)
+  // Default to PENDING: a row must never read PAID unless a real transfer
+  // succeeded, otherwise the UI tells a subcontractor they were paid when they
+  // weren't.
+  let stripePayoutId: string | null = null
+  let paymentStatus = 'PENDING'
   let errorMsg = null
 
   // Real transfers to connected accounts are money movement (Stripe Connect
@@ -105,11 +108,12 @@ export async function createPayment(taskId: string) {
       stripePayoutId = transfer.id
       paymentStatus = 'PAID'
     } else {
-      // Record-only: either no Stripe key (local/dev) or payouts deliberately off.
+      // Record-only: either no Stripe key (local/dev) or payouts deliberately
+      // off. No money moved, so the row stays PENDING with no payout id.
       console.warn(
         stripe
-          ? 'STRIPE_PAYOUTS_ENABLED is not "true" — recording the payout without moving money.'
-          : 'No STRIPE_SECRET_KEY configured — recording a mock payout (dev only).'
+          ? 'STRIPE_PAYOUTS_ENABLED is not "true" — recording the payout as PENDING without moving money.'
+          : 'No STRIPE_SECRET_KEY configured — recording the payout as PENDING (dev only).'
       )
     }
   } catch (stripeErr: unknown) {
@@ -138,5 +142,7 @@ export async function createPayment(taskId: string) {
 
   revalidatePath('/payments')
   revalidatePath(`/tasks/${taskId}`)
-  return { success: true }
+  // `paid` lets the caller distinguish a real money movement from a recorded
+  // PENDING payout (payouts disabled) so the UI doesn't over-promise.
+  return { success: true, status: paymentStatus, paid: paymentStatus === 'PAID' }
 }

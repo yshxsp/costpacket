@@ -16,9 +16,15 @@ export function PayoutButton({ taskId }: { taskId: string }) {
       const res = await createPayment(taskId)
       if (res.error) {
         toast.error(res.error)
+      } else if (res.paid) {
+        toast.success('Payout sent', {
+          description: 'The transfer to the subcontractor has been initiated.',
+        })
+        router.refresh()
       } else {
-        toast.success('Payout initiated successfully!', {
-          description: 'The funds are on the way to the subcontractor.',
+        // Recorded as PENDING — payouts are not enabled, so no money moved yet.
+        toast.success('Payout recorded as pending', {
+          description: 'No funds were transferred — enable payouts to send money.',
         })
         router.refresh()
       }
