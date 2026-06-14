@@ -12,7 +12,8 @@
     "cf-typegen": "wrangler types --env-interface CloudflareEnv",
     "test:rls": "node supabase/tests/run-test.mjs rls.test.sql",
     "test:tenant": "node supabase/tests/run-test.mjs tenant-integrity.test.sql",
-    "test:db": "npm run test:rls && npm run test:tenant"
+    "test:invite": "node supabase/tests/run-test.mjs invites.test.sql",
+    "test:db": "npm run test:rls && npm run test:tenant && npm run test:invite"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
