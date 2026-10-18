@@ -11,7 +11,9 @@ focused job-costed expense and approval product for small contractors.
 
 ## Skills
 
-Repo-local skills live in `.claude/skills/<name>/SKILL.md`.
+Skills load from user scope (no repo copies): `frontend-design` comes from the
+`frontend-design@claude-plugins-official` plugin; `webapp-testing` and
+`brand-guidelines` live in `~/.claude/skills/`.
 
 - `frontend-design` — use before UI/UX work. Avoid generic AI SaaS styling,
   glow blobs, glassmorphism, and vague "autonomous operations" language.
