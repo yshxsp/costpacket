@@ -14,7 +14,7 @@ export function PayoutButton({ taskId }: { taskId: string }) {
     setLoading(true)
     try {
       const res = await createPayment(taskId)
-      if (res.error) {
+      if ('error' in res && res.error) {
         toast.error(res.error)
       } else {
         // Recorded as PENDING — no money moved. An admin confirms it manually.
