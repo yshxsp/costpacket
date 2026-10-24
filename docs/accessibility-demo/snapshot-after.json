@@ -1,0 +1,98 @@
+{
+  "site": {
+    "name": "Workshop quote — controlled demonstration",
+    "rootUrl": "Local fixture; not a client website"
+  },
+  "generatedByName": "Dmytro Filonenko",
+  "generatedAt": "2026-10-24T11:07:05.663Z",
+  "latestScan": {
+    "engine": "axe-core 4.14.0 in local Chromium; Gangway report generator",
+    "startedAt": "2026-10-24T11:07:05.663Z",
+    "finishedAt": "2026-10-24T11:07:05.663Z",
+    "pagesDone": 1,
+    "pagesTotal": 1
+  },
+  "counts": {
+    "critical": 0,
+    "serious": 0,
+    "moderate": 0,
+    "minor": 0
+  },
+  "findings": [
+    {
+      "ruleId": "color-contrast",
+      "severity": "serious",
+      "status": "verified_fixed",
+      "wcagCriteria": [
+        "1.4.3"
+      ],
+      "selector": ".hint:nth-child(7)",
+      "pagePath": "before.html",
+      "htmlSnippet": "<p class=\"hint\" style=\"color:#9aabc0\">Quotes remain valid for seven days.</p>",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=axeAPI",
+      "wontFixReason": null,
+      "firstSeenAt": "2026-10-24T11:07:05.663Z",
+      "lastSeenAt": "2026-10-24T11:07:05.663Z"
+    },
+    {
+      "ruleId": "image-alt",
+      "severity": "critical",
+      "status": "verified_fixed",
+      "wcagCriteria": [
+        "1.1.1"
+      ],
+      "selector": "img",
+      "pagePath": "before.html",
+      "htmlSnippet": "<img src=\"data:image/svg+xml,%...\">",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.14/image-alt?application=axeAPI",
+      "wontFixReason": null,
+      "firstSeenAt": "2026-10-24T11:07:05.663Z",
+      "lastSeenAt": "2026-10-24T11:07:05.663Z"
+    },
+    {
+      "ruleId": "label",
+      "severity": "critical",
+      "status": "verified_fixed",
+      "wcagCriteria": [
+        "4.1.2"
+      ],
+      "selector": "#email",
+      "pagePath": "before.html",
+      "htmlSnippet": "<input id=\"email\" name=\"email\" type=\"email\" value=\"\" autocomplete=\"email\">",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.14/label?application=axeAPI",
+      "wontFixReason": null,
+      "firstSeenAt": "2026-10-24T11:07:05.663Z",
+      "lastSeenAt": "2026-10-24T11:07:05.663Z"
+    },
+    {
+      "ruleId": "label",
+      "severity": "critical",
+      "status": "verified_fixed",
+      "wcagCriteria": [
+        "4.1.2"
+      ],
+      "selector": "#quantity",
+      "pagePath": "before.html",
+      "htmlSnippet": "<input id=\"quantity\" name=\"quantity\" type=\"number\" value=\"4\" min=\"1\" max=\"50\">",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.14/label?application=axeAPI",
+      "wontFixReason": null,
+      "firstSeenAt": "2026-10-24T11:07:05.663Z",
+      "lastSeenAt": "2026-10-24T11:07:05.663Z"
+    },
+    {
+      "ruleId": "select-name",
+      "severity": "critical",
+      "status": "verified_fixed",
+      "wcagCriteria": [
+        "4.1.2"
+      ],
+      "selector": "#delivery",
+      "pagePath": "before.html",
+      "htmlSnippet": "<select id=\"delivery\"><option>Collect from workshop</option><option>Local delivery</option></select>",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.14/select-name?application=axeAPI",
+      "wontFixReason": null,
+      "firstSeenAt": "2026-10-24T11:07:05.663Z",
+      "lastSeenAt": "2026-10-24T11:07:05.663Z"
+    }
+  ]
+}

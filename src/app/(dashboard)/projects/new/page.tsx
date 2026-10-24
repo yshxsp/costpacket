@@ -129,7 +129,7 @@ export default function NewProjectPage() {
                   )}
                 >
                   <div className="text-sm font-medium">{opt.label}</div>
-                  <div className="mt-0.5 text-xs opacity-80">{opt.desc}</div>
+                  <div className="mt-0.5 text-xs opacity-100">{opt.desc}</div>
                 </button>
               ))}
             </div>

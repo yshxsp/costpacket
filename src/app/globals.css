@@ -17,8 +17,8 @@
   --color-surface: #faf6ee;
   --color-surface-sunken: #e8e1d2;
   --color-ink: #1b1a16;
-  --color-ink-muted: #6c6557;
-  --color-ink-faint: #989083;
+  --color-ink-muted: #5f584d;
+  --color-ink-faint: #625b4f;
   --color-rule: #d8cfbd;
   --color-rule-strong: #c3b8a1;
 
@@ -127,7 +127,7 @@ h3,
   --color-surface-sunken: #100f0a;
   --color-ink: #f1ece1;
   --color-ink-muted: #a39c8b;
-  --color-ink-faint: #6c6557;
+  --color-ink-faint: #aaa18f;
   --color-rule: #312e24;
   --color-rule-strong: #423d2f;
 
@@ -177,3 +177,7 @@ h3,
     animation: none;
   }
 }
+
+:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
+dialog::backdrop { background: rgb(0 0 0 / 50%); }
+dialog { overscroll-behavior: contain; }

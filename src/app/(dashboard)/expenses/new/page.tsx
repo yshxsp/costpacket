@@ -173,6 +173,7 @@ export default function NewExpensePage() {
             )}
             <input
               type="file"
+              aria-label="Receipt image"
               accept="image/jpeg,image/png,image/webp"
               onChange={handleFileChange}
               className="absolute inset-0 h-full w-full cursor-pointer opacity-0 disabled:cursor-not-allowed"
@@ -187,8 +188,8 @@ export default function NewExpensePage() {
                   />
                   <h3 className="font-medium text-ink">Upload receipt</h3>
                   <p className="max-w-xs text-xs leading-relaxed text-ink-muted">
-                    Attach a photo and we&apos;ll prefill vendor, amount, and
-                    description.
+                    Attach a photo, then enter the details below. Automatic
+                    suggestions appear when receipt extraction is available.
                   </p>
                 </>
               ) : (

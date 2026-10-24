@@ -11,6 +11,11 @@ browser checks use synthetic demonstration data, not customer results.
 
 ![Expense review with synthetic demo data](docs/screenshots/expenses-desktop.png)
 
+## Accessibility example
+
+A [controlled before/after demonstration](docs/accessibility-demo/README.md) includes
+source, browser evidence and an HTML/PDF report. It is a personal demonstration.
+
 ## Current stack
 
 - Next.js 16 and React, deployed to Cloudflare Workers through OpenNext.

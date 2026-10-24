@@ -43,18 +43,20 @@ export function ProfileForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Field label="Email address">
+        <Field label="Email address" htmlFor="profile-email">
           <Input
             type="text"
             readOnly
+            id="profile-email"
             value={initialEmail}
             className="cursor-not-allowed bg-surface-sunken text-ink-muted"
           />
         </Field>
-        <Field label="Current role">
+        <Field label="Current role" htmlFor="profile-role">
           <Input
             type="text"
             readOnly
+            id="profile-role"
             value={role}
             className="cursor-not-allowed bg-surface-sunken text-ink-muted"
           />

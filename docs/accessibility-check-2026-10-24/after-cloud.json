@@ -1,0 +1,62 @@
+[
+  {
+    "path": "/",
+    "url": "https://costpacket.yshxsp.workers.dev/",
+    "violations": []
+  },
+  {
+    "path": "/dashboard",
+    "url": "https://costpacket.yshxsp.workers.dev/dashboard",
+    "violations": []
+  },
+  {
+    "path": "/projects",
+    "url": "https://costpacket.yshxsp.workers.dev/projects",
+    "violations": []
+  },
+  {
+    "path": "/projects/new",
+    "url": "https://costpacket.yshxsp.workers.dev/projects/new",
+    "violations": []
+  },
+  {
+    "path": "/tasks",
+    "url": "https://costpacket.yshxsp.workers.dev/tasks",
+    "violations": []
+  },
+  {
+    "path": "/expenses",
+    "url": "https://costpacket.yshxsp.workers.dev/expenses",
+    "violations": []
+  },
+  {
+    "path": "/expenses/new",
+    "url": "https://costpacket.yshxsp.workers.dev/expenses/new",
+    "violations": []
+  },
+  {
+    "path": "/payments",
+    "url": "https://costpacket.yshxsp.workers.dev/payments",
+    "violations": []
+  },
+  {
+    "path": "/members",
+    "url": "https://costpacket.yshxsp.workers.dev/members",
+    "violations": []
+  },
+  {
+    "path": "/settings",
+    "url": "https://costpacket.yshxsp.workers.dev/settings",
+    "violations": []
+  },
+  {
+    "path": "/billing",
+    "url": "https://costpacket.yshxsp.workers.dev/billing",
+    "violations": []
+  },
+  {
+    "path": "/dashboard mobile",
+    "url": "https://costpacket.yshxsp.workers.dev/dashboard",
+    "violations": []
+  }
+]

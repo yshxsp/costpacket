@@ -132,3 +132,9 @@ real inbox was not exercised.
 
 Final lint and unit checks passed, including 18 PostgreSQL authorization and
 consistency scenarios. The staged source secret scan found no leaks.
+
+Follow-up external checks and scoped UI remediation are recorded in
+[INTEGRATION-CHECK-2026-10-24.md](INTEGRATION-CHECK-2026-10-24.md) and
+[ACCESSIBILITY-CHECK-2026-10-24.md](ACCESSIBILITY-CHECK-2026-10-24.md).
+Resend accepted its official provider test sink; the key is sending-only.
+A real recipient's inbox was not used.

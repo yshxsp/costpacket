@@ -1,0 +1,17 @@
+{
+  "checks": [
+    "mobile navigation labels and staff links",
+    "navigation keyboard loop, Escape and return focus",
+    "settings named dialog and controls",
+    "settings dark contrast",
+    "settings OLED contrast",
+    "settings keyboard loop, Escape and return focus",
+    "desktop dialog close",
+    "dashboard dark contrast"
+  ],
+  "notTested": [
+    "screen reader output",
+    "all browsers",
+    "all WCAG success criteria"
+  ]
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "path": "/login",
+    "http": 200,
+    "violations": []
+  },
+  {
+    "path": "/signup",
+    "http": 200,
+    "violations": []
+  },
+  {
+    "path": "/privacy",
+    "http": 200,
+    "violations": []
+  },
+  {
+    "path": "/accept-invite",
+    "http": 200,
+    "violations": []
+  }
+]

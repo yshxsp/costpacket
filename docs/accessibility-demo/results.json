@@ -1,0 +1,182 @@
+{
+  "checkedAt": "2026-10-24T11:07:05.663Z",
+  "before": {
+    "version": "4.14.0",
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "tags": [
+          "cat.color",
+          "wcag2aa",
+          "wcag143",
+          "TTv5",
+          "TT13.c",
+          "EN-301-549",
+          "EN-9.1.4.3",
+          "ACT",
+          "RGAAv4",
+          "RGAA-3.2.1"
+        ],
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "helpUrl": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=axeAPI",
+        "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+        "nodes": [
+          {
+            "target": [
+              ".hint:nth-child(7)"
+            ],
+            "html": "<p class=\"hint\" style=\"color:#9aabc0\">Quotes remain valid for seven days.</p>",
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #9aabc0, background color: #ffffff, font size: 10.8pt (14.4px), font weight: normal). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      },
+      {
+        "id": "image-alt",
+        "impact": "critical",
+        "tags": [
+          "cat.text-alternatives",
+          "wcag2a",
+          "wcag111",
+          "section508",
+          "section508.22.a",
+          "TTv5",
+          "TT7.a",
+          "TT7.b",
+          "EN-301-549",
+          "EN-9.1.1.1",
+          "ACT",
+          "RGAAv4",
+          "RGAA-1.1.1"
+        ],
+        "help": "Images must have alternative text",
+        "helpUrl": "https://dequeuniversity.com/rules/axe/4.14/image-alt?application=axeAPI",
+        "description": "Ensure <img> elements have alternative text or a role of none or presentation",
+        "nodes": [
+          {
+            "target": [
+              "img"
+            ],
+            "html": "<img src=\"data:image/svg+xml,%...\">",
+            "failureSummary": "Fix any of the following:\n  Element does not have an alt attribute\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+          }
+        ]
+      },
+      {
+        "id": "label",
+        "impact": "critical",
+        "tags": [
+          "cat.forms",
+          "wcag2a",
+          "wcag412",
+          "section508",
+          "section508.22.n",
+          "TTv5",
+          "TT5.c",
+          "EN-301-549",
+          "EN-9.4.1.2",
+          "ACT",
+          "RGAAv4",
+          "RGAA-11.1.1"
+        ],
+        "help": "Form elements must have labels",
+        "helpUrl": "https://dequeuniversity.com/rules/axe/4.14/label?application=axeAPI",
+        "description": "Ensure every form element has a label",
+        "nodes": [
+          {
+            "target": [
+              "#email"
+            ],
+            "html": "<input id=\"email\" name=\"email\" type=\"email\" value=\"\" autocomplete=\"email\">",
+            "failureSummary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element has no placeholder attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+          },
+          {
+            "target": [
+              "#quantity"
+            ],
+            "html": "<input id=\"quantity\" name=\"quantity\" type=\"number\" value=\"4\" min=\"1\" max=\"50\">",
+            "failureSummary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element has no placeholder attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+          }
+        ]
+      },
+      {
+        "id": "select-name",
+        "impact": "critical",
+        "tags": [
+          "cat.forms",
+          "wcag2a",
+          "wcag412",
+          "section508",
+          "section508.22.n",
+          "TTv5",
+          "TT5.c",
+          "EN-301-549",
+          "EN-9.4.1.2",
+          "ACT",
+          "RGAAv4",
+          "RGAA-11.1.1"
+        ],
+        "help": "Select element must have an accessible name",
+        "helpUrl": "https://dequeuniversity.com/rules/axe/4.14/select-name?application=axeAPI",
+        "description": "Ensure select element has an accessible name",
+        "nodes": [
+          {
+            "target": [
+              "#delivery"
+            ],
+            "html": "<select id=\"delivery\"><option>Collect from workshop</option><option>Local delivery</option></select>",
+            "failureSummary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+          }
+        ]
+      }
+    ],
+    "incomplete": [],
+    "passes": 21
+  },
+  "after": {
+    "version": "4.14.0",
+    "violations": [],
+    "incomplete": [],
+    "passes": 28
+  },
+  "dialog": {
+    "version": "4.14.0",
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 1
+      },
+      {
+        "id": "label-content-name-mismatch",
+        "nodes": 1
+      }
+    ],
+    "passes": 12
+  },
+  "beforeControl": {
+    "tag": "DIV",
+    "tabIndex": -1,
+    "role": null
+  },
+  "manualChecks": [
+    "reachable native submit button",
+    "logical tab order",
+    "invalid email feedback and focus",
+    "named modal",
+    "modal focus containment",
+    "Escape closes dialog",
+    "focus restoration",
+    "keyboard confirmation",
+    "status live-region DOM",
+    "320px reflow",
+    "200% text resize at 320px"
+  ],
+  "notTested": [
+    "screen reader speech and interaction",
+    "real OS/browser zoom",
+    "Safari/Firefox",
+    "all WCAG criteria",
+    "production Cloudflare browser scan workflow"
+  ]
+}

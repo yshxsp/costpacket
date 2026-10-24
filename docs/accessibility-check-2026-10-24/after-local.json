@@ -1,0 +1,62 @@
+[
+  {
+    "path": "/",
+    "url": "http://127.0.0.1:3187/",
+    "violations": []
+  },
+  {
+    "path": "/dashboard",
+    "url": "http://127.0.0.1:3187/dashboard",
+    "violations": []
+  },
+  {
+    "path": "/projects",
+    "url": "http://127.0.0.1:3187/projects",
+    "violations": []
+  },
+  {
+    "path": "/projects/new",
+    "url": "http://127.0.0.1:3187/projects/new",
+    "violations": []
+  },
+  {
+    "path": "/tasks",
+    "url": "http://127.0.0.1:3187/tasks",
+    "violations": []
+  },
+  {
+    "path": "/expenses",
+    "url": "http://127.0.0.1:3187/expenses",
+    "violations": []
+  },
+  {
+    "path": "/expenses/new",
+    "url": "http://127.0.0.1:3187/expenses/new",
+    "violations": []
+  },
+  {
+    "path": "/payments",
+    "url": "http://127.0.0.1:3187/payments",
+    "violations": []
+  },
+  {
+    "path": "/members",
+    "url": "http://127.0.0.1:3187/members",
+    "violations": []
+  },
+  {
+    "path": "/settings",
+    "url": "http://127.0.0.1:3187/settings",
+    "violations": []
+  },
+  {
+    "path": "/billing",
+    "url": "http://127.0.0.1:3187/billing",
+    "violations": []
+  },
+  {
+    "path": "/dashboard mobile",
+    "url": "http://127.0.0.1:3187/dashboard",
+    "violations": []
+  }
+]

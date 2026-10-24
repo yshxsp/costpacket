@@ -1,0 +1,48 @@
+{
+  "before": [
+    {
+      "ruleId": "image-alt",
+      "severity": "critical",
+      "selector": "main:nth-of-type(1) > div:nth-of-type(2) > aside:nth-of-type(1) > img:nth-of-type(1)",
+      "htmlSnippet": "<img src='data:image/svg+xml,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"480\" height=\"180\" viewBox=\"0 0 480 180\"%3E%3Crect width=\"480\" height=\"180\" fill=\"%23e4edf6\"/%3E%3Cpath d=\"M45 120L325 45l105 35-280 76z\" fill=\"%23d6b88c\" stroke=\"%23735d3e\" stroke-width=\"3\"/%3E%3Cpath d=\"M45 120v10l105 36 280-76V80M150 156v10M72 115l102 34M103 106l100 35M135 98l100 35M166 90l100 35M198 81l100 35M230 73l100 35M261 65l100 35\" fill=\"none\" stroke=\"%23735d3e\" stroke-width=\"2\"/%3E%3C/svg%3E' >",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.10/image-alt",
+      "wcagCriteria": [
+        "1.1.1"
+      ]
+    },
+    {
+      "ruleId": "label",
+      "severity": "critical",
+      "selector": "input#email",
+      "htmlSnippet": "<input id=\"email\" name=\"email\" type=\"email\" value=\"\" autocomplete=\"email\" >",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.10/label",
+      "wcagCriteria": [
+        "1.3.1",
+        "4.1.2"
+      ]
+    },
+    {
+      "ruleId": "label",
+      "severity": "critical",
+      "selector": "input#quantity",
+      "htmlSnippet": "<input id=\"quantity\" name=\"quantity\" type=\"number\" value=\"4\" min=\"1\" max=\"50\">",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.10/label",
+      "wcagCriteria": [
+        "1.3.1",
+        "4.1.2"
+      ]
+    },
+    {
+      "ruleId": "label",
+      "severity": "critical",
+      "selector": "select#delivery",
+      "htmlSnippet": "<select id=\"delivery\"><option>Collect from workshop</option><option>Local delivery</option></select>",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.10/label",
+      "wcagCriteria": [
+        "1.3.1",
+        "4.1.2"
+      ]
+    }
+  ],
+  "after": []
+}

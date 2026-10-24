@@ -20,6 +20,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex h-screen overflow-hidden flex-col md:flex-row">
+      <a href="#main-content" className="sr-only z-50 rounded bg-surface px-4 py-3 text-ink focus:not-sr-only focus:absolute focus:left-4 focus:top-4">Skip to main content</a>
       {/* Mobile Topbar */}
       <MobileNav displayName={displayName} role={role} />
 
@@ -27,7 +28,7 @@ export default async function DashboardLayout({
       <DesktopSidebar displayName={displayName} role={role} />
 
       {/* Main content */}
-      <main className="flex-1 overflow-y-auto relative bg-background">
+      <main id="main-content" tabIndex={-1} className="flex-1 overflow-y-auto relative bg-background">
         {!access.active && (
           <div className="border-b border-pending/40 bg-pending/10 px-5 py-2.5 text-sm text-ink">
             Your plan is inactive — new projects, tasks, and expenses are

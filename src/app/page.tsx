@@ -78,14 +78,14 @@ export default function Home() {
               <h2 className="font-display text-2xl text-ink">What lands in a packet</h2>
               <span className="label hidden sm:block">Job · Kitchen remodel</span>
             </div>
-            <dl className="mt-2 divide-y divide-rule">
+            <ul className="mt-2 divide-y divide-rule">
               {[
                 ['Receipt', 'Lumber yard — framing + trim', 'Parsed from photo', '$426.18'],
                 ['Receipt', 'Hardware supplies', 'Parsed from photo', '$119.42'],
                 ['Task expense', 'Cabinet install — labor', 'Approved by you', '$1,800.00'],
                 ['Payout', 'Subcontractor transfer', 'Recorded as paid · wire', '$1,800.00'],
               ].map(([kind, label, meta, amount]) => (
-                <div
+                <li
                   key={label}
                   className="grid grid-cols-[7rem_1fr_auto] items-baseline gap-x-4 gap-y-1 py-4 sm:grid-cols-[8rem_1fr_10rem_auto]"
                 >
@@ -93,15 +93,15 @@ export default function Home() {
                   <span className="text-sm text-ink">{label}</span>
                   <span className="hidden font-mono text-xs text-ink-faint sm:block">{meta}</span>
                   <span className="text-right font-mono text-sm tabular-nums text-ink">{amount}</span>
-                </div>
+                </li>
               ))}
-              <div className="grid grid-cols-[1fr_auto] items-baseline gap-x-4 py-4">
+              <li className="grid grid-cols-[1fr_auto] items-baseline gap-x-4 py-4">
                 <span className="font-display text-lg text-ink">Packet total</span>
                 <span className="text-right font-mono text-lg font-semibold tabular-nums text-ink">
                   $4,145.60
                 </span>
-              </div>
-            </dl>
+              </li>
+            </ul>
           </div>
         </section>
 

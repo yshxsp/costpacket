@@ -1,0 +1,324 @@
+[
+  {
+    "path": "/",
+    "url": "https://costpacket.yshxsp.workers.dev/",
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": [
+          {
+            "target": [
+              ".mt-5.reveal.text-ink-faint"
+            ],
+            "html": "<p class=\"reveal mt-5 font-mono text-xs text-ink-faint\" style=\"animation-delay:340ms\">No card to start \u00b7 Manual entry or receipt extraction \u00b7 Export anytime</p>",
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.67 (foreground color: #989083, background color: #f1ece1, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+          },
+          {
+            "target": [
+              ".bg-surface-sunken.px-2.py-3:nth-child(1) > .label"
+            ],
+            "html": "<p class=\"label\">Receipts</p>",
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.43 (foreground color: #6c6557, background color: #e8e1d2, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1"
+          },
+          {
+            "target": [
+              ".bg-surface-sunken.px-2.py-3:nth-child(2) > .label"
+            ],
+            "html": "<p class=\"label\">Pending</p>",
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.43 (foreground color: #6c6557, background color: #e8e1d2, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1"
+          },
+          {
+            "target": [
+              ".bg-surface-sunken.px-2.py-3:nth-child(3) > .label"
+            ],
+            "html": "<p class=\"label\">Packet</p>",
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.43 (foreground color: #6c6557, background color: #e8e1d2, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1"
+          },
+          {
+            "target": [
+              ".grid-cols-\\[7rem_1fr_auto\\].gap-y-1.sm\\:grid-cols-\\[8rem_1fr_10rem_auto\\]:nth-child(1) > .hidden.sm\\:block.text-ink-faint"
+            ],
+            "html": "<span class=\"hidden font-mono text-xs text-ink-faint sm:block\">Parsed from photo</span>",
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.82 (foreground color: #989083, background color: #f6f2e9, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+          },
+          {
+            "target": [
+              ".grid-cols-\\[7rem_1fr_auto\\].gap-y-1.sm\\:grid-cols-\\[8rem_1fr_10rem_auto\\]:nth-child(2) > .hidden.sm\\:block.text-ink-faint"
+            ],
+            "html": "<span class=\"hidden font-mono text-xs text-ink-faint sm:block\">Parsed from photo</span>",
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.82 (foreground color: #989083, background color: #f6f2e9, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+          },
+          {
+            "target": [
+              ".grid-cols-\\[7rem_1fr_auto\\].gap-y-1.sm\\:grid-cols-\\[8rem_1fr_10rem_auto\\]:nth-child(3) > .hidden.sm\\:block.text-ink-faint"
+            ],
+            "html": "<span class=\"hidden font-mono text-xs text-ink-faint sm:block\">Approved by you</span>",
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.82 (foreground color: #989083, background color: #f6f2e9, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+          },
+          {
+            "target": [
+              ".grid-cols-\\[7rem_1fr_auto\\].gap-y-1.sm\\:grid-cols-\\[8rem_1fr_10rem_auto\\]:nth-child(4) > .hidden.sm\\:block.text-ink-faint"
+            ],
+            "html": "<span class=\"hidden font-mono text-xs text-ink-faint sm:block\">Recorded as paid \u00b7 wire</span>",
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.82 (foreground color: #989083, background color: #f6f2e9, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+          },
+          {
+            "target": [
+              ".mt-2.text-ink-faint.text-xs"
+            ],
+            "html": "<p class=\"mt-2 font-mono text-xs text-ink-faint\">A personal project by <!-- -->Dmytro Filonenko<!-- -->.</p>",
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.67 (foreground color: #989083, background color: #f1ece1, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+          },
+          {
+            "target": [
+              ".sm\\:items-end.flex-col.gap-2 > .text-ink-faint.text-xs"
+            ],
+            "html": "<p class=\"font-mono text-xs text-ink-faint\">\u00a9 <!-- -->2026<!-- --> CostPacket</p>",
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.67 (foreground color: #989083, background color: #f1ece1, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      },
+      {
+        "id": "definition-list",
+        "impact": "serious",
+        "nodes": [
+          {
+            "target": [
+              "dl"
+            ],
+            "html": "<dl class=\"mt-2 divide-y divide-rule\">",
+            "failureSummary": "Fix all of the following:\n  dl element has direct children that are not allowed: div > span"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "path": "/dashboard",
+    "url": "https://costpacket.yshxsp.workers.dev/dashboard",
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": [
+          {
+            "target": [
+              ".mt-2.text-xs.justify-between > span:nth-child(1)"
+            ],
+            "html": "<span>0<!-- --> done</span>",
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.92 (foreground color: #989083, background color: #faf6ee, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+          },
+          {
+            "target": [
+              ".mt-2.text-xs.justify-between > span:nth-child(2)"
+            ],
+            "html": "<span>0<!-- --> remaining</span>",
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.92 (foreground color: #989083, background color: #faf6ee, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "path": "/projects",
+    "url": "https://costpacket.yshxsp.workers.dev/projects",
+    "violations": []
+  },
+  {
+    "path": "/projects/new",
+    "url": "https://costpacket.yshxsp.workers.dev/projects/new",
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": [
+          {
+            "target": [
+              ".text-ink-faint.text-xs"
+            ],
+            "html": "<p class=\"text-xs text-ink-faint\">Optional.</p>",
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.92 (foreground color: #989083, background color: #faf6ee, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+          },
+          {
+            "target": [
+              ".p-3.text-left[type=\"button\"]:nth-child(2) > .opacity-80.mt-0\\.5.text-xs"
+            ],
+            "html": "<div class=\"mt-0.5 text-xs opacity-80\">Temporarily paused</div>",
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 3.54 (foreground color: #888275, background color: #faf6ee, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "path": "/tasks",
+    "url": "https://costpacket.yshxsp.workers.dev/tasks",
+    "violations": []
+  },
+  {
+    "path": "/expenses",
+    "url": "https://costpacket.yshxsp.workers.dev/expenses",
+    "violations": []
+  },
+  {
+    "path": "/expenses/new",
+    "url": "https://costpacket.yshxsp.workers.dev/expenses/new",
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": [
+          {
+            "target": [
+              ".max-w-xs"
+            ],
+            "html": "<p class=\"max-w-xs text-xs leading-relaxed text-ink-muted\">Attach a photo and we'll prefill vendor, amount, and description.</p>",
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.43 (foreground color: #6c6557, background color: #e8e1d2, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+          },
+          {
+            "target": [
+              ".space-y-1\\.5:nth-child(3) > .text-xs.text-ink-faint"
+            ],
+            "html": "<p class=\"text-xs text-ink-faint\">Optional.</p>",
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.92 (foreground color: #989083, background color: #faf6ee, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+          },
+          {
+            "target": [
+              ".space-y-1\\.5:nth-child(5) > .text-xs.text-ink-faint"
+            ],
+            "html": "<p class=\"text-xs text-ink-faint\">Optional.</p>",
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.92 (foreground color: #989083, background color: #faf6ee, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      },
+      {
+        "id": "label",
+        "impact": "critical",
+        "nodes": [
+          {
+            "target": [
+              ".inset-0"
+            ],
+            "html": "<input type=\"file\" accept=\"image/jpeg,image/png,image/webp\" class=\"absolute inset-0 h-full w-full cursor-pointer opacity-0 disabled:cursor-not-allowed\">",
+            "failureSummary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element has no placeholder attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "path": "/payments",
+    "url": "https://costpacket.yshxsp.workers.dev/payments",
+    "violations": []
+  },
+  {
+    "path": "/members",
+    "url": "https://costpacket.yshxsp.workers.dev/members",
+    "violations": []
+  },
+  {
+    "path": "/settings",
+    "url": "https://costpacket.yshxsp.workers.dev/settings",
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": [
+          {
+            "target": [
+              ".space-y-1\\.5:nth-child(1) > .cursor-not-allowed.placeholder\\:text-ink-faint[readonly=\"\"]"
+            ],
+            "html": "<input class=\"w-full rounded-[3px]...\" type=\"text\" readonly=\"\" value=\"delivered+costpacket...\">",
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.43 (foreground color: #6c6557, background color: #e8e1d2, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+          },
+          {
+            "target": [
+              "input[value=\"ADMIN\"]"
+            ],
+            "html": "<input class=\"w-full rounded-[3px]...\" type=\"text\" readonly=\"\" value=\"ADMIN\">",
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.43 (foreground color: #6c6557, background color: #e8e1d2, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      },
+      {
+        "id": "label",
+        "impact": "critical",
+        "nodes": [
+          {
+            "target": [
+              ".space-y-1\\.5:nth-child(1) > .cursor-not-allowed.placeholder\\:text-ink-faint[readonly=\"\"]"
+            ],
+            "html": "<input class=\"w-full rounded-[3px]...\" type=\"text\" readonly=\"\" value=\"delivered+costpacket...\">",
+            "failureSummary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element has no placeholder attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+          },
+          {
+            "target": [
+              "input[value=\"ADMIN\"]"
+            ],
+            "html": "<input class=\"w-full rounded-[3px]...\" type=\"text\" readonly=\"\" value=\"ADMIN\">",
+            "failureSummary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element has no placeholder attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "path": "/billing",
+    "url": "https://costpacket.yshxsp.workers.dev/billing",
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": [
+          {
+            "target": [
+              ".text-xs"
+            ],
+            "html": "<p class=\"text-xs text-ink-faint\">Billed by Paddle, our Merchant of Record. Card details are handled by Paddle \u2014 CostPacket never sees them. Subcontractor payouts are a separate manual ledger and are not billed here.</p>",
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.67 (foreground color: #989083, background color: #f1ece1, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "path": "/dashboard mobile",
+    "url": "https://costpacket.yshxsp.workers.dev/dashboard",
+    "violations": [
+      {
+        "id": "button-name",
+        "impact": "critical",
+        "nodes": [
+          {
+            "target": [
+              ".p-2"
+            ],
+            "html": "<button class=\"p-2 text-ink-muted hover:text-ink\">",
+            "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+          }
+        ]
+      },
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": [
+          {
+            "target": [
+              ".mt-2.text-xs.justify-between > span:nth-child(1)"
+            ],
+            "html": "<span>0<!-- --> done</span>",
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.92 (foreground color: #989083, background color: #faf6ee, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+          },
+          {
+            "target": [
+              ".mt-2.text-xs.justify-between > span:nth-child(2)"
+            ],
+            "html": "<span>0<!-- --> remaining</span>",
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.92 (foreground color: #989083, background color: #faf6ee, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      }
+    ]
+  }
+]
