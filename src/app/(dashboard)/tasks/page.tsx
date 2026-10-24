@@ -1,64 +1,32 @@
-import { createClient } from '@/lib/supabase-server'
-import { redirect } from 'next/navigation'
-import Link from 'next/link'
-import { PageShell, PageHeader } from '@/components/ui/page'
-import { EmptyState } from '@/components/ui/empty'
-import { Stamp, statusTone, statusLabel } from '@/components/ui/status'
-import { cn } from '@/lib/utils'
+import { workspace } from "@/lib/server";
+import Link from "next/link";
+import { PageShell, PageHeader } from "@/components/ui/page";
+import { EmptyState } from "@/components/ui/empty";
+import { Stamp, statusTone, statusLabel } from "@/components/ui/status";
+import { cn } from "@/lib/utils";
 
-const ALL_STATUSES = ['PENDING', 'IN_PROGRESS', 'REVIEW', 'COMPLETED'] as const
+const ALL_STATUSES = ["PENDING", "IN_PROGRESS", "REVIEW", "COMPLETED"] as const;
 
 export default async function TasksPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; project?: string }>
+  searchParams: Promise<{ status?: string; project?: string }>;
 }) {
-  const { status: filterStatus, project: filterProject } = await searchParams
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
-
-  const { data: profile } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-  const role = profile?.role ?? 'SUBCONTRACTOR'
-
-  let query = supabase
-    .from('tasks')
-    .select(`
-      id, title, status, amount, created_at,
-      project_id,
-      projects (id, name),
-      assignee_id,
-      users (id, name, email)
-    `)
-    .order('created_at', { ascending: false })
-
-  if (role === 'SUBCONTRACTOR') {
-    query = query.eq('assignee_id', user.id)
-  }
-  if (filterStatus && (ALL_STATUSES as readonly string[]).includes(filterStatus)) {
-    query = query.eq('status', filterStatus)
-  }
-  if (filterProject) {
-    query = query.eq('project_id', filterProject)
-  }
-
-  const { data: tasks } = await query
-
-  const { data: projects } = await supabase
-    .from('projects')
-    .select('id, name')
-    .order('name')
+  const { status: filterStatus, project: filterProject } = await searchParams;
+  const ws = await workspace();
+  const tasks = (await ws.listTasks()).filter(
+    (t) =>
+      (!filterStatus || t.status === filterStatus) &&
+      (!filterProject || t.project_id === filterProject),
+  );
+  const projects = await ws.listProjects();
 
   return (
     <PageShell>
       <PageHeader
         kicker="Ledger"
         title="Tasks"
-        description={`${tasks?.length ?? 0} task${tasks?.length !== 1 ? 's' : ''} found`}
+        description={`${tasks?.length ?? 0} task${tasks?.length !== 1 ? "s" : ""} found`}
       />
 
       <div className="mb-6 flex flex-wrap gap-3">
@@ -67,7 +35,7 @@ export default async function TasksPage({
           {ALL_STATUSES.map((s) => (
             <FilterLink
               key={s}
-              href={`?status=${s}${filterProject ? `&project=${filterProject}` : ''}`}
+              href={`?status=${s}${filterProject ? `&project=${filterProject}` : ""}`}
               active={filterStatus === s}
               label={statusLabel(s)}
             />
@@ -77,14 +45,14 @@ export default async function TasksPage({
         {projects && projects.length > 0 && (
           <div className="flex items-center gap-1 rounded-[3px] border border-rule bg-surface p-1">
             <FilterLink
-              href={filterStatus ? `?status=${filterStatus}` : '?'}
+              href={filterStatus ? `?status=${filterStatus}` : "?"}
               active={!filterProject}
               label="All projects"
             />
             {projects.map((p) => (
               <FilterLink
                 key={p.id}
-                href={`?project=${p.id}${filterStatus ? `&status=${filterStatus}` : ''}`}
+                href={`?project=${p.id}${filterStatus ? `&status=${filterStatus}` : ""}`}
                 active={filterProject === p.id}
                 label={p.name}
               />
@@ -113,11 +81,20 @@ export default async function TasksPage({
             <tbody className="divide-y divide-rule">
               {tasks.map((task) => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const project = (task.projects as any) as { id: string; name: string } | null
+                const project = task.projects as any as {
+                  id: string;
+                  name: string;
+                } | null;
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const assignee = (task.users as any) as { name?: string; email?: string } | null
+                const assignee = task.users as any as {
+                  name?: string;
+                  email?: string;
+                } | null;
                 return (
-                  <tr key={task.id} className="group transition-colors hover:bg-surface-sunken">
+                  <tr
+                    key={task.id}
+                    className="group transition-colors hover:bg-surface-sunken"
+                  >
                     <td className="px-5 py-4">
                       <Link
                         href={`/tasks/${task.id}`}
@@ -140,40 +117,58 @@ export default async function TasksPage({
                     </td>
                     <td className="hidden px-5 py-4 sm:table-cell">
                       <span className="text-xs text-ink-muted">
-                        {assignee ? (assignee.name ?? assignee.email) : '—'}
+                        {assignee ? (assignee.name ?? assignee.email) : "—"}
                       </span>
                     </td>
                     <td className="px-5 py-4">
-                      <Stamp tone={statusTone(task.status)}>{statusLabel(task.status)}</Stamp>
+                      <Stamp tone={statusTone(task.status)}>
+                        {statusLabel(task.status)}
+                      </Stamp>
                     </td>
                     <td className="px-5 py-4 text-right font-mono text-sm tabular-nums text-ink">
                       ${Number(task.amount).toLocaleString()}
                     </td>
                   </tr>
-                )
+                );
               })}
             </tbody>
           </table>
         </div>
       )}
     </PageShell>
-  )
+  );
 }
 
-function Th({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <th className={cn('label px-5 py-3 text-left', className)}>{children}</th>
+function Th({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <th className={cn("label px-5 py-3 text-left", className)}>{children}</th>
+  );
 }
 
-function FilterLink({ href, active, label }: { href: string; active: boolean; label: string }) {
+function FilterLink({
+  href,
+  active,
+  label,
+}: {
+  href: string;
+  active: boolean;
+  label: string;
+}) {
   return (
     <Link
       href={href}
       className={cn(
-        'rounded-[2px] px-3 py-1.5 text-xs font-medium transition-colors',
-        active ? 'bg-surface-sunken text-ink' : 'text-ink-muted hover:text-ink'
+        "rounded-[2px] px-3 py-1.5 text-xs font-medium transition-colors",
+        active ? "bg-surface-sunken text-ink" : "text-ink-muted hover:text-ink",
       )}
     >
       {label}
     </Link>
-  )
+  );
 }

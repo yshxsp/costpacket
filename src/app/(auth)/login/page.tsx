@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
-import { createClient } from '@/lib/supabase'
+import { authClient, safeReturnPath } from '@/lib/auth-client'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Field, Input } from '@/components/ui/field'
@@ -24,16 +24,15 @@ export default function LoginPage() {
     const email = formData.get('email') as string
     const password = formData.get('password') as string
 
-    const supabase = createClient()
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { error } = await authClient.signIn.email({ email, password })
 
     if (error) {
-      setError(error.message)
+      setError(error.message ?? 'Could not complete sign-in.')
       setLoading(false)
       return
     }
 
-    router.push('/dashboard')
+    router.push(safeReturnPath(new URLSearchParams(window.location.search).get('redirectTo') ?? new URLSearchParams(window.location.search).get('next')))
     router.refresh()
   }
 

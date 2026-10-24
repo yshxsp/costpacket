@@ -1,49 +1,38 @@
-import { createClient } from '@/lib/supabase-server'
-import { redirect, notFound } from 'next/navigation'
-import Link from 'next/link'
-import { ArrowLeft, Receipt, User, CheckCircle2 } from 'lucide-react'
-import { UpdateTaskStatusSelect } from '@/components/features/update-task-status'
-import { PayoutButton } from '@/components/features/payout-button'
-import { Card } from '@/components/ui/card'
-import { Stamp, statusTone, statusLabel } from '@/components/ui/status'
+import { workspace } from "@/lib/server";
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeft, Receipt, User, CheckCircle2 } from "lucide-react";
+import { UpdateTaskStatusSelect } from "@/components/features/update-task-status";
+import { PayoutButton } from "@/components/features/payout-button";
+import { Card } from "@/components/ui/card";
+import { Stamp, statusTone, statusLabel } from "@/components/ui/status";
 
 export default async function TaskDetailPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = await params
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  const { id } = await params;
+  const ws = await workspace();
+  const { user } = ws;
+  const task = await ws.getTask(id);
+  if (!task) notFound();
+  const expenses = await ws.listExpenses(id);
+  const existingPayment = (await ws.listPayments()).find(
+    (p) => p.task_id === id,
+  );
+  const project = task.projects as {
+    id: string;
+    name: string;
+    owner_id: string;
+  } | null;
+  const assignee = task.users as { name?: string; email?: string } | null;
 
-  const [{ data: task }, { data: expenses }, { data: existingPayment }] = await Promise.all([
-    supabase
-      .from('tasks')
-      .select(`
-        *,
-        projects (id, name, owner_id),
-        users (id, name, email)
-      `)
-      .eq('id', id)
-      .single(),
-    supabase
-      .from('expenses')
-      .select('id, amount, description, vendor, status, created_at')
-      .eq('task_id', id)
-      .order('created_at', { ascending: false }),
-    supabase.from('payments').select('id, status').eq('task_id', id).maybeSingle(),
-  ])
-
-  if (!task) notFound()
-
-  const project = task.projects as { id: string; name: string; owner_id: string } | null
-  const assignee = task.users as { name?: string; email?: string } | null
-
-  const isOwner = project?.owner_id === user.id
-  const isAssignee = task.assignee_id === user.id
-  const canEditStatus = isOwner || isAssignee
-  const totalExpenses = expenses?.reduce((s, e) => s + Number(e.amount), 0) ?? 0
+  const isOwner = project?.owner_id === user.id;
+  const isAssignee = task.assignee_id === user.id;
+  const canEditStatus = isOwner || isAssignee;
+  const totalExpenses =
+    expenses?.reduce((s, e) => s + Number(e.amount), 0) ?? 0;
 
   return (
     <div className="mx-auto max-w-4xl p-6 sm:p-8">
@@ -58,8 +47,12 @@ export default async function TaskDetailPage({
       <div className="mb-8 flex flex-col gap-4 border-b border-rule pb-6 md:flex-row md:items-start md:justify-between">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="font-display text-3xl tracking-tight text-ink">{task.title}</h1>
-            <Stamp tone={statusTone(task.status)}>{statusLabel(task.status)}</Stamp>
+            <h1 className="font-display text-3xl tracking-tight text-ink">
+              {task.title}
+            </h1>
+            <Stamp tone={statusTone(task.status)}>
+              {statusLabel(task.status)}
+            </Stamp>
           </div>
           {project && (
             <Link
@@ -71,7 +64,12 @@ export default async function TaskDetailPage({
           )}
         </div>
 
-        {canEditStatus && <UpdateTaskStatusSelect taskId={task.id} currentStatus={task.status} />}
+        {canEditStatus && (
+          <UpdateTaskStatusSelect
+            taskId={task.id}
+            currentStatus={task.status}
+          />
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -79,7 +77,9 @@ export default async function TaskDetailPage({
           {task.description && (
             <Card className="p-5">
               <h2 className="label mb-2">Description</h2>
-              <p className="text-sm leading-relaxed text-ink">{task.description}</p>
+              <p className="text-sm leading-relaxed text-ink">
+                {task.description}
+              </p>
             </Card>
           )}
 
@@ -98,7 +98,9 @@ export default async function TaskDetailPage({
             </div>
 
             {!expenses || expenses.length === 0 ? (
-              <p className="py-2 text-sm text-ink-muted">No expenses submitted yet.</p>
+              <p className="py-2 text-sm text-ink-muted">
+                No expenses submitted yet.
+              </p>
             ) : (
               <div className="overflow-hidden rounded-[3px] border border-rule">
                 {expenses.map((exp) => (
@@ -107,11 +109,17 @@ export default async function TaskDetailPage({
                     className="flex items-center justify-between gap-3 border-b border-rule bg-surface px-4 py-3 last:border-0"
                   >
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-medium text-ink">{exp.description}</p>
-                      {exp.vendor && <p className="text-xs text-ink-muted">{exp.vendor}</p>}
+                      <p className="truncate text-sm font-medium text-ink">
+                        {exp.description}
+                      </p>
+                      {exp.vendor && (
+                        <p className="text-xs text-ink-muted">{exp.vendor}</p>
+                      )}
                     </div>
                     <div className="flex flex-shrink-0 items-center gap-3">
-                      <Stamp tone={statusTone(exp.status)}>{statusLabel(exp.status)}</Stamp>
+                      <Stamp tone={statusTone(exp.status)}>
+                        {statusLabel(exp.status)}
+                      </Stamp>
                       <span className="font-mono text-sm font-semibold tabular-nums text-ink">
                         ${Number(exp.amount).toLocaleString()}
                       </span>
@@ -144,9 +152,13 @@ export default async function TaskDetailPage({
             {assignee ? (
               <div className="flex items-center gap-3">
                 <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-rule bg-surface-sunken font-mono text-sm font-semibold text-ink">
-                  {assignee.name?.[0]?.toUpperCase() ?? assignee.email?.[0]?.toUpperCase() ?? '?'}
+                  {assignee.name?.[0]?.toUpperCase() ??
+                    assignee.email?.[0]?.toUpperCase() ??
+                    "?"}
                 </div>
-                <p className="text-sm text-ink">{assignee.name ?? assignee.email}</p>
+                <p className="text-sm text-ink">
+                  {assignee.name ?? assignee.email}
+                </p>
               </div>
             ) : (
               <div className="flex items-center gap-2 text-ink-muted">
@@ -162,12 +174,16 @@ export default async function TaskDetailPage({
               <div className="flex justify-between">
                 <span className="text-ink-muted">Created</span>
                 <span className="font-mono text-ink">
-                  {new Date(task.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  {new Date(task.created_at).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
                 </span>
               </div>
             </div>
 
-            {isOwner && task.status === 'COMPLETED' && (
+            {isOwner && task.status === "COMPLETED" && (
               <div className="mt-3 border-t border-rule pt-3">
                 {existingPayment ? (
                   <div className="flex w-full items-center justify-center gap-2 rounded-[3px] border border-approved/30 bg-approved-soft py-2.5 text-sm font-medium text-approved">
@@ -183,5 +199,5 @@ export default async function TaskDetailPage({
         </div>
       </div>
     </div>
-  )
+  );
 }

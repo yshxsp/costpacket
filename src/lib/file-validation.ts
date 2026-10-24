@@ -3,7 +3,7 @@
  * spoofable, so receipt uploads are validated by their actual file signature
  * before they touch storage or the AI vision call.
  */
-export const ALLOWED_IMAGE_MIME = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/heic'] as const
+export const ALLOWED_IMAGE_MIME = ['image/jpeg', 'image/png', 'image/webp'] as const
 
 export function sniffImageMime(buf: Uint8Array): string | null {
   const at = (sig: number[], off = 0) => sig.every((b, i) => buf[off + i] === b)

@@ -1,85 +1,110 @@
 # CostPacket
 
-CostPacket is a focused expense approval and job-costing workspace for small
-contractors. It keeps receipts, task expenses, approvals, payout records, and
-PDF packets tied to the job before the back office turns into spreadsheets and
-message threads.
+[Open the application](https://costpacket.yshxsp.workers.dev)
 
----
+Expense approvals and job costing for small contractors. Projects hold tasks,
+receipts and expense records; staff review expenses and record manual payouts.
+CSV and PDF exports provide a copy of the visible records.
 
-## Key Features
+This is a development project by Dmytro Filonenko. Screenshots and automated
+browser checks use synthetic demonstration data, not customer results.
 
-- **Job-costed expense inbox:** Review receipts and expenses by project, task,
-  submitter, and status.
-- **AI receipt parsing:** Extract vendor, amount, and description from receipt
-  photos with Gemini Vision.
-- **Approval workflow:** Contractors can approve or reject pending expenses with
-  server-side authorization checks.
-- **Payout records:** Track subcontractor payouts and Stripe transfer IDs.
-- **PDF export:** Generate expense packets for bookkeeping, client review, or
-  payment backup.
-- **Mobile-first PWA:** Installable dashboard for field and office workflows.
+![Expense review with synthetic demo data](docs/screenshots/expenses-desktop.png)
 
----
+## Current stack
 
-## Tech Stack
+- Next.js 16 and React, deployed to Cloudflare Workers through OpenNext.
+- Neon PostgreSQL and Drizzle, in the isolated `costpacket` schema.
+- Better Auth for email/password sign-in, verification and sessions.
+- Private R2 receipt storage, accessed through authorized application routes.
+- Resend for transactional email when configured.
+- Optional Gemini receipt extraction; manual expense entry works independently.
+- Optional Paddle subscription checkout. Payout records never transfer funds.
 
-- **Framework:** [Next.js 16](https://nextjs.org/) App Router
-- **Runtime:** [React 19](https://react.dev/)
-- **Database & Auth:** [Supabase](https://supabase.com/) Postgres + Auth + Storage
-- **AI Engine:** [Google Gemini AI](https://aistudio.google.com/)
-- **Styling:** [Tailwind CSS 4](https://tailwindcss.com/)
-- **Payments:** [Stripe](https://stripe.com/)
-- **Hosting:** [Cloudflare Workers](https://workers.cloudflare.com/) via the [OpenNext](https://opennext.js.org/cloudflare) adapter
+Supabase is no longer a runtime dependency. Historical Supabase migrations and
+tests are retained only as reference in `docs/legacy-supabase/`.
 
----
+## Local development
 
-## Getting Started
+Use Node.js 24 and a Neon development branch or a local PostgreSQL instance.
 
-```bash
-git clone https://github.com/yshxsp/costpacket.git
-cd costpacket
-npm install
+```sh
+npm ci --ignore-scripts
 cp .env.example .env.local
-npm run dev
+# Set DATABASE_URL, BETTER_AUTH_URL and a random BETTER_AUTH_SECRET.
+# Use MIGRATION_DATABASE_URL for a schema-owner connection if the runtime role is restricted.
+npm run db:migrate
+npm run dev:local
 ```
 
----
+The local server runs at `http://127.0.0.1:3187`. Keep `COSTPACKET_LOCAL=1` for
+Node development. Use a separate database/branch for tests and demonstrations.
+Production receives Cloudflare bindings and does not use the local file-storage
+fallback or email outbox.
 
-## Deployment (Cloudflare Workers)
+To generate a local secret without changing existing database configuration,
+`npm run setup:local` creates a starter `.env.local` if one is absent. Replace
+its database URL before starting the app. Existing configuration is preserved.
 
-CostPacket runs on Cloudflare Workers through the OpenNext adapter.
+For local email verification checks, set `DEV_EMAIL_OUTBOX` to a private local
+file. Verification and invitation emails are captured there instead of being
+sent. This option is restricted to local mode.
 
-```bash
-# one-time: authenticate wrangler with your Cloudflare account
-npx wrangler login
+## Checks
 
-# set runtime secrets (read by the Worker at request time)
-npx wrangler secret put NEXT_PUBLIC_SUPABASE_URL
-npx wrangler secret put NEXT_PUBLIC_SUPABASE_ANON_KEY
-npx wrangler secret put STRIPE_SECRET_KEY
-npx wrangler secret put GEMINI_API_KEY
-
-# build + run locally on the Workers runtime
-npm run preview
-
-# build + deploy
-npm run deploy
+```sh
+npm run lint -- --max-warnings=0
+npm test
+npm run build:worker
+npm audit --audit-level=high
 ```
 
-For local `npm run preview`, copy `.dev.vars.example` to `.dev.vars` and fill it in.
+`npm test` covers signature verification, CSV and file handling, untrusted
+extraction output, bounded webhook bodies, and PostgreSQL access-control scenarios
+in PGlite. It does not need hosted service credentials.
 
-> **Note:** auth runs in an **Edge** `src/middleware.ts` (not Next 16's Node-runtime
-> `proxy.ts`). The OpenNext Cloudflare adapter does not yet support Node-runtime proxy
-> ([opennextjs-cloudflare#962](https://github.com/opennextjs/opennextjs-cloudflare/issues/962)).
+With the isolated local app running against Neon, `npm run test:auth` checks
+sign-up, verification through the local outbox, five concurrent authenticated
+requests and tenant-isolated export. This creates synthetic test accounts.
 
----
+`tests/browser-smoke.js` is a Playwright CLI `run-code` scenario for the local
+app: sign-up, project/task creation, receipt upload, manual expense approval,
+CSV/PDF export, manual payout recording and profile updates. It assumes receipt
+extraction is disabled and saves artifacts under `output/playwright/`.
 
-## Product Direction
+## Cloud deployment
 
-The product is intentionally not a full Procore-style construction management
-suite. The current wedge is narrower: job-costed receipts, expense approvals,
-and payout packets for small contractors.
+See [deployment and migration notes](docs/NEON-MIGRATION.md) for bindings,
+credentials, verification evidence and service limits.
 
-Avoid adding fleet telemetry, GPS equipment tracking, or autonomous task
-completion flows unless customer discovery proves a direct revenue path.
+- Apply SQL migrations with the schema-owner connection. Migrations do not run
+  inside the Worker.
+- Give the runtime role access only to CostPacket tables, excluding `_migrations`.
+- Set the Hyperdrive binding and disable its query cache for session and
+  subscription freshness.
+- Bind the private `costpacket-receipts` R2 bucket as `RECEIPTS`.
+- Set `BETTER_AUTH_URL` to the deployed HTTPS origin and configure Worker secrets.
+- Leave `COSTPACKET_LOCAL` and `DEV_EMAIL_OUTBOX` unset in production.
+
+Optional extraction needs a working Gemini key. Optional billing needs the
+CostPacket Paddle catalog, API key, webhook secret, public client token and price
+ID. Browser checkout success does not grant subscription access.
+
+Deployments are manually triggered; a source push does not automatically publish
+the application.
+
+## Boundaries
+
+Each company has a separate authorization scope. Subcontractors see their
+assigned tasks and own expenses/payouts. Staff manage work in their company;
+only admins manage subscriptions, invite admins and confirm manual payouts.
+Invitation acceptance requires a verified email and cannot silently discard an
+existing workspace containing data or members.
+
+Lists show at most 500 entries. CSV export uses bounded keyset pages, up to
+10,000 records; PDF exports the displayed expense list. Receipt uploads accept
+JPEG, PNG and WebP with size and hourly quota checks. Images remain private.
+
+Deleting a project removes its linked tasks, expenses and payout records.
+Receipt files have separate retention; automatic orphan-file deletion and
+self-service account removal are not implemented.

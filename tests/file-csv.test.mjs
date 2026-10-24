@@ -10,6 +10,10 @@ assert.equal(toCsv(['x'], [['he said "hi"']]), 'x\r\n"he said ""hi"""')
 assert.equal(toCsv(['x'], [['line1\nline2']]), 'x\r\n"line1\nline2"')
 assert.equal(toCsv(['x'], [[null]]), 'x\r\n')
 
+assert.equal(toCsv(['x'], [['=1+1']]), "x\r\n'=1+1")
+assert.equal(toCsv(['x'], [[' @SUM(A1)']]), "x\r\n' @SUM(A1)")
+assert.equal(toCsv(['x'], [[-10]]), 'x\r\n-10')
+
 // --- magic-byte sniffing ---
 assert.equal(sniffImageMime(new Uint8Array([0xff, 0xd8, 0xff, 0xe0])), 'image/jpeg')
 assert.equal(sniffImageMime(new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])), 'image/png')

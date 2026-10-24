@@ -48,3 +48,9 @@ next-env.d.ts
 /.wrangler/
 .dev.vars
 cloudflare-env.d.ts
+
+.data/
+output/
+.playwright-cli/
+
+!.env.example

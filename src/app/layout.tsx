@@ -1,32 +1,22 @@
-import type { Metadata } from 'next';
-import { Fraunces, IBM_Plex_Sans, IBM_Plex_Mono } from 'next/font/google';
-import './globals.css';
-import { Toaster } from 'sonner';
-import { ThemeProvider } from '@/components/providers/theme-provider';
-import { PwaRegister } from '@/components/providers/pwa-register';
-
-const fraunces = Fraunces({
-  subsets: ['latin'],
-  variable: '--font-fraunces',
-  weight: ['400', '500', '600', '700'],
-  style: ['normal', 'italic'],
-});
-
-const plexSans = IBM_Plex_Sans({
-  subsets: ['latin'],
-  variable: '--font-plex-sans',
-  weight: ['400', '500', '600', '700'],
-});
-
-const plexMono = IBM_Plex_Mono({
-  subsets: ['latin'],
-  variable: '--font-plex-mono',
-  weight: ['400', '500', '600'],
-});
+import type { Metadata } from "next";
+import "@fontsource-variable/fraunces/index.css";
+import "@fontsource-variable/fraunces/wght-italic.css";
+import "@fontsource/ibm-plex-sans/latin-400.css";
+import "@fontsource/ibm-plex-sans/latin-500.css";
+import "@fontsource/ibm-plex-sans/latin-600.css";
+import "@fontsource/ibm-plex-sans/latin-700.css";
+import "@fontsource/ibm-plex-mono/latin-400.css";
+import "@fontsource/ibm-plex-mono/latin-500.css";
+import "@fontsource/ibm-plex-mono/latin-600.css";
+import "./globals.css";
+import { Toaster } from "sonner";
+import { ThemeProvider } from "@/components/providers/theme-provider";
+import { PwaRegister } from "@/components/providers/pwa-register";
 
 export const metadata: Metadata = {
-  title: 'CostPacket — Job-Costed Expense Packets',
-  description: 'Receipt parsing, expense approvals, and payout packets for small contractors.',
+  title: "CostPacket — Job-Costed Expense Packets",
+  description:
+    "Receipt parsing, expense approvals, and payout packets for small contractors.",
 };
 
 export default function RootLayout({
@@ -38,13 +28,19 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${fraunces.variable} ${plexSans.variable} ${plexMono.variable}`}
+      style={
+        {
+          "--font-fraunces": '"Fraunces Variable"',
+          "--font-plex-sans": '"IBM Plex Sans"',
+          "--font-plex-mono": '"IBM Plex Mono"',
+        } as React.CSSProperties
+      }
     >
       <body>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
-          themes={['light', 'dark', 'oled']}
+          themes={["light", "dark", "oled"]}
           enableSystem
           disableTransitionOnChange
         >

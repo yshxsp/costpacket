@@ -1,59 +1,34 @@
-import { createClient } from '@/lib/supabase-server'
-import { redirect } from 'next/navigation'
-import Link from 'next/link'
-import { Plus } from 'lucide-react'
-import { PageShell, PageHeader } from '@/components/ui/page'
-import { Button } from '@/components/ui/button'
-import { EmptyState } from '@/components/ui/empty'
-import { Stamp, statusTone, statusLabel } from '@/components/ui/status'
+import { workspace } from "@/lib/server";
+import Link from "next/link";
+import { Plus } from "lucide-react";
+import { PageShell, PageHeader } from "@/components/ui/page";
+import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty";
+import { Stamp, statusTone, statusLabel } from "@/components/ui/status";
 
 export default async function ProjectsPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
-
-  const { data: profile } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  const role = profile?.role ?? 'SUBCONTRACTOR'
-
-  let projectsQuery = supabase
-    .from('projects')
-    .select('id, name, description, budget, status, created_at, owner_id')
-    .order('created_at', { ascending: false })
-
-  if (role === 'CONTRACTOR') {
-    projectsQuery = projectsQuery.eq('owner_id', user.id)
-  }
-
-  const { data: projects } = await projectsQuery
-
-  const projectIds = projects?.map((p) => p.id) ?? []
-  const { data: taskCounts } = await supabase
-    .from('tasks')
-    .select('project_id, status')
-    .in('project_id', projectIds)
-
+  const ws = await workspace();
+  const { profile } = ws;
+  const role = profile.role;
+  const projects = await ws.listProjects();
+  const taskCounts = await ws.listTasks();
   const tasksByProject = (taskCounts ?? []).reduce<
     Record<string, { total: number; done: number }>
   >((acc, t) => {
-    if (!acc[t.project_id]) acc[t.project_id] = { total: 0, done: 0 }
-    acc[t.project_id].total++
-    if (t.status === 'COMPLETED') acc[t.project_id].done++
-    return acc
-  }, {})
+    if (!acc[t.project_id]) acc[t.project_id] = { total: 0, done: 0 };
+    acc[t.project_id].total++;
+    if (t.status === "COMPLETED") acc[t.project_id].done++;
+    return acc;
+  }, {});
 
-  const canCreate = role !== 'SUBCONTRACTOR'
+  const canCreate = role !== "SUBCONTRACTOR";
 
   return (
     <PageShell>
       <PageHeader
         kicker="Workspace"
         title="Projects"
-        description={`${projects?.length ?? 0} project${projects?.length !== 1 ? 's' : ''} in your workspace`}
+        description={`${projects?.length ?? 0} project${projects?.length !== 1 ? "s" : ""} in your workspace`}
       >
         {canCreate && (
           <Button asChild>
@@ -70,8 +45,8 @@ export default async function ProjectsPage() {
           title="No projects yet"
           description={
             canCreate
-              ? 'Create your first project and start logging job costs against it.'
-              : 'You have not been added to any projects yet.'
+              ? "Create your first project and start logging job costs against it."
+              : "You have not been added to any projects yet."
           }
         >
           {canCreate && (
@@ -86,8 +61,11 @@ export default async function ProjectsPage() {
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {projects.map((project) => {
-            const tasks = tasksByProject[project.id] ?? { total: 0, done: 0 }
-            const pct = tasks.total > 0 ? Math.round((tasks.done / tasks.total) * 100) : 0
+            const tasks = tasksByProject[project.id] ?? { total: 0, done: 0 };
+            const pct =
+              tasks.total > 0
+                ? Math.round((tasks.done / tasks.total) * 100)
+                : 0;
 
             return (
               <Link
@@ -99,36 +77,53 @@ export default async function ProjectsPage() {
                   <h2 className="font-display text-lg leading-tight text-ink transition-colors group-hover:text-accent">
                     {project.name}
                   </h2>
-                  <Stamp tone={statusTone(project.status)}>{statusLabel(project.status)}</Stamp>
+                  <Stamp tone={statusTone(project.status)}>
+                    {statusLabel(project.status)}
+                  </Stamp>
                 </div>
 
                 {project.description && (
-                  <p className="mt-2 line-clamp-2 text-sm text-ink-muted">{project.description}</p>
+                  <p className="mt-2 line-clamp-2 text-sm text-ink-muted">
+                    {project.description}
+                  </p>
                 )}
 
                 <div className="mt-4 flex items-center gap-3 font-mono text-xs text-ink-muted">
-                  <span className="tabular-nums">${Number(project.budget).toLocaleString()}</span>
+                  <span className="tabular-nums">
+                    ${Number(project.budget).toLocaleString()}
+                  </span>
                   <span className="text-rule-strong">·</span>
-                  <span className="tabular-nums">{tasks.done}/{tasks.total} tasks</span>
+                  <span className="tabular-nums">
+                    {tasks.done}/{tasks.total} tasks
+                  </span>
                 </div>
 
                 {tasks.total > 0 && (
                   <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-surface-sunken">
-                    <div className="h-full bg-accent" style={{ width: `${pct}%` }} />
+                    <div
+                      className="h-full bg-accent"
+                      style={{ width: `${pct}%` }}
+                    />
                   </div>
                 )}
 
                 <div className="mt-4 flex items-center justify-between border-t border-rule pt-3 text-xs text-ink-faint">
-                  <span className="tabular-nums">{tasks.total > 0 ? `${pct}% complete` : 'No tasks'}</span>
+                  <span className="tabular-nums">
+                    {tasks.total > 0 ? `${pct}% complete` : "No tasks"}
+                  </span>
                   <span className="font-mono">
-                    {new Date(project.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    {new Date(project.created_at).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
                   </span>
                 </div>
               </Link>
-            )
+            );
           })}
         </div>
       )}
     </PageShell>
-  )
+  );
 }

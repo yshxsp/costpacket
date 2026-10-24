@@ -10,47 +10,66 @@
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv",
-    "test:rls": "node supabase/tests/run-test.mjs rls.test.sql",
-    "test:tenant": "node supabase/tests/run-test.mjs tenant-integrity.test.sql",
-    "test:invite": "node supabase/tests/run-test.mjs invites.test.sql",
-    "test:payout": "node supabase/tests/run-test.mjs payout.test.sql",
-    "test:billing": "node supabase/tests/run-test.mjs billing.test.sql",
-    "test:paywall": "node supabase/tests/run-test.mjs paywall.test.sql",
     "test:paddle": "node tests/paddle-signature.test.mjs",
     "test:files": "node tests/file-csv.test.mjs",
-    "test:unit": "npm run test:paddle && npm run test:files",
-    "test:db": "npm run test:rls && npm run test:tenant && npm run test:invite && npm run test:payout && npm run test:billing && npm run test:paywall"
+    "test:unit": "npm run test:paddle && npm run test:files && node tests/receipt-fields.test.mjs && node --import tsx tests/read-body.test.mjs",
+    "test:db": "tsx tests/workspace.test.ts",
+    "db:migrate": "node --env-file-if-exists=.env.local --import tsx scripts/db-migrate.ts",
+    "test": "npm run test:unit && npm run test:db",
+    "setup:local": "tsx scripts/setup-local.ts",
+    "dev:local": "next dev --webpack --hostname 127.0.0.1 --port 3187",
+    "build:worker": "opennextjs-cloudflare build",
+    "test:auth": "node --env-file=.env.local --import tsx scripts/smoke-auth.ts",
+    "format": "prettier --write src scripts tests package.json next.config.ts"
   },
   "dependencies": {
+    "@better-auth/drizzle-adapter": "1.7.12",
+    "@fontsource-variable/fraunces": "5.3.0",
+    "@fontsource/ibm-plex-mono": "5.3.0",
+    "@fontsource/ibm-plex-sans": "5.3.0",
     "@paddle/paddle-js": "^1.4.2",
     "@radix-ui/react-slot": "^1.2.4",
-    "@supabase/ssr": "^0.9.0",
-    "@supabase/supabase-js": "^2.99.2",
+    "better-auth": "1.7.12",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "drizzle-orm": "0.45.4",
     "framer-motion": "^12.38.0",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
     "lucide-react": "^0.577.0",
-    "next": "^16.2.6",
+    "next": "16.4.3",
     "next-themes": "^0.4.6",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0",
-    "zustand": "^5.0.12"
+    "zod": "4.6.7",
+    "zustand": "^5.0.12",
+    "postgres": "^3.4.5"
   },
   "devDependencies": {
-    "@opennextjs/cloudflare": "^1.19.11",
+    "@electric-sql/pglite": "0.5.11",
+    "@opennextjs/cloudflare": "1.20.13",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "auth": "1.7.12",
     "eslint": "^9",
-    "eslint-config-next": "^16.2.6",
-    "postgres": "^3.4.5",
+    "eslint-config-next": "16.4.3",
+    "prettier": "3.9.10",
     "tailwindcss": "^4",
+    "tsx": "4.21.0",
     "typescript": "^5",
-    "wrangler": "^4.95.0"
+    "wrangler": "4.152.0"
+  },
+  "type": "module",
+  "overrides": {
+    "@node-minify/core": {
+      "glob": "^10.5.0"
+    },
+    "miniflare": {
+      "undici": "7.30.1"
+    }
   }
 }

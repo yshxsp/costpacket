@@ -1,20 +1,14 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "costpacket",
+  "keep_names": false,
+  "workers_dev": true,
+  "preview_urls": false,
   "main": ".open-next/worker.js",
-  "compatibility_date": "2026-05-29",
+  "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat"],
-  "assets": {
-    "directory": ".open-next/assets",
-    "binding": "ASSETS"
-  },
-  "observability": {
-    "enabled": true
-  }
-  // Runtime env (set as secrets, NOT committed):
-  //   wrangler secret put NEXT_PUBLIC_SUPABASE_URL
-  //   wrangler secret put NEXT_PUBLIC_SUPABASE_ANON_KEY
-  //   wrangler secret put STRIPE_SECRET_KEY
-  //   wrangler secret put GEMINI_API_KEY
-  // For local `npm run preview`, put the same keys in .dev.vars
+  "assets": {"directory": ".open-next/assets", "binding": "ASSETS"},
+  "r2_buckets": [{"binding": "RECEIPTS", "bucket_name": "costpacket-receipts"}],
+  "hyperdrive": [{"binding":"HYPERDRIVE","id":"7c08e216a9994d588e1b8eb47f99af17","localConnectionString":"postgresql://postgres:postgres@127.0.0.1:5432/postgres"}],
+  "observability": {"enabled": true}
 }

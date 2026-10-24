@@ -1,19 +1,23 @@
-'use server'
-
-import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase-server'
-
-// Login and signup run client-side in (auth)/login/page.tsx and
-// (auth)/signup/page.tsx via supabase.auth.*. There is intentionally no signup
-// server action here: role/company are assigned by the handle_new_user DB
-// trigger (a public signup is always a new company's ADMIN). A second signup
-// path that forwarded a client-sent role lived here and was removed — never
-// trust the client for authorization fields.
-
+"use server";
+import { services } from "@/lib/server";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 export async function logout() {
-  const supabase = await createClient()
-  await supabase.auth.signOut()
-  revalidatePath('/', 'layout')
-  redirect('/')
+  const response = await (
+    await services()
+  ).auth.api.signOut({ headers: await headers(), asResponse: true });
+  const jar = await cookies();
+  for (const cookie of response.headers.getSetCookie()) {
+    const [pair] = cookie.split(";");
+    const name = pair.slice(0, pair.indexOf("="));
+    jar.set(name, "", {
+      path: "/",
+      expires: new Date(0),
+      httpOnly: true,
+      secure: name.startsWith("__Secure-"),
+      sameSite: "lax",
+    });
+  }
+  redirect("/");
 }

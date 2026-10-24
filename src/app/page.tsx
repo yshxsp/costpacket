@@ -61,7 +61,7 @@ export default function Home() {
               className="reveal mt-5 font-mono text-xs text-ink-faint"
               style={{ animationDelay: '340ms' }}
             >
-              No card to start · Receipts parsed on upload · Export anytime
+              No card to start · Manual entry or receipt extraction · Export anytime
             </p>
           </div>
 
@@ -131,9 +131,9 @@ export default function Home() {
               No trackers, no ads. Your job data and receipts stay in your account —
               export your packets anytime.
             </p>
-            {/* TODO: replace <BRAND> with the umbrella/maker name once decided */}
+            {/* TODO: replace Dmytro Filonenko with the umbrella/maker name once decided */}
             <p className="mt-2 font-mono text-xs text-ink-faint">
-              A personal project by {'<BRAND>'}.
+              A personal project by {'Dmytro Filonenko'}.
             </p>
           </div>
           <div className="flex flex-col gap-2 sm:items-end">
@@ -141,9 +141,9 @@ export default function Home() {
               <Link href="/privacy" className="text-ink-muted transition-colors hover:text-ink">
                 Privacy
               </Link>
-              {/* TODO: replace hello@example.com with the real mailbox once <BRAND> domain + Zoho are live */}
+              {/* TODO: replace github.com/yshxsp with the real mailbox once Dmytro Filonenko domain + Zoho are live */}
               <a
-                href="mailto:hello@example.com"
+                href="https://github.com/yshxsp"
                 className="text-ink-muted transition-colors hover:text-ink"
               >
                 Contact

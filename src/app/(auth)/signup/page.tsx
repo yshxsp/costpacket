@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
-import { createClient } from '@/lib/supabase'
+import { authClient, safeReturnPath } from '@/lib/auth-client'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Field, Input } from '@/components/ui/field'
@@ -25,29 +25,21 @@ export default function SignupPage() {
     const email = formData.get('email') as string
     const password = formData.get('password') as string
 
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters.')
+    if (password.length < 12) {
+      setError('Password must be at least 12 characters.')
       setLoading(false)
       return
     }
 
-    const supabase = createClient()
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      // Role is assigned server-side: a public signup creates a new company and
-      // its ADMIN owner (see the handle_new_user DB trigger). Never trust a
-      // client-sent role.
-      options: { data: { name } },
-    })
+    const { error } = await authClient.signUp.email({email,password,name})
 
     if (error) {
-      setError(error.message)
+      setError(error.message ?? 'Could not complete sign-in.')
       setLoading(false)
       return
     }
 
-    router.push('/dashboard')
+    router.push(safeReturnPath(new URLSearchParams(window.location.search).get('redirectTo') ?? new URLSearchParams(window.location.search).get('next')))
     router.refresh()
   }
 
@@ -87,7 +79,7 @@ export default function SignupPage() {
                 type="password"
                 required
                 autoComplete="new-password"
-                placeholder="Min. 6 characters"
+                placeholder="Min. 12 characters"
               />
             </Field>
 

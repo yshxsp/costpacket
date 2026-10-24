@@ -1,65 +1,58 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { ArrowLeft, FolderKanban, Loader2 } from 'lucide-react'
-import { createClient } from '@/lib/supabase'
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Field, Input, Textarea } from '@/components/ui/field'
-import { cn } from '@/lib/utils'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeft, FolderKanban, Loader2 } from "lucide-react";
+import { createProject } from "@/app/actions/create";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Field, Input, Textarea } from "@/components/ui/field";
+import { cn } from "@/lib/utils";
 
 const STATUS_OPTIONS = [
-  { value: 'ACTIVE', label: 'Active', desc: 'Currently in progress' },
-  { value: 'ON_HOLD', label: 'On Hold', desc: 'Temporarily paused' },
-]
+  { value: "ACTIVE", label: "Active", desc: "Currently in progress" },
+  { value: "ON_HOLD", label: "On Hold", desc: "Temporarily paused" },
+];
 
 export default function NewProjectPage() {
-  const router = useRouter()
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [status, setStatus] = useState('ACTIVE')
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState("ACTIVE");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-    const fd = new FormData(e.currentTarget)
-    const name = (fd.get('name') as string).trim()
-    const description = (fd.get('description') as string).trim()
-    const budget = parseFloat((fd.get('budget') as string) || '0')
+    const fd = new FormData(e.currentTarget);
+    const name = (fd.get("name") as string).trim();
+    const description = (fd.get("description") as string).trim();
+    const budget = parseFloat((fd.get("budget") as string) || "0");
 
     if (!name) {
-      setError('Project name is required.')
-      setLoading(false)
-      return
+      setError("Project name is required.");
+      setLoading(false);
+      return;
     }
 
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) {
-      router.push('/login')
-      return
-    }
-
-    const { error: insertError } = await supabase.from('projects').insert({
+    const result = await createProject({
       name,
       description: description || null,
       budget,
       status,
-      owner_id: user.id,
-    })
+    });
+    const insertError = result.error ? { message: result.error } : null;
 
     if (insertError) {
-      setError(insertError.message)
-      setLoading(false)
-      return
+      setError(insertError.message);
+      setLoading(false);
+      return;
     }
 
-    router.push('/projects')
-    router.refresh()
+    router.push("/projects");
+    router.refresh();
   }
 
   return (
@@ -75,28 +68,53 @@ export default function NewProjectPage() {
       <div className="mb-6 border-b border-rule pb-6">
         <p className="label mb-2">New project</p>
         <h1 className="font-display text-3xl text-ink">Create a project</h1>
-        <p className="mt-1 text-sm text-ink-muted">Fill in the details to start a new job.</p>
+        <p className="mt-1 text-sm text-ink-muted">
+          Fill in the details to start a new job.
+        </p>
       </div>
 
       <Card className="p-6 md:p-8">
         <form onSubmit={handleSubmit} className="space-y-6">
           <Field label="Project name" htmlFor="name">
-            <Input id="name" name="name" type="text" required placeholder="e.g. Downtown Office Renovation" />
+            <Input
+              id="name"
+              name="name"
+              type="text"
+              required
+              placeholder="e.g. Downtown Office Renovation"
+            />
           </Field>
 
           <Field label="Description" htmlFor="description" hint="Optional.">
-            <Textarea id="description" name="description" rows={3} placeholder="Brief summary of this project…" />
+            <Textarea
+              id="description"
+              name="description"
+              rows={3}
+              placeholder="Brief summary of this project…"
+            />
           </Field>
 
           <Field label="Budget (USD)" htmlFor="budget">
             <div className="relative">
-              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 font-mono text-sm text-ink-faint">$</span>
-              <Input id="budget" name="budget" type="number" min="0" step="0.01" placeholder="0.00" className="pl-7 font-mono tabular-nums" />
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 font-mono text-sm text-ink-faint">
+                $
+              </span>
+              <Input
+                id="budget"
+                name="budget"
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="0.00"
+                className="pl-7 font-mono tabular-nums"
+              />
             </div>
           </Field>
 
           <div className="space-y-1.5">
-            <span className="block text-sm font-medium text-ink">Initial status</span>
+            <span className="block text-sm font-medium text-ink">
+              Initial status
+            </span>
             <div className="grid grid-cols-2 gap-2">
               {STATUS_OPTIONS.map((opt) => (
                 <button
@@ -104,10 +122,10 @@ export default function NewProjectPage() {
                   type="button"
                   onClick={() => setStatus(opt.value)}
                   className={cn(
-                    'rounded-[3px] border p-3 text-left transition-colors',
+                    "rounded-[3px] border p-3 text-left transition-colors",
                     status === opt.value
-                      ? 'border-accent bg-accent-soft text-ink'
-                      : 'border-rule bg-surface text-ink-muted hover:bg-surface-sunken hover:text-ink'
+                      ? "border-accent bg-accent-soft text-ink"
+                      : "border-rule bg-surface text-ink-muted hover:bg-surface-sunken hover:text-ink",
                   )}
                 >
                   <div className="text-sm font-medium">{opt.label}</div>
@@ -144,5 +162,5 @@ export default function NewProjectPage() {
         </form>
       </Card>
     </div>
-  )
+  );
 }

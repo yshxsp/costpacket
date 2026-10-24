@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ClipboardList, Loader2 } from 'lucide-react'
-import { createClient } from '@/lib/supabase'
+import { createTask } from '@/app/actions/create'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Field, Input, Textarea, Select } from '@/components/ui/field'
@@ -51,8 +51,7 @@ export function NewTaskForm({
       return
     }
 
-    const supabase = createClient()
-    const { error: insertError } = await supabase.from('tasks').insert({
+    const result = await createTask({
       title,
       description: description || null,
       amount,
@@ -61,6 +60,7 @@ export function NewTaskForm({
       assignee_id: assignee_id || null,
     })
 
+    const insertError = result.error ? {message:result.error} : null
     if (insertError) {
       setError(insertError.message)
       setLoading(false)

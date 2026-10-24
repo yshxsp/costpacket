@@ -7,7 +7,7 @@
 */
 
 @theme {
-  /* Type — wired from next/font CSS variables set on <html> */
+  /* Type — wired from self-hosted font CSS variables set on <html> */
   --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", monospace;
   --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;

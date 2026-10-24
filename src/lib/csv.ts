@@ -3,7 +3,9 @@ export type CsvCell = string | number | null | undefined
 
 function escapeCell(value: CsvCell): string {
   if (value === null || value === undefined) return ''
-  const s = String(value)
+  let s = String(value)
+  // Prevent spreadsheet formulas in user-controlled text, preserving numeric cells.
+  if (typeof value === 'string' && /^[\t\r\n ]*[=+@-]/.test(s)) s = "'" + s
   if (/[",\r\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`
   return s
 }

@@ -1,10 +1,10 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Loader2 } from 'lucide-react'
-import { toast } from 'sonner'
-import { markPayoutPaid } from '@/app/actions/payments'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { markPayoutPaid } from "@/app/actions/payments";
 
 /**
  * Admin/owner control on a PENDING payout. Reveals a reference field, then
@@ -12,28 +12,29 @@ import { markPayoutPaid } from '@/app/actions/payments'
  * MARKED_PAID — nothing is paid automatically.
  */
 export function MarkPaidButton({ paymentId }: { paymentId: string }) {
-  const router = useRouter()
-  const [open, setOpen] = useState(false)
-  const [reference, setReference] = useState('')
-  const [loading, setLoading] = useState(false)
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [reference, setReference] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function confirm() {
-    setLoading(true)
+    setLoading(true);
     try {
-      const res = await markPayoutPaid(paymentId, reference)
+      const res = await markPayoutPaid(paymentId, reference);
       if (res.error) {
-        toast.error(res.error)
+        toast.error(res.error);
       } else {
-        toast.success('Payout marked as paid', {
-          description: 'Recorded as paid manually — no funds moved through CostPacket.',
-        })
-        setOpen(false)
-        router.refresh()
+        toast.success("Payout marked as paid", {
+          description:
+            "Recorded as paid manually — no funds moved through CostPacket.",
+        });
+        setOpen(false);
+        router.refresh();
       }
     } catch {
-      toast.error('Something went wrong.')
+      toast.error("Something went wrong.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -45,7 +46,7 @@ export function MarkPaidButton({ paymentId }: { paymentId: string }) {
       >
         Mark paid
       </button>
-    )
+    );
   }
 
   return (
@@ -54,6 +55,8 @@ export function MarkPaidButton({ paymentId }: { paymentId: string }) {
         value={reference}
         onChange={(e) => setReference(e.target.value)}
         placeholder="Reference (optional)"
+        aria-label="Payment reference"
+        maxLength={200}
         className="w-36 rounded-[3px] border border-rule bg-surface px-2 py-1 text-xs text-ink placeholder:text-ink-faint focus:outline-none focus:ring-1 focus:ring-accent"
       />
       <button
@@ -71,5 +74,5 @@ export function MarkPaidButton({ paymentId }: { paymentId: string }) {
         Cancel
       </button>
     </div>
-  )
+  );
 }
