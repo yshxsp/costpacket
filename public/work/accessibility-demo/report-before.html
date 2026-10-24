@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Remediation Report — Workshop quote — controlled demonstration</title>
+<style>
+  :root { color-scheme: light; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    color: #1a1e22;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 24px;
+    line-height: 1.5;
+  }
+  h1, h2 { font-family: Arial, sans-serif; }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  h2 { font-size: 16px; margin-top: 32px; border-bottom: 1px solid #ccc; padding-bottom: 6px; }
+  .meta { font-family: monospace; font-size: 12px; color: #555; margin-bottom: 24px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #f2f2f2; }
+  code, pre { font-family: 'Courier New', monospace; font-size: 12px; }
+  pre { white-space: pre-wrap; word-break: break-word; margin: 0; }
+  .disclaimer {
+    margin-top: 40px;
+    padding: 16px;
+    border: 1px solid #b3362b;
+    font-size: 12px;
+    color: #6b1f18;
+  }
+  @media print {
+    body { max-width: none; padding: 0 8px; }
+    .disclaimer { border-color: #000; color: #000; }
+  }
+</style>
+</head>
+<body>
+<h1>Remediation Report — Workshop quote — controlled demonstration</h1>
+<p class="meta">Generated 2026-10-24T11:07:05.663Z by Dmytro Filonenko — Gangway</p>
+<p><strong>Site:</strong> Local fixture; not a client website</p>
+<h2>Latest scan</h2><p>Engine: axe-core 4.14.0 in local Chromium; Gangway report generator &middot; Pages scanned: 1/1 &middot; Finished: 2026-10-24T11:07:05.663Z</p>
+<h2>Summary</h2><table><thead><tr><th>Critical</th><th>Serious</th><th>Moderate</th><th>Minor</th></tr></thead><tbody><tr><td>4</td><td>1</td><td>0</td><td>0</td></tr></tbody></table>
+<h2>Findings</h2>
+<h3>critical</h3>
+<table><thead><tr><th>Rule</th><th>WCAG</th><th>Page</th><th>Selector</th><th>Status</th><th>Snippet</th><th>Notes</th></tr></thead><tbody>
+<tr><td>image-alt</td><td>1.1.1</td><td>before.html</td><td><code>img</code></td><td>open</td><td><pre>&lt;img src=&quot;data:image/svg+xml,%...&quot;&gt;</pre></td><td></td></tr>
+<tr><td>label</td><td>4.1.2</td><td>before.html</td><td><code>#email</code></td><td>open</td><td><pre>&lt;input id=&quot;email&quot; name=&quot;email&quot; type=&quot;email&quot; value=&quot;&quot; autocomplete=&quot;email&quot;&gt;</pre></td><td></td></tr>
+<tr><td>label</td><td>4.1.2</td><td>before.html</td><td><code>#quantity</code></td><td>open</td><td><pre>&lt;input id=&quot;quantity&quot; name=&quot;quantity&quot; type=&quot;number&quot; value=&quot;4&quot; min=&quot;1&quot; max=&quot;50&quot;&gt;</pre></td><td></td></tr>
+<tr><td>select-name</td><td>4.1.2</td><td>before.html</td><td><code>#delivery</code></td><td>open</td><td><pre>&lt;select id=&quot;delivery&quot;&gt;&lt;option&gt;Collect from workshop&lt;/option&gt;&lt;option&gt;Local delivery&lt;/option&gt;&lt;/select&gt;</pre></td><td></td></tr>
+</tbody></table>
+<h3>serious</h3>
+<table><thead><tr><th>Rule</th><th>WCAG</th><th>Page</th><th>Selector</th><th>Status</th><th>Snippet</th><th>Notes</th></tr></thead><tbody>
+<tr><td>color-contrast</td><td>1.4.3</td><td>before.html</td><td><code>.hint:nth-child(7)</code></td><td>open</td><td><pre>&lt;p class=&quot;hint&quot; style=&quot;color:#9aabc0&quot;&gt;Quotes remain valid for seven days.&lt;/p&gt;</pre></td><td></td></tr>
+</tbody></table>
+<p class="disclaimer">This document records automated findings and remediation work. Automated checks cover only part of accessibility requirements and cannot determine WCAG conformance on their own. The recorded scan engine and tested scope describe the checks performed. This is not a certification of compliance, not a legal opinion, and not a guarantee that the referenced site meets any accessibility standard. A conformance evaluation also requires manual testing, including assistive-technology and expert review. This report documents a good-faith accessibility remediation effort.</p>
+<h2>Scope and result</h2><p>This is a fictional, controlled demonstration. Before: 4 axe rule groups reported findings. After: 0 violations in the tested WCAG A/AA tag set; the open dialog also had 0. This is not evidence that the entire page conforms to WCAG.</p><h2>Implemented changes</h2><ul><li>Associated visible labels with email, quantity and delivery controls.</li><li>Supplied a meaningful alternative for the material illustration.</li><li>Increased supporting-text contrast.</li><li>Replaced the pointer-only submit control with a native button.</li><li>Added invalid-email feedback, focus handling and a named dialog with keyboard containment and return focus.</li><li>Added a status live region. Speech output was not tested.</li></ul><h2>Browser and keyboard checks actually performed</h2><ul><li>reachable native submit button</li><li>logical tab order</li><li>invalid email feedback and focus</li><li>named modal</li><li>modal focus containment</li><li>Escape closes dialog</li><li>focus restoration</li><li>keyboard confirmation</li><li>status live-region DOM</li><li>320px reflow</li><li>200% text resize at 320px</li></ul><h2>Not checked</h2><ul><li>screen reader speech and interaction</li><li>real OS/browser zoom</li><li>Safari/Firefox</li><li>all WCAG criteria</li><li>production Cloudflare browser scan workflow</li></ul><p><a href="before.html">Before fixture</a> | <a href="after.html">After fixture</a> | <a href="results.json">Raw browser evidence</a></p><p>Method: <a href="https://www.w3.org/WAI/test-evaluate/tools/">W3C evaluation-tools guidance</a>. Automated checks require human evaluation.</p></body>
+</html>

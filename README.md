@@ -13,6 +13,8 @@ browser checks use synthetic demonstration data, not customer results.
 
 ## Accessibility example
 
+A [public walkthrough](https://costpacket.yshxsp.workers.dev/work/accessibility)
+lets you try the corrected form and inspect the code without signing in.
 A [controlled before/after demonstration](docs/accessibility-demo/README.md) includes
 source, browser evidence and an HTML/PDF report. It is a personal demonstration.
 
